@@ -8,7 +8,10 @@ const cors = require('cors'); // means app will use CORS
 // This allows us to accept JSON from the frontend and use CORS
 app.use(cors());
 app.use(express.json()); // This allows us to parse JSON bodies in incoming requests
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '../Frontend')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../Frontend/index.html'));
+});
 //In memory storage that will act as a temporary database for the form data. This is just for demonstration purposes and should be replaced with a proper database in a production application.
 let allRequests = [];
 
