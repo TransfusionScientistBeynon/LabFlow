@@ -1,11 +1,14 @@
 // server.js
 const express = require('express');
+const path = require('path');
+
 const app = express();
 const cors = require('cors'); // means app will use CORS
 
 // This allows us to accept JSON from the frontend and use CORS
 app.use(cors());
 app.use(express.json()); // This allows us to parse JSON bodies in incoming requests
+app.use(express.static(path.join(__dirname, '../frontend')));
 //In memory storage that will act as a temporary database for the form data. This is just for demonstration purposes and should be replaced with a proper database in a production application.
 let allRequests = [];
 
@@ -285,7 +288,7 @@ app.get('/api/data', (req, res) => {
 });
 
 // Start the server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 })
