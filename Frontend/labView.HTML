@@ -1,0 +1,95 @@
+<!doctype HTML>
+
+<html>
+
+<head> 
+    <meta charset="UTF-8">
+    <title> Laboratory Dashboard </title>
+     <link rel="stylesheet" href="labViewStyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Delius+Unicase:wght@400;700&display=swap" rel="stylesheet">
+<!-- Google Fonts-->
+
+</head>
+
+<body>
+
+    <div id=updateSampleStatus class="overlay" data-id="" hidden> 
+        
+        <div id="modalBox" class="modalBox" hidden>
+              <p> <strong> Updating sample status </strong> </p>
+             <label for="revertStatusInput">  Are you sure you want to change the sample status?  </label> <br>
+           
+            Yes <input id="yes" type="checkbox" class="reverseStatusInput" > No <input id="no" type="checkbox" class="reverseStatusInput" value="no"> 
+
+            
+            
+            <div id="revertStatusPopUp" hidden>
+            <label for="revertStatusReasonInput"> <br> Reason for status change:  </label>
+            <input type="text" id="revertStatusReasonInput">
+            <input id="submitButton" type="submit" value="Submit" > 
+
+        <div id="valModalBox" hidden class="validation">
+            Please enter a reason for status change
+        </div>
+
+        </div>
+
+     </div>
+
+        
+
+    </div>
+ 
+
+
+    <div id="labView" class="">
+
+        <h1> Current Requests </h1>
+
+    <div id="tableDiv" class="labView">
+        <table id="requestsTable">
+            <tr id="header"> 
+                <th id="nameHeader"> Patient name </th>
+                <th id="hospitalHeader"> Hospital </th>
+                <th id="investigationHeader"> Investigation required</th>
+                <th id="noOfUnits"> No of units required </th>
+                <th id="dateAndTimeRequired"> Date and time required </th>
+                <th id="status"> Status </th>
+                <th id="updateStatus"> Update Status </th>
+            </tr>
+
+            <tbody id="tableData"> 
+                
+            </tbody>
+
+        </table>
+
+        <div id="buttons"> 
+        <button id="RequestButton" onclick="submitNewRequest()"> Submit new request </button>
+        </div>
+        
+    </div>
+
+  
+
+
+    </div>
+
+
+
+
+
+
+    </div>
+
+<script src="labView.js"> 
+
+</script>
+</body>
+
+</html>

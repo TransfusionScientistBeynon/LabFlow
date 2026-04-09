@@ -1,0 +1,70 @@
+body {
+    background-color: #b80000;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 80px;
+    font-style: bold;
+}
+
+
+
+#fullRequestContainer{
+    display:grid;
+    margin: auto;
+    text-align:center;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    gap: 30px;
+    padding: 40px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    max-width: 1500px;
+    
+
+}
+
+#patientDemographics{
+    border-style:solid;
+    background-color:white;
+    border-color:aliceblue;
+    border-radius:4px;  
+    padding:10px;
+    
+}
+
+#clinicalInformation{
+    border-style:solid;
+    background-color:white;
+    border-color:aliceblue;
+    border-radius:4px;
+    padding:10px; 
+}
+
+#hospitalInformation{
+    border-style:solid;
+    background-color:white;
+    border-color:aliceblue;
+    border-radius:4px;
+    padding:10px; 
+}
+
+#testRequestInformation{
+    border-style:solid;
+    background-color:white;
+    border-color:aliceblue;
+    border-radius:4px;
+    padding:10px;
+
+}
+
+#bottomMenu{
+    align-items: center;
+    display:flex;
+    justify-content:center;
+    padding:20px;
+}

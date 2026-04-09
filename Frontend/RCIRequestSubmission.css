@@ -1,0 +1,164 @@
+
+
+
+
+body {
+    background-color: #b80000;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 50pt;
+    font-style: bold;
+}
+
+/* Google fonts */ 
+.delius-unicase-regular {
+  font-family: "Delius Unicase", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.delius-unicase-bold {
+  font-family: "Delius Unicase", cursive;
+  font-weight: 700;
+  font-style: normal;
+}
+/* Google fonts */
+
+
+
+
+
+/* CSS */
+#buttons{
+  margin-top:20px;
+  display:flex; 
+  flex-direction: row;
+  gap:20px;
+  justify-content: center;
+  
+}
+
+.button-30 {
+  align-items: center;
+  appearance: none;
+  background-color: #FCFCFD;
+  border-radius: 4px;
+  border-width: 0;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #36395A;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "JetBrains Mono",monospace;
+  height: 48px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s,transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow,transform;
+  font-size: 18px;
+}
+
+.button-30:focus {
+  box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+}
+
+.button-30:hover {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.button-30:active {
+  box-shadow: #D6D6E7 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
+
+
+
+
+label{
+  margin-right:10px;
+}
+
+
+
+#patientd{
+list-style-type: none;
+
+}
+
+.clinicalInfo li{
+list-style-type: none;
+
+}
+
+.hospitalInfo li{
+  list-style-type: none;
+  
+
+}
+
+
+.testRequest li{
+list-style-type: none;
+
+}
+
+.validation{
+  font-style:italic;
+  color:red;
+}
+
+
+.testSummary{
+  display: grid;
+    grid-template-columns: 2fr 2fr; 
+    grid-auto-rows: 1fr;
+    gap:20px;
+    align-items: center;        /* centers horizontally */
+    justify-content: center;    /* centers vertically */
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;         /* centers text within elements */
+    max-width: 1000px; /* limits the width of the container */
+    margin:0 auto; /* centers the container horizontally */
+   
+    list-style-type: none;
+    border-radius: 10px;
+
+}
+
+
+.testSummary p{
+  margin-bottom: 0px;
+  margin-top:5px;
+
+}
+
+.block{
+  background-color:white;
+  border-color:white;
+  border-width: 4px;
+  border-style: solid;
+  border-radius:5px;
+  margin-top:10px;
+  padding:10px;
+
+  
+
+}
+

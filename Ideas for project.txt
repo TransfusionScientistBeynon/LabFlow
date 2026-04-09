@@ -1,0 +1,16 @@
+Improvement of request form:
+
+Aysha's ideas
+
+option for hospital number of NHS number
+Hospital name linked to hospital location code
+Number of samples being sent and size of tube
+Transfusion reaction investigation
+box for referral lab id number
+if rare antibody selected then alert diplayed.
+
+function that generates turnaround time for crossmatch
+
+if second sample >10 mins reject 2nd sample
+
+

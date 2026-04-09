@@ -1,0 +1,436 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang2057{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 before code on labview\par
+\par
+\par
+\par
+// Elements for generating the current date\par
+let currentDate= new Date();\par
+let currentHour = currentDate.getHours();\par
+let currentMinutes = currentDate.getMinutes();\par
+let currentYear = currentDate.getFullYear();\par
+let currentMonth = currentDate.getMonth()+1;\par
+let currentDay = currentDate.getUTCDate();\par
+\par
+\par
+\par
+//Variables made to set sample state in audit trail and for updating UI\par
+const requestState = \{\par
+    requestReceived: "Request Received",\par
+    requestSampleReceived : "Sample received in laboratory",\par
+    requestInProgress : "Sample in progress",\par
+    requestComplete :"Complete"\par
+\par
+\par
+\}\par
+\par
+const revertStatusReasonInput = document.getElementById ("revertStatusReasonInput")\par
+let reason = revertStatusReasonInput.value\par
+        console.log(reason)\par
+\par
+\par
+\par
+// Declaration of variables within the HTML document\par
+const tableData =\par
+document.getElementById("tableData");\par
+\par
+\par
+// Gets the rciRequest data from local storage from the request form\par
+let rciRequest = \par
+    localStorage.getItem("rciRequest");\par
+\par
+\par
+//creates the variabl\{e formData which contains the incoming request from the request form page\par
+let formData = ""\par
+if (rciRequest)\{\par
+formData = \par
+JSON.parse(rciRequest)\par
+formData.status = requestState.requestReceived;\par
+formData.requestDisplayStamp = new Date().toLocaleString('en-GB');\par
+formData.auditTrail.push(\{\par
+            status : requestState.requestReceived,\par
+            timeStamp : new Date()\par
+        \})\par
+\}\par
+//Creates an array called allRequests. If requests already exist they are parsed from local storage on load or otherwise all requests\par
+//becomes = to an empty array\par
+let allRequests = JSON.parse(localStorage.getItem("allRequests")) || [];\par
+\par
+\par
+//This collects all hospital number from the all requests array meaning they can be used to compare for duplicate requests\par
+let allHospitalNumbers = allRequests.map(function (item)\{\par
+    return item.HospitalNumber;\par
+\par
+\});\par
+\par
+\par
+const tableStatus =\par
+document.getElementById("status");\par
+\par
+\par
+let currentHospitalNumber = formData.HospitalNumber;\par
+\par
+//if rci request is present then it runs a function called check duplicate which compares the hospital number parsed from local storage\par
+// with the current request\par
+incomingRequest();\par
+\par
+function incomingRequest()\{\par
+    if(rciRequest)\{\par
+        checkDuplicate();\par
+\par
+    \}\par
+\par
+\}\par
+\par
+// if there is no duplicate the incoming data stored in formData is set into storage and a sort function is called\par
+function checkDuplicate()\{\par
+\par
+if (allHospitalNumbers.includes(currentHospitalNumber)) \{\par
+    return false;\par
+\par
+\}else\{\par
+        \par
+        allRequests.push(formData); //formData is the parsed version of rcirequest\par
+        localStorage.setItem("allRequests", JSON.stringify(allRequests))\par
+        localStorage.setItem("allHospitalNumbers", JSON.stringify(allHospitalNumbers))\par
+        allRequests.sort()\par
+\par
+\}\par
+\par
+\}\par
+\par
+\par
+\par
+    \par
+//This is a sort function which sorts the objects in the allRequests array according to Date and Time. It states that a = date requested and b = time requested and constructs a date/time variable.\par
+\par
+\par
+// This script works by getting the Rcirequest from the original page and parsing the information into an object stored in form data.\par
+//I then created another storage method which stores all current requests or if there are no requests it makes an array.\par
+// After this I created a function which pushes the previous request into the array thereby storing all current requests.\par
+// At the send of the page the storage is set again and is stringified acting like a loop.\par
+let tableDataHTML = ""\par
+\par
+ renderTable();\par
+\par
+\par
+function renderTable()\{\par
+    \par
+    tableDataHTML = ""\par
+    tableData.innerHTML = tableDataHTML;\par
+\par
+allRequests.sort(function (a,b) \{\par
+       \par
+a.DateRequested\par
+a.TimeRequested\par
+\par
+b.DateRequested\par
+b.TimeRequested\par
+\par
+a.dateTime = `$\{a.DateRequested\} $\{a.TimeRequested\}`\par
+b.dateTime = `$\{b.DateRequested\} $\{b.TimeRequested\}`\par
+\par
+a.dateTimeObject = new Date(a.dateTime);\par
+b.dateTimeObject = new Date(b.dateTime);\par
+\par
+return (a.dateTimeObject) - b.dateTimeObject; \par
+\par
+    \});\par
+    allRequests.forEach (function (item) \{ ///This line states that for each item in the allRequests array add a line in the table\par
+\par
+    if (item.status !== requestState.requestComplete)\{\par
+    tableDataHTML += `<tr> </tr>`;\par
+\par
+    tableDataHTML += \par
+    \par
+    `<tr id=$\{item.requestId\} class="requestRow">\par
+    <td> $\{item.Forename\} $\{item.Surname\} </td> \par
+    <td> $\{item.HospitalName\} </td> \par
+    <td> $\{item.TestRequested\} </td> \par
+    <td> $\{item.UnitsRequired\} </td>\par
+    <td> $\{item.DateRequested\} <br> $\{item.TimeRequested\} </td>\par
+    <td> $\{item.status\} <br> $\{item.requestDisplayStamp\} </td>\par
+    \par
+    <td> \par
+    <input type="button" value="Request received" id="$\{item.requestId\}" class="requestReceivedButton">\par
+    <input type ="button" value="Sample received" id="$\{item.requestId\}" class="sampleReceivedButton"> \par
+    <input type="button" value="In progress" id="$\{item.requestId\}" class="sampleInProgressButton">\par
+    <input type="button" value="Completed" class="requestCompleteButton" id="$\{item.requestId\}"> \par
+     </td>\par
+\par
+    </tr>`\par
+\par
+    \}\par
+\par
+\par
+\});\par
+    tableData.innerHTML = tableDataHTML;\par
+\par
+\par
+\}\par
+\par
+\par
+//This Table data listener looks for when the user clicks an update button. When the status is updated it gets the buttons id and finds item id within all requests which matches the buttons Id\par
+//Look in the table generated by javascript which shows how it gets the items id.\par
+//I then set conditions so that if the user clicks backwards in status e.g. in progress to sample received it renders a modal box.\par
+\par
+    tableData.addEventListener("click" ,(event) => \{\par
+\par
+        if (event.target.classList.contains ('requestReceivedButton'))\{\par
+             const buttonId = event.target.id;\par
+              const match = allRequests.find(function (item)\{\par
+              return item.requestId === buttonId;\par
+        \});\par
+\par
+        if (match &&\par
+  (\par
+    match.status === requestState.requestReceived ||\par
+    match.status === requestState.requestSampleReceived ||\par
+    match.status === requestState.requestInProgress\par
+  )\par
+)\{\par
+            overlay.dataset.id = match.requestId\par
+            renderModalBox();\par
+            \par
+\par
+        \}\par
+        return;\par
+        \}\par
+\par
+        \par
+        if (event.target.classList.contains ('sampleReceivedButton')) \{\par
+        const buttonId = event.target.id;\par
+\par
+        const match = allRequests.find(function (item)\{\par
+        return item.requestId === buttonId;\par
+        \});\par
+        \par
+        \par
+        if (match && match.status !== requestState.requestReceived )\{\par
+           \par
+            if (match.status === requestState.requestInProgress)\{\par
+                renderModalBox();\par
+                overlay.dataset.id = match.requestId\par
+                console.log (overlay.dataset.id)\par
+            \}\par
+            match.status = requestState.requestSampleReceived\par
+            match.requestDisplayStamp = new Date().toLocaleString('en-GB');\par
+            match.auditTrail.push(\{\par
+                status: requestState.requestSampleReceived,\par
+                timeStamp: new Date(),\par
+            \})\par
+           \par
+            localStorage.setItem("allRequests",JSON.stringify(allRequests))\par
+        renderTable();\par
+        \}\par
+        return;\par
+        \}\par
+\par
+        if (event.target.classList.contains ('sampleInProgressButton'))\{\par
+        \par
+\par
+        const buttonId = event.target.id;\par
+\par
+        const match = allRequests.find(function (item)\{\par
+        return item.requestId === buttonId;\par
+                \par
+        \});\par
+\par
+        if (match && match.status !== requestState.requestInProgress)\{\par
+            match.status = requestState.requestInProgress\par
+            match.requestDisplayStamp = new Date().toLocaleString('en-GB')\par
+            \par
+            match.auditTrail.push(\{\par
+                status : requestState.requestInProgress,\par
+                timeStamp : new Date()\par
+\par
+            \})\par
+            localStorage.setItem("allRequests",JSON.stringify(allRequests))\par
+            renderTable();\par
+        \}\par
+        return;\par
+        \}\par
+\par
+        if (event.target.className === 'requestCompleteButton' )\{\par
+        \par
+\par
+        const buttonId = event.target.id;\par
+        let requestReceivedButtonId = event.target.id;\par
+\par
+\par
+        const match = allRequests.find(function (item)\{\par
+        return item.requestId === buttonId;\par
+                \par
+        \});\par
+        \par
+\par
+        if (match && match.status !== requestState.requestComplete )\{\par
+            match.status = requestState.requestComplete\par
+            match.requestDisplayStamp = new Date().toLocaleString('en-GB');\par
+            match.auditTrail.push(\{\par
+                status: requestState.requestComplete,\par
+                timeStamp: new Date()\par
+\par
+            \})\par
+\par
+            localStorage.setItem("allRequests",JSON.stringify(allRequests))\par
+        renderTable();\par
+        \}\par
+        return;\par
+        \}\par
+    \par
+    let rowRequest = ""\par
+\par
+    const rowClicked = event.target.closest("tr"); //this looks for the nearest table element\par
+    console.log(rowClicked.id)\par
+     rowRequest = rowClicked.id\par
+    localStorage.setItem("rowRequest", JSON.stringify(rowRequest))\par
+    window.location.href = "labview.viewRequest.HTML"\par
+\par
+    console.log(rowRequest)\par
+    \par
+    \});\par
+\par
+\par
+//This section references the overlay, modal box and reason box.\par
+const overlay = \par
+document.getElementById("updateSampleStatus");\par
+overlay.hidden = true;\par
+overlay.dataset.id = "";\par
+\par
+\par
+\par
+\par
+const modalBox =\par
+document.getElementById("modalBox");\par
+modalBox.hidden=true;\par
+\par
+const revertStatusPopUp = \par
+document.getElementById("revertStatusPopUp")\par
+\par
+const modalCheckBox = document.querySelectorAll('input[name="revertStatusInput"]:checked')\par
+\par
+\par
+// When the user clicks on the modal box is either renders the reason box or hides the modal box. When the user clicks submit it updates the requests audit trail.\par
+overlay.addEventListener("click", (event) =>\{\par
+\par
+     if (event.target.id === "yes")\{\par
+            renderReasonBox();\par
+\par
+           \par
+     \}\par
+\par
+      if (event.target.id === "no")\{\par
+        hideAuditTrail();\par
+\par
+            \}\par
+\par
+    if (event.target.id === "submitButton")\{\par
+    validateReason()\par
+        \par
+    \}\par
+\par
+    \par
+\});\par
+\par
+    //VALIDATE REASON COLLECTS THE INPUT FROM REASON AND IF NO REASON GIVEN IT CREATES AN ERROR MESSAGE\par
+function validateReason()\{\par
+ reason = revertStatusReasonInput.value\par
+\par
+    if (!reason)\{\par
+        valModalBox.hidden = false;\par
+\par
+    \}\par
+    if (reason)\{\par
+        valModalBox.hidden = true;\par
+        \par
+        updateAuditTrail();\par
+        hideAuditTrail();\par
+        \par
+    \}\par
+\par
+    \par
+\}\par
+\par
+function renderModalBox()\{\par
+    if (overlay.hidden = true )\{\par
+        overlay.hidden = false;\par
+        modalBox.hidden = false;\par
+        overlay.classList.add("overlayActive");\par
+\par
+    \}\par
+\}\par
+\par
+function renderReasonBox()\{\par
+    revertStatusPopUp.hidden = false;\par
+\}\par
+\par
+function updateAuditTrail()\{\par
+    console.log(overlay.dataset.id)\par
+     let modalRequestId = overlay.dataset.id\par
+     let reason = revertStatusReasonInput.value\par
+\par
+     const modalMatch = allRequests.find (function (item)\{\par
+    return item.requestId === modalRequestId\par
+\par
+        \});\par
+    console.log(modalMatch)\par
+    console.log(modalRequestId)\par
+\par
+     modalMatch.status = requestState.requestSampleReceived\par
+        modalMatch.auditTrail.push (\{\par
+            status: requestState.requestSampleReceived,\par
+            reason: reason\par
+            \})\par
+    localStorage.setItem("allRequests", JSON.stringify(allRequests))\par
+\par
+\}\par
+\par
+const valModalBox = document.getElementById("valModalBox")\par
+function hideAuditTrail()\{\par
+    \par
+    overlay.hidden = true;\par
+    modalBox.hidden = true;\par
+    revertStatusPopUp.hidden = true;\par
+    overlay.classList.remove("overlayActive");\par
+    resetCheckboxes();\par
+\par
+\}\par
+\par
+function resetCheckboxes()\{\par
+\par
+    const auditCheckBoxes = document.querySelectorAll('input[type="checkbox"]')\par
+\par
+    auditCheckBoxes.forEach(function (checkbox)\{\par
+        checkbox.checked = false\par
+\par
+    \});\par
+\par
+\}\par
+\par
+//This code is going to allow user to view the full request when they click on the request\par
+\par
+\par
+\par
+\par
+//Logic for resetting status for debugging \par
+/*allRequests.forEach(function (item)\{ \par
+    item.status = "Request Received"\par
+\par
+\});\par
+\par
+localStorage.setItem("allRequests", JSON.stringify(allRequests));\par
+renderTable(); //\par
+\par
+allRequests.forEach (function (item)\{\par
+    \par
+\par
+\}); \par
+//*/\par
+\par
+allRequests.forEach(function (item)\{\par
+    console.log(item.status)\par
+\par
+\});\par
+}
+ 
