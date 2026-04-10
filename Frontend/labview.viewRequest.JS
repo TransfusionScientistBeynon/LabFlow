@@ -1,7 +1,7 @@
-
+const BASE_URL = window.location.origin;
 
 let allRequests = [];
-fetch("http://localhost:3000/api/getformData",{
+fetch(`${BASE_URL}/api/getformData`,{
     method: "GET",
     headers: {
         "Content-Type": "application/json"

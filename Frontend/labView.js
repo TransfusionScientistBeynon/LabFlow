@@ -1,6 +1,11 @@
+
+const BASE_URL = window.location.origin;
+
+
+
 let allRequests = [];
 let tableDataHTML = ""
-fetch("http://localhost:3000/api/getformData",{
+fetch(`${BASE_URL}/api/getformData`,{
     method: "GET",
     headers: {
         "Content-Type": "application/json"
@@ -169,7 +174,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
 
     tableData.addEventListener("click" ,(event) => {
 
-    fetch("http://localhost:3000/api/validateStatusChange",{
+    fetch(`${BASE_URL}/api/validateStatusChange`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -270,7 +275,7 @@ function validateReason(){
 
  reason = revertStatusReasonInput.value
 
- fetch("http://localhost:3000/api/validateModalReason",{
+ fetch(`${BASE_URL}/api/validateModalReason`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json"

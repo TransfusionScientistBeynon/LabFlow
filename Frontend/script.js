@@ -1,4 +1,7 @@
 // script.js
+const BASE_URL = window.location.origin;
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   // your entire script
@@ -758,7 +761,7 @@ const requestState = {
 
  }
 
- fetch("http://localhost:3000/api/formSubmit",{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
+ fetch(`${BASE_URL}/api/formSubmit`,{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
     method:"POST",
     headers:{
         "Content-Type": "application/json"
