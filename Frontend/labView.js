@@ -202,17 +202,22 @@ return (a.dateTimeObject) - b.dateTimeObject;
 
         }
         
-         if (updateStatusResponse.newMatchStatus = requestState.requestComplete){
+         if (updateStatusResponse.newMatchStatus === requestState.requestComplete){
+            console.log(updateStatusResponse.newMatchStatus)
            const requestToUpdateStatus = updateStatusResponse.requestId
            const newStatus = updateStatusResponse.newMatchStatus
 
            const foundRequest = allRequests.find(function (item){
               return item.requestId === requestToUpdateStatus;
            });
-
-           foundRequest.status = newStatus
-           
+            foundRequest.status = newStatus
            renderTable();
+
+           
+
+           
+           
+           
         }
        
          return modalBoxRequestId
