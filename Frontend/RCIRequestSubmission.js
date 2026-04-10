@@ -1,10 +1,12 @@
+const BASE_URL = window.location.origin;
+
 const params = new URLSearchParams(window.location.search);
 const requestId = params.get("requestId");
 console.log(requestId + " This is from the frontend")
 
 
 let rciRequest = "";
-fetch (`http://localhost:3000/api/getformData/${requestId}`)
+fetch (`${BASE_URL}/api/getformData/${requestId}`)
 
     .then (res => res.json())
     .then ( requestData => {
