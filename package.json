@@ -12,9 +12,10 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-  "cors": "^2.8.5",
-  "dotenv": "^16.3.1",
-  "path": "^0.12.7"
+    "path": "^0.12.7",
+    "pg": "^8.20.0"
   }
 }

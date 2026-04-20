@@ -2,7 +2,6 @@
 const BASE_URL = window.location.origin;
 
 
-
 let allRequests = [];
 let tableDataHTML = ""
 fetch(`${BASE_URL}/api/getformData`,{
@@ -12,6 +11,8 @@ fetch(`${BASE_URL}/api/getformData`,{
     }
 
 })
+
+
 
 .then (res => res.json())
 .then (allRequestData => { 
@@ -141,13 +142,13 @@ return (a.dateTimeObject) - b.dateTimeObject;
 
     tableDataHTML += 
     
-    `<tr id=${item.requestId} class="requestRow">
-    <td> ${item.Forename} ${item.Surname} </td> 
-    <td> ${item.HospitalName} </td> 
-    <td> ${item.TestRequested} </td> 
-    <td> ${item.UnitsRequired} </td>
-    <td> ${item.DateRequested} <br> ${item.TimeRequested} </td>
-    <td> ${item.status} <br> ${item.requestDisplayStamp} </td>
+    `<tr id=${item.id} class="requestRow">
+    <td> ${item.forename} ${item.surname} </td> 
+    <td> ${item.hospitalname} </td> 
+    <td> ${item.testrequested} </td> 
+    <td> ${item.unitsrequired} </td>
+    <td> ${item.daterequested} <br> ${item.timerequested} </td>
+    <td> ${item.request_status} <br> ${item.created_at} </td>
     
     <td> 
     <input type="button" value="Request received" id="${item.requestId}" class="requestReceivedButton" data-id="${item.requestId}" data-action="statusChangeToRequestReceived">
@@ -230,7 +231,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
     function renderModalBox(){
 
 overlay.hidden = true;
-    if (overlay.hidden = true ){
+    if (overlay.hidden === true ){
         overlay.hidden = false;
         modalBox.hidden = false;
         overlay.classList.add("overlayActive");
