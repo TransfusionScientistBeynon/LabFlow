@@ -234,7 +234,11 @@ app.get('/api/getformData', async (req, res) => {
     
   }catch (err){
     console.error(err);
-    res.status(500).json({Message: "Unable to retrieve all requests from database"})
+    res.status(500).json(
+      {Message: "Unable to retrieve all requests from database",
+      fullMessage: err.message,
+      fullError: err
+    })
 
   }
  //res.json(allRequests); 
