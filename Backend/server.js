@@ -258,188 +258,302 @@ function formSubmissionHandler (requestId, allRequests){ // This function takes 
 
 
 // A route to update the status of a request. 
-app.post('/api/validateStatusChange', (req, res) => {
-
+app.post('/api/validateStatusChange', async (req, res) => {
+  
+  const requestedAction = req.body.action;
+  
   const buttonClicked = req.body;
-  const match = locateMatchingRequest(buttonClicked);
+  const match = await locateMatchingRequest(buttonClicked);
+  
+  console.log("Action before update", requestedAction)
+  
+ function actionTranslationTable(requestedAction, requestState) {
 
+  if (requestedAction === "statusChangeToRequestReceived"){
+    console.log("match")
+    return requestState.requestReceived
 
+  }else if (requestedAction === "statusChangeTosampleReceived") {
+    
+    return requestState.requestSampleReceived
+
+  }else if (requestedAction === "statusChangeToSampleInProgress"){
+
+    return requestState.requestInProgress
+      
+
+  
+  }else if (requestedAction === "statusChangeToRequestComplete"){
+     return requestState.requestComplete
+  }
+
+} 
+
+  
   let updateStatusResponse = {
     status:"",
     message:"",
+    requestedAction,
+    reason: "Reason not required",
     requestId: match.id,
-    newMatchStatus: ""
+    oldMatchStatus: match.request_status,
+    newMatchStatus: actionTranslationTable(requestedAction, requestState) ,
+    ChangedBy: "to be updated with user authentication" 
   }
 
-  locateMatchingRequest(buttonClicked);
+
   
-  validateStatusChange(buttonClicked,updateStatusResponse, match);
 
+  const updatedVariables = await validateStatusChange(buttonClicked, updateStatusResponse, match)
+  await updateDatabaseAndAuditTrail(updatedVariables)
 
+console.log("UpdateStatusResponse before response to frontend", updateStatusResponse)
 
-  console.log (updateStatusResponse,"Server response to validate status change")
-
-console.log(match.status)
   res.json(updateStatusResponse);
 });
 
-function locateMatchingRequest(buttonClicked){
-      const matchingRequest = allRequests.find (function (item){
-        return item.requestId === buttonClicked.id;
-    });
-return matchingRequest;
+async function locateMatchingRequest(buttonClicked){
+      const result = await db.query(
+      'SELECT * FROM requests WHERE id = $1',
+       [buttonClicked.id]
+         
+    );
+    const matchingRequest = result.rows[0];
+
+    return matchingRequest;
   }
 
-  function validateStatusChange(buttonClicked, updateStatusResponse, match ){
-  console.log(match.status, "before logic run")
+
+ async function validateStatusChange(buttonClicked, updateStatusResponse, match ){
+  await locateMatchingRequest(buttonClicked);
+  await match;
 
     if (buttonClicked.action === 'statusChangeToRequestReceived' &&
       (
-      match.status === requestState.requestReceived ||
-      match.status === requestState.requestSampleReceived ||
-      match.status === requestState.requestInProgress ||
-      match.status === requestState.requestComplete
+      match.request_status === requestState.requestReceived ||
+      match.request_status === requestState.requestSampleReceived ||
+      match.request_status === requestState.requestInProgress ||
+      match.request_status === requestState.requestComplete
     )
    ){ updateStatusResponse.status = "invalid"
        updateStatusResponse.message = "Invalid request. Please provide reason"
+       updateStatusResponse.requestAction = buttonClicked.action;
+       
+
        return updateStatusResponse
+
+      
 
   }else if (buttonClicked.action === 'statusChangeTosampleReceived' && 
 
       (
-      match.status === requestState.requestSampleReceived ||
-      match.status === requestState.requestInProgress ||
-      match.status === requestState.requestComplete
+      match.request_status === requestState.requestSampleReceived ||
+      match.request_status === requestState.requestInProgress ||
+      match.request_status === requestState.requestComplete
     )
     ){
         
         updateStatusResponse.status = "invalid"
         updateStatusResponse.message = "Invalid request. Please provide reason"
+        updateStatusResponse.requestAction = buttonClicked.action;
+        
+
       return updateStatusResponse
 
-    }else if (buttonClicked.action === 'statusChangeTosampleReceived') {
-      
-    match.status = requestState.requestSampleReceived;
-    updateStatusResponse.status = "valid";
-    updateStatusResponse.message = "Valid request. Transition accepted";
-    updateStatusResponse.newMatchStatus = match.status
-
-    
-    return updateStatusResponse
 
     }else if (buttonClicked.action === 'statusChangeTosampleReceived') {
-      
       updateStatusResponse.status = "valid"
       updateStatusResponse.message = "Valid request. Transition accepted" 
-      match.status = requestState.requestSampleReceived
+      updateStatusResponse.requestAction = buttonClicked.action;
+      updateStatusResponse.newMatchStatus = requestState.requestSampleReceived
+      
       return updateStatusResponse
 
     }else if  (buttonClicked.action === 'statusChangeToSampleInProgress' &&
       (
-      match.status === requestState.requestInProgress ||
-      match.status === requestState.requestComplete
+      match.request_status === requestState.requestInProgress ||
+      match.request_status === requestState.requestComplete
     )
   ){
      updateStatusResponse.status = "invalid"
     updateStatusResponse.message = "Invalid request. Please provide reason"
+    updateStatusResponse.requestAction = buttonClicked.action;
     return updateStatusResponse
 
 
   }else if (buttonClicked.action === 'statusChangeToSampleInProgress'){
 
-      match.status = requestState.requestInProgress
       
       updateStatusResponse.status = "valid"
       updateStatusResponse.message = "Valid request. Transition accepted" 
-      updateStatusResponse.newMatchStatus = match.status
+      updateStatusResponse.requestAction = buttonClicked.action;
+      updateStatusResponse.newMatchStatus = requestState.requestInProgress
       return updateStatusResponse
 
   }else if  (buttonClicked.action === 'statusChangeToRequestComplete' &&
   (
-      match.status === requestState.requestComplete
+      match.request_status === requestState.requestComplete
     )
 
   ){
     updateStatusResponse.status = "invalid"
         updateStatusResponse.message = "Invalid request. Please provide reason"
+        updateStatusResponse.requestAction = buttonClicked.action;
         return updateStatusResponse
 
   }else if (buttonClicked.action === 'statusChangeToRequestComplete'){
-      match.status = requestState.requestComplete;
+
       updateStatusResponse.status = "valid"
       updateStatusResponse.message = "Valid request. Transition accepted" 
-      updateStatusResponse.newMatchStatus = match.status
-      
+      updateStatusResponse.requestAction = buttonClicked.action;
+      updateStatusResponse.newMatchStatus = requestState.requestComplete
+
+       
       
       return updateStatusResponse
 
   }
 return updateStatusResponse
+
 }    
 
-app.post('/api/validateModalReason', (req, res) => {
+
+
+app.post('/api/validateModalReason', async (req, res) => {
+
   const reason = req.body.reason
   const requestId = req.body.modalBoxRequestId
-  
-  const currentRequest = allRequests.find
+  const action = req.body.submitAction
+
+    
+
+
+  let updateStatusResponse = {
+    status:"",
+    message:"",
+    requestedAction: action,
+    requestId: requestId,
+    reason,
+    ChangedBy: "to be updated",
+    newMatchStatus: actionTranslationTable(action, requestState)
+  }
+
+
+
+const validationOutput = await validateModalInput(reason, requestId, updateStatusResponse);
+
+updateDatabaseAndAuditTrail(validationOutput)
+
+if (validationOutput.status === "invalid"){
+ return res.status(400).json(validationOutput)
+}
+
+
+if (validationOutput.status === "valid"){
+  res.status(200).json(validationOutput)
+}
+
+
+
+});
+
+
+
+ function actionTranslationTable(action, requestState) {
+
+  if (action === "statusChangeToRequestReceived"){
+   
+    return requestState.requestReceived
+
+  }else if (action === "statusChangeTosampleReceived") {
+    
+    return requestState.requestSampleReceived
+
+  }else if (action === "statusChangeToSampleInProgress"){
+
+    return requestState.requestInProgress
+      
 
   
+  }else if (action === "statusChangeToRequestComplete"){
+     return requestState.requestComplete
+  }
+
+} 
+
+
+async function validateModalInput (reason, requestId, updateStatusResponse){
+    
 if (!reason || reason === ""){
+  return {
+    ...updateStatusResponse,
+  status: "invalid", 
+  message: "No reason provided, please provide a reason"
+  }
 
-  res.status(400).json({
-    message: "Invalid reason in modal box",
-    status: "invalid"
+}else {
+return{
+...updateStatusResponse,
+status: "valid",
+message: "Reason updated Successfully",
+reason : reason
+}
+}
+
+return updateStatusResponse
+}
 
 
-  })
+
+async function updateDatabaseAndAuditTrail(data){ //This is a service function that takes data from validateStatusChange and updates the request status and audit trail in the database.
+console.log("Data sent to service function", data)
   
-}else{
-
-  res.status(200).json({
-    message: "Valid reason received in modal box",
-    status: "valid"
-  })
-
-  updateAuditTrail(requestId,reason)
-}
-
-
-
-});
-
-function updateAuditTrail(requestId, reason){
-  const match = allRequests.find(item => item.requestId === requestId);
-
-  const previousState = {
-    PreviousStatus : match.status,
-    ChangedBy: "USER NAME WILL BE UPDATED LATER"
-  } 
-
-  match.auditTrail.push ({
-            previousState : JSON.stringify(previousState),
-            newStatus: requestState.requestSampleReceived,
-            reason: reason,
-            ChangedBy: "USER NAME WILL BE UPDATED LATER "
-  })
-
-
+if (data.status === "invalid"){
+  return;
 
 }
 
- 
+if (data.status === "valid"){
 
+  const currentStatus = await db.query (
+    `SELECT * FROM requests WHERE id=$1`,
+    [data.requestId]
 
+  ) 
 
-// Another route example
-app.get('/api/data', (req, res) => {
-  res.json({ message: 'This is some data from the backend!' });
-});
+  const oldStatus = currentStatus.rows[0].request_status;
+  console.log("Old status is ", oldStatus)
+    await db.query(
+      `UPDATE requests
+      SET request_Status = $1
+      WHERE id = $2`,
+      [data.newMatchStatus,data.requestId] 
+
+    )
+      await db.query(
+        `INSERT INTO audit_log (request_id, action, status_changed_from, status_changed_to, reason, changed_by)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id `,
+        [
+          data.requestId,
+          data.requestedAction,
+          oldStatus,
+          data.newMatchStatus,
+          data.reason,
+          data.ChangedBy
+        ]
+      )
+     
+  
+  }
+
+}
 
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-})
+});
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../Frontend/index.html'));
