@@ -71,42 +71,8 @@ document.getElementById("revertStatusPopUp")
 const modalCheckBox = document.querySelectorAll('input[name="revertStatusInput"]:checked')
 
 
-
-/*formData.status = requestState.requestReceived;
-formData.requestDisplayStamp = new Date().toLocaleString('en-GB');
-formData.auditTrail.push({
-            status : requestState.requestReceived,
-            timeStamp : new Date()
-        })*/
-
-
-
-
 const tableStatus =
 document.getElementById("status");
-
-
-
-        
-       /* allRequests.push(formData); //formData is the parsed version of rcirequest
-        localStorage.setItem("allRequests", JSON.stringify(allRequests))
-        localStorage.setItem("allHospitalNumbers", JSON.stringify(allHospitalNumbers))
-        allRequests.sort() */
-
-
-
-
-    
-//This is a sort function which sorts the objects in the allRequests array according to Date and Time. It states that a = date requested and b = time requested and constructs a date/time variable.
-
-
-// This script works by getting the Rcirequest from the original page and parsing the information into an object stored in form data.
-//I then created another storage method which stores all current requests or if there are no requests it makes an array.
-// After this I created a function which pushes the previous request into the array thereby storing all current requests.
-// At the send of the page the storage is set again and is stringified acting like a loop.
-
-
-
 
 
 function renderTable(){
@@ -134,9 +100,14 @@ return (a.dateTimeObject) - b.dateTimeObject;
     allRequests.forEach (function (item) { ///This line states that for each item in the allRequests array add a line in the table
     
     //Table formatting
-    if (item.UnitsRequired === undefined || item.UnitsRequired === "" || item.UnitsRequired === null){
-        item.UnitsRequired = "N/A"
+    if (item.unitsrequired === null){
+        item.unitsrequired = "N/A"
      }
+
+    const dateConversion = new Date (item.daterequested) // This converts the date of the string received from the database (date object converted to string when JSON goes to front end for table formatting)
+    const [hour,minute] = item.timerequested.split(":") //splits the seconds away from the time string and converts to a time conversion variable for diaplay.
+    const timeConversion = `${hour}:${minute} `
+    console.log(timeConversion)
 
     
     if (item.status !== requestState.requestComplete){
@@ -149,7 +120,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
     <td> ${item.hospitalname} </td> 
     <td> ${item.testrequested} </td> 
     <td> ${item.unitsrequired} </td>
-    <td> ${item.daterequested} <br> ${item.timerequested} </td>
+    <td> ${dateConversion.toLocaleDateString('en-GB')} <br> ${timeConversion} </td>
     <td> ${item.request_status} <br> ${item.created_at} </td>
     
     <td> 
@@ -179,8 +150,20 @@ return (a.dateTimeObject) - b.dateTimeObject;
 
 
     function handleEventClick(event){
+
+    if (event.target.type !== 'button') { // This ensures that this script only runs is a button wasn't clicked.
+        
+     let rowRequest = ""
+
+       const rowClicked = event.target.closest("tr"); //this looks for the nearest table element
+    console.log(rowClicked.id)
+     rowRequest = rowClicked.id
     
-    if (event.target.matches("input[type='button']")){
+    window.location.href = `labview.viewRequest.HTML?requestId=${rowRequest}` //This takes the request id and adds it as a URL parameter to the new page. This is used to identify which request has been clicked on and to render the correct information on the new page.
+
+    console.log(rowRequest)
+
+    }
         
         fetch(`${BASE_URL}/api/validateStatusChange`,{
         method: "POST",
@@ -232,7 +215,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
     )
 
 }
-    }
+    
 
 
  
@@ -318,7 +301,8 @@ function validateReason(){
 
     }
         
-    })  
+})  
+}
 
 function resetCheckboxes(){
 
@@ -331,24 +315,11 @@ function resetCheckboxes(){
 
 }
 
-}
 
-/*let rowRequest = ""
-    if (event.target.type === 'button'){ //This stops the fullrequest loading if when the button is clicked on the row.
-        return;
 
-    }else{
-        const rowClicked = event.target.closest("tr"); //this looks for the nearest table element
-    console.log(rowClicked.id)
-     rowRequest = rowClicked.id
+
     
-    window.location.href = `labview.viewRequest.HTML?requestId=${rowRequest}` //This takes the request id and adds it as a URL parameter to the new page. This is used to identify which request has been clicked on and to render the correct information on the new page.
 
-    console.log(rowRequest)
-
-    }
-    
-*/
 
 function submitNewRequest(){
     window.location.href= "index.HTML"

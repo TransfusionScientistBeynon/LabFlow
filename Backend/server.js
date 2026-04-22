@@ -245,7 +245,9 @@ app.get('/api/getformData', async (req, res) => {
 
 });
 
-app.get('/api/getformData/:requestId', (req, res) => {
+
+
+/*app.get('/api/getformData/:requestId', (req, res) => {
 
     const requestId = req.params.requestId; // Get the request ID from the URL parameters
     formSubmissionHandler(requestId, allRequests)
@@ -255,11 +257,67 @@ app.get('/api/getformData/:requestId', (req, res) => {
 });
 
 function formSubmissionHandler (requestId, allRequests){ // This function takes the request ID and the array of all requests as parameters. It uses the find method to search through the allRequests array for an item that has a requestId that matches the requestId parameter. If a match is found, it returns the matched item. If no match is found, it returns undefined.
-  const match = allRequests.find(item => item.requestId === requestId);
+  const match = allRequests.find(item => item.requestId == requestId);
   return match;
-}
+}*/
 
+app.get('/api/getformData/fullRequestView', async (req, res) => {
+  
+  try {
+    const requests = await db.query(
+      `SELECT 
+        requests.id,
+        patients.forename,
+        patients.surname,
+        patients.date_of_birth,
+        patients.hospital_number,
+        patients.NHS_number,
+        requests.PatientStability,
+        requests.BleedingOrHaemolysing,
+        requests.Hb,
+        requests.ClinicalDetails,
+        requests.PatientTransfusedInLastThreeMonths,
+        requests.TransfusionDate,
+        requests.LaboratoryContactNumber,
+        requests.ABOGroup,
+        requests.RhDGroup,
+        requests.SerologicalResults,
+        requests.AdditionalInfo,
+        requests.SpecialRequirements,
+        requests.Requester,
+        requests.request_status,
+        requests.created_at,
+        requests.HospitalName,
+        requests.TestRequested,
+        requests.UnitsRequired,
+        requests.DateRequested,
+        requests.TimeRequested,
+        requests.request_status,
+        requests.created_at,
+        requests.SampleTransportMethod,
+        requests.DateOfSampleArrival,
+        requests.TimeOfSampleArrival
+       
+      FROM requests JOIN patients ON requests.patients_id = patients.id 
+      ORDER BY requests.created_at DESC`
+      
+    );
 
+    // The join statement in the SQL query combines data from the requests and patients tables based on the patients_id foreign key. This allows us to retrieve both the request data and the associated patient demographics in a single query. The results are ordered by the created_at timestamp in descending order, so the most recent requests will be returned first.
+
+    res.json(requests.rows);
+    
+  }catch (err){
+    console.error(err);
+    res.status(500).json(
+      {Message: "Unable to retrieve all requests from database",
+      fullMessage: err.message,
+      fullError: err
+    })
+
+  }
+
+});
 
 // A route to update the status of a request. 
 app.post('/api/validateStatusChange', async (req, res) => {
