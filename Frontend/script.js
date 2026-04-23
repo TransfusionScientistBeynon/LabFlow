@@ -1,10 +1,9 @@
 // script.js
 const BASE_URL = window.location.origin;
 
-
-
 document.addEventListener("DOMContentLoaded", () => {
-  // your entire script
+  document.getElementById("login").addEventListener("click", window.login);
+
 
 
 // These are elements required for state
@@ -159,8 +158,8 @@ document.getElementById("valAboGroup");
 valAboGroup.hidden = true;
 
 const valRhDGroup =
-document.getElementById("valRhdGroup");
-valRhdGroup.hidden=true;
+document.getElementById("valRhDGroup");
+valRhDGroup.hidden=true;
 
 const valContactNumber =
 document.getElementById("valContactNumber")
@@ -210,7 +209,7 @@ const state = {
     showBackupWarning:false,
     showTxDate:false,
     showCrossmatch:false,
-    showDateTimeRequired:false
+    showDateTimeRequired:false,
 
     //Validation
 };
@@ -400,10 +399,10 @@ function validateAboGroup(){
 
 function validateRhdGroup(){
     if (!rhdGroupInput.value){
-        valRhdGroup.hidden = false;
+        valRhDGroup.hidden = false;
 
     }else{
-        valRhdGroup.hidden = true;
+        valRhDGroup.hidden = true;
 
     }
 
@@ -616,9 +615,9 @@ function render() {
 //Elements required for page submission and event listener
 
 const formSubmission=
-document.querySelector(".requestForm")
+document.querySelector(".requestForm");
 
-formSubmission.addEventListener("submit", pageSubmission)
+formSubmission.addEventListener("submit", pageSubmission);
 
 function pageSubmission(event){
     event.preventDefault();//prevents page from reloading on the clicking of submit button
@@ -711,7 +710,6 @@ const requestState = {
     sampleInProgress : "Sample in progress",
     sampleComplete :"Complete"
 
-
 }
 
     const formData ={
@@ -754,12 +752,12 @@ const requestState = {
             status: requestState.requestSent,
             timeStamp: new Date()
 
-        }],
+        }]
 
-
+    }
     
 
- }
+ 
 
  fetch(`${BASE_URL}/api/formSubmit`,{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
     method:"POST",
@@ -779,12 +777,13 @@ const requestState = {
         alert("Duplicate request detected. Please check your form.");
         return;
     }else{
-     window.location.href= `RCIRequestSubmission.html?requestId=${formData.requestId}`; //this code redirects the user to the RCIREQUESTSUBMISSION PAGE and adds the request ID as a URL parameter so that the relevant request can be pulled up on the submission page
+     window.location.href= `RCIRequestSubmission.html?requestId=${formData.requestId}`; 
+    }//this code redirects the user to the RCIREQUESTSUBMISSION PAGE and adds the request ID as a URL parameter so that the relevant request can be pulled up on the submission page
 //?requestId is a query parameter that allows us to pass the request ID to the next page, where we can use it to retrieve the specific request data from local storage or the backend server and display it on the RCIRequestSubmission.html page. This means
 //on the RCIRequestSubmission.html page, we can access the request ID from the URL parameters, use it to fetch the corresponding request data from local storage or the backend, and then display that data to the user in a meaningful way, such as showing the details of their transfusion request and its current status.
     
 
-    }
+    
 });
 
-}});
+}})

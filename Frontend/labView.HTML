@@ -49,16 +49,30 @@
 
     <div id="labView" class="">
 
-        <h1> Current Requests </h1>
+    <div id ="headerBar" class="headerBar"> 
+    <img id="appLogo" alt="LabDash" src="Images/labDashLogo7.png" class="headerLogo"> 
+    
+    <div id="navBar" class="navBar">
+        <a href="index.html"> Home </a>
+    </div>
+
+    </div>
+
+
+    <div id="tableContainer" class="tableContainer">
+    
+    <div id="sectionHeader" class="sectionHeader">
+    <h2> Current Requests </h2> 
+    </div>
 
     <div id="tableDiv" class="labView">
         <table id="requestsTable">
-            <tr id="header"> 
+            <tr id="header" class="header"> 
                 <th id="nameHeader"> Patient name </th>
                 <th id="hospitalHeader"> Hospital </th>
                 <th id="investigationHeader"> Investigation required</th>
                 <th id="noOfUnits"> No of units required </th>
-                <th id="dateAndTimeRequired"> Date and time required </th>
+                <th id="dateAndTimeRequired"> Date/Time Required </th>
                 <th id="status"> Status </th>
                 <th id="updateStatus"> Update Status </th>
             </tr>
@@ -69,12 +83,11 @@
 
         </table>
 
-        <div id="buttons"> 
-        <button id="RequestButton" onclick="submitNewRequest()"> Submit new request </button>
-        </div>
+        
         
     </div>
 
+    </div>
   
 
 

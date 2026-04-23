@@ -99,18 +99,55 @@ return (a.dateTimeObject) - b.dateTimeObject;
     });
     allRequests.forEach (function (item) { ///This line states that for each item in the allRequests array add a line in the table
     
+        
     //Table formatting
+
+    //Formats table for when unit number is null
     if (item.unitsrequired === null){
         item.unitsrequired = "N/A"
      }
 
-    const dateConversion = new Date (item.daterequested) // This converts the date of the string received from the database (date object converted to string when JSON goes to front end for table formatting)
+     //Date and time formatting for date and time requested
+   const dateConversion = new Date (item.daterequested) // This converts the date of the string received from the database (date object converted to string when JSON goes to front end for table formatting)
     const [hour,minute] = item.timerequested.split(":") //splits the seconds away from the time string and converts to a time conversion variable for diaplay.
     const timeConversion = `${hour}:${minute} `
-    console.log(timeConversion)
+
+    //Date and time formatting for date and time of request status
+    const createdAtConversion = new Date (item.created_at)
+
+
+    //Image formating based on test requested
+
+    if (item.testrequested === "Antibody identification with phone call"){
+        item.testrequested = `<img src="Images/ABID+CALL IMG.png" alt = "Antibody Identification and Phone Call" class="testReqImg">`
+    }
+
+     if (item.testrequested === "Antibody identification and crossmatch"){
+        item.testrequested = `<img src ="Images/abidxmimprove.png" alt = "Antibody Identificatoin and Crossmatch" class="xmImg"`
+
+    }
+console.log(item.request_status)
+    //Image formatting based on current status of request
+
+    if (item.request_status === requestState.requestReceived){
+        item.request_status = `<img src="Images/sampleInTransitimg.png" alt ="Request Received" class="statusImg"`
+    }
+
+     if (item.request_status === requestState.requestSampleReceived){
+        item.request_status = `<img src="Images/sampleReceivedImg.png" alt="Sample received" class="statusImgSample">`
+     }
+    
+     if (item.request_status === requestState.requestInProgress){
+        item.request_status = `<img src="Images/sampleInProgressImg.png" alt="Sample in Progress" class="statusImg">`
+    }
+    
+    if (item.request_status === requestState.requestComplete){
+        item.request_status = `<img src="Images/testingCompleteButton.png" alt="Request Complete" class="statusImg">`
+
+    }
 
     
-    if (item.status !== requestState.requestComplete){
+    if (item.request_status !== requestState.requestComplete){
     tableDataHTML += `<tr> </tr>`;
 
     tableDataHTML += 
@@ -121,13 +158,13 @@ return (a.dateTimeObject) - b.dateTimeObject;
     <td> ${item.testrequested} </td> 
     <td> ${item.unitsrequired} </td>
     <td> ${dateConversion.toLocaleDateString('en-GB')} <br> ${timeConversion} </td>
-    <td> ${item.request_status} <br> ${item.created_at} </td>
+    <td> ${item.request_status}  </td>
     
     <td> 
-    <input type="button" value="Request received" id="${item.requestId}" class="requestReceivedButton" data-id="${item.id}" data-action="statusChangeToRequestReceived">
-    <input type ="button" value="Sample received" id="${item.requestId}" class="sampleReceivedButton" data-id="${item.id}" data-action="statusChangeTosampleReceived"> 
-    <input type="button" value="In progress" id="${item.requestId}" class="sampleInProgressButton" data-id="${item.id}" data-action="statusChangeToSampleInProgress">
-    <input type="button" value="Completed" class="requestCompleteButton" id="${item.requestId}" data-id="${item.id}" data-action="statusChangeToRequestComplete"> 
+    <input type="button" value="Request received" id="${item.requestId}" class="statusButton" data-id="${item.id}" data-action="statusChangeToRequestReceived">
+    <input type ="button" value="Sample received" id="${item.requestId}" class="statusButton" data-id="${item.id}" data-action="statusChangeTosampleReceived"> 
+    <input type="button" value="In progress" id="${item.requestId}" class="statusButton" data-id="${item.id}" data-action="statusChangeToSampleInProgress">
+    <input type="button" value="Completed" class="statusButton" id="${item.requestId}" data-id="${item.id}" data-action="statusChangeToRequestComplete"> 
      </td>
 
     </tr>`
@@ -164,6 +201,8 @@ return (a.dateTimeObject) - b.dateTimeObject;
     console.log(rowRequest)
 
     }
+
+    if (event.target.type === 'button'){
         
         fetch(`${BASE_URL}/api/validateStatusChange`,{
         method: "POST",
@@ -217,7 +256,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
 }
     
 
-
+    }
  
    
 
@@ -321,7 +360,3 @@ function resetCheckboxes(){
     
 
 
-function submitNewRequest(){
-    window.location.href= "index.HTML"
-
-}

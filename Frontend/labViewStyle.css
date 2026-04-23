@@ -3,34 +3,85 @@
 
 
 body {
-    background-color: #b80000;
+    background-color:#F4F6F8;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    color:#212b32;
+    font-family: Frutiger W01,arial,sans-serif;
 }
 
+.headerBar{
+  background-color: #005EB8;
+  display:inline-flex;
+  height: clamp(60px, 6vw, 90px);
+  max-width:100%;
+  min-width:100%;
 
+}
+
+.headerLogo {
+height: clamp(40px, 7vw, 100px);
+  padding: 0 1rem;
+
+}
+
+.navBar{
+  display:flex;
+  margin-top:auto;
+  margin-bottom:auto;
+  margin-left:10%;
+  padding:auto;
+  
+
+
+}
+
+a{
+  color:white;
+
+}
+
+a:active{
+  color:white;
+  font-style:normal;
+}
+
+a:hover{
+  color:rgb(245, 242, 242);
+
+}
+    
+  .tableContainer{
+    display:flex;
+    flex-direction:column;
+    width:80%;
+    height:100%;
+    margin-left:auto;
+    margin-right:auto;
+    color:white;
+  }
+
+.sectionHeader{
+  color:rgb(60, 58, 58);
+  margin-left:4%;
+  font-size:1.5rem;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-weight:600;
+  
+  
+}
+  
+  
 h1 {
-    color: white;
+    color: #212b32;
     text-align: center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: Frutiger W01,arial,sans-serif;
     font-size: 80px;
-    font-style: bold;
+    font-weight:600;
 }
 
-/* Google fonts */ 
-.delius-unicase-regular {
-  font-family: "Delius Unicase", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
 
-.delius-unicase-bold {
-  font-family: "Delius Unicase", cursive;
-  font-weight: 700;
-  font-style: normal;
-}
-/* Google fonts */
 
 
 .validation{
@@ -39,6 +90,7 @@ h1 {
 }
 
 .labView table{
+  color:#212b32;
   border-collapse:separate;
   border-spacing: 0 12px;
    font-size:25px;
@@ -48,10 +100,21 @@ h1 {
 }
 
 
+.header{
+  background-color:#005EB8;
+  color:white;
+
+}
 
 tr {
-  background: white;
-  
+
+  background-color:#FFFFFF;
+  border-color:#DADADA;
+}
+
+td{
+  padding:1rem;
+
 }
 
 th:first-child {
@@ -81,7 +144,7 @@ td:last-child {
 
 }
 
-
+/* whitesmoke*/
 
 
 
@@ -100,6 +163,7 @@ td:last-child {
     align-items: center;        /* centers horizontally */
     justify-content: center;    /* centers vertically */
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: Frutiger W01,arial,sans-serif;
     text-align: center;         /* centers text within elements */
     max-width: 98%; /* limits the width of the container */
     margin:0 auto; /* centers the container horizontally */
@@ -153,5 +217,130 @@ td:last-child {
   font-size:20px;
 }
 
+/* em is used to scale the images for test requested relative to the font size of the table. If font size is 8px for instance 2em = 16px*/
+.testReqImg{
+  height:2em;  
+  width:3em;
+
+}
+
+.xmImg{
+    height:2.75em;  
+  width:3.75em;
+
+}
+
+.statusImg{
+  height:2em;  
+  width:3em;
+
+}
+
+.statusImgSample{
+    height:2em;  
+    width:2em;
 
 
+}
+
+.statusButton{
+  font-size:10pt;
+  background-color:#005EB8;
+  color:white;
+  padding:1%;
+  border-radius:2px;
+  border-color:#005EB8;
+}
+
+.statusButton:hover{
+  background-color:#036bcd;
+  	border-color:#005eb8;
+
+}
+
+/*
+    text-size-adjust: 100%;
+    font-family: Frutiger W01,arial,sans-serif;
+    --nhsuk-frontend-version: "10.4.2";
+    --nhsuk-breakpoint-mobile: 20rem;
+    --nhsuk-breakpoint-tablet: 40.0625rem;
+    --nhsuk-breakpoint-desktop: 48.0625rem;
+    --nhsuk-breakpoint-large-desktop: 61.875rem;
+    --nhsuk-blue-colour: #005eb8;
+    --nhsuk-white-colour: #fff;
+    --nhsuk-black-colour: #212b32;
+    --nhsuk-green-colour: #007f3b;
+    --nhsuk-purple-colour: #330072;
+    --nhsuk-dark-pink-colour: #7c2855;
+    --nhsuk-red-colour: #d5281b;
+    --nhsuk-yellow-colour: #ffeb3b;
+    --nhsuk-dark-blue-colour: #003087;
+    --nhsuk-pale-yellow-colour: #fff9c4;
+    --nhsuk-warm-yellow-colour: #ffb81c;
+    --nhsuk-orange-colour: #ed8b00;
+    --nhsuk-aqua-green-colour: #00a499;
+    --nhsuk-pink-colour: #ae2573;
+    --nhsuk-grey-1-colour: #4c6272;
+    --nhsuk-grey-2-colour: #768692;
+    --nhsuk-grey-3-colour: #aeb7bd;
+    --nhsuk-grey-4-colour: #d8dde0;
+    --nhsuk-grey-5-colour: #f0f4f5;
+    --nhsuk-brand-colour: #005eb8;
+    --nhsuk-text-colour: #212b32;
+    --nhsuk-reverse-text-colour: #fff;
+    --nhsuk-template-background-colour: #d8dde0;
+    --nhsuk-body-background-colour: #f0f4f5;
+    --nhsuk-card-background-colour: #fff;
+    --nhsuk-print-text-colour: #000;
+    --nhsuk-secondary-text-colour: #4c6272;
+    --nhsuk-focus-colour: #ffeb3b;
+    --nhsuk-focus-text-colour: #212b32;
+    --nhsuk-error-colour: #d5281b;
+    --nhsuk-success-colour: #007f3b;
+    --nhsuk-border-colour: #d8dde0;
+    --nhsuk-border-hover-colour: #aeb7bd;
+    --nhsuk-secondary-border-colour: hsla(0,0%,100%,.2);
+    --nhsuk-reverse-border-colour: #337ec6;
+    --nhsuk-input-border-colour: #4c6272;
+    --nhsuk-hover-colour: #aeb7bd;
+    --nhsuk-input-background-colour: #fff;
+    --nhsuk-code-colour: #d5281b;
+    --nhsuk-link-colour: #005eb8;
+    --nhsuk-link-visited-colour: #330072;
+    --nhsuk-link-hover-colour: #7c2855;
+    --nhsuk-link-active-colour: #002f5c;
+    --nhsuk-button-colour: #007f3b;
+    --nhsuk-button-text-colour: #fff;
+    --nhsuk-button-hover-colour: #00662f;
+    --nhsuk-button-active-colour: #00401e;
+    --nhsuk-button-shadow-colour: #00401e;
+    --nhsuk-secondary-button-colour: transparent;
+    --nhsuk-secondary-button-solid-background-colour: #fff;
+    --nhsuk-secondary-button-border-colour: #005eb8;
+    --nhsuk-secondary-button-text-colour: #005eb8;
+    --nhsuk-secondary-button-hover-colour: #d9e7f4;
+    --nhsuk-secondary-button-active-colour: #c7dcef;
+    --nhsuk-secondary-button-shadow-colour: #005eb8;
+    --nhsuk-reverse-button-colour: #fff;
+    --nhsuk-reverse-button-text-colour: #212b32;
+    --nhsuk-reverse-button-hover-colour: #d9d9d9;
+    --nhsuk-reverse-button-active-colour: #b3b3b3;
+    --nhsuk-reverse-button-shadow-colour: #b3b3b3;
+    --nhsuk-warning-button-colour: #d5281b;
+    --nhsuk-warning-button-hover-colour: #aa2016;
+    --nhsuk-warning-button-active-colour: #6b140e;
+    --nhsuk-warning-button-shadow-colour: #6b140e;
+    --nhsuk-login-button-colour: #005eb8;
+    --nhsuk-login-button-hover-colour: #004b93;
+    --nhsuk-login-button-active-colour: #002f5c;
+    --nhsuk-login-button-shadow-colour: #002f5c;
+    -webkit-font-smoothing: antialiased;
+    color: #212b32;
+    box-sizing: inherit;
+    display: block;
+    font-weight: 600;
+    margin-top: 0;
+    font-size: 3rem;
+    line-height: 1.125;
+    margin-bottom: 48px;
+    max-width: 14.5em;

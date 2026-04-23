@@ -16,6 +16,13 @@
 
     <body>
 
+    <div id="auth-section">
+    <button onclick="window.login()" id="login">Login</button>
+  </div>
+
+ 
+
+
     <h1> Urgent Test Request </h1>
 
   <form class="requestForm">
@@ -157,7 +164,7 @@
                             <option value="RhD Variant"> RhD Variant </option>
                         </select>
 
-                        <div id="valRhdGroup" class="validation" hidden> Please select a RhD group</div>
+                        <div id="valRhDGroup" class="validation" hidden> Please select a RhD group</div>
                         <br>
 
                     <label for="serohosp"> Serological results obtained at hospital: </label>
@@ -244,7 +251,7 @@
                     Washed <input value='Washed' type='checkbox' name="spqrBoxes"> 
                     CMV Negative <input value='CMVNegative' type='checkbox' name="spqrBoxes"> 
                     HbS Negative <input value='HbS' type='checkbox' name="spqrBoxes">
-                    Less than 5 days old <input value="Less than 5 days old" type="checkbox" name="spqrCheckBoxes">
+                    Less than 5 days old <input value="Less than 5 days old" type="checkbox" name="spqrBoxes">
                     Other <input value="other" type="checkbox" name="spqrBoxes"> None <input value="None" type="checkbox" name="spqrBoxes">
                 </div>
                 <div id="valSpqr" class="validation" hidden>Please specify the patients special requirements </div> 
@@ -276,7 +283,9 @@
           </form>    
 </div>
 
-   <script src="script.js"></script>
+<script src="https://cdn.auth0.com/js/auth0-spa-js/1.22/auth0-spa-js.production.js"></script>
+<script src="auth.js"></script>
+<script src="script.js"></script>
     </body>
 
      
