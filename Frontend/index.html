@@ -16,21 +16,42 @@
 
     <body>
 
-    <div id="auth-section">
-    <button onclick="window.login()" id="login">Login</button>
-  </div>
 
- 
+    
+  
 
+ <div id ="headerBar" class="headerBar"> 
+    <img id="appLogo" alt="LabDash" src="Images/labDashLogo7.png" class="headerLogo"> 
+    
+    <div id="navBar" class="navBar">
+        <a href="index.html"> Home </a>
+        <button onclick="window.login()" id="login">Login</button>
+    </div>
 
-    <h1> Urgent Test Request </h1>
+    </div>
+
+<div id="sectionHeader" class="sectionHeader">
+    <h2> Urgent Test Request </h2>
+
+</div>
+
+    
+<div id="formContainer" class="formContainer">
 
   <form class="requestForm">
         
-    <div class="patientcontainer">
-        <h2> Submit a new Request</h2> 
+    
+         
+    <div id="patientDemographics" class="patientDemographics">
+    
+    <div id="patientDemoHeader" class="patientDemoHeader">
+        
+        <h3> Patient Demographics </h3>
 
-        <h3> Patient Demographics </h3> <br>
+    </div>
+    
+    <div id ="patientDemoInput">
+         <br>
             <label for="forenameInput"> Forename: </label>
              <input type="text" id="forenameInput">   </br>
              <div id="valForename" hidden class="validation"> Please enter the patient's forename </div>
@@ -54,9 +75,12 @@
             <br>
 
             <div id="valDemo" class="validation"> Please enter hospital number and/or NHS number </div>
-        
-        <div class="clinicalInfo">
-            <h3> Clinical Information </h3> <br>
+
+        </div>
+
+        </div>
+    <div id="clinicalInfo" class="clinicalInfo">
+    <h3> Clinical Information </h3> <br>
 
                 <label for="patientStability"> Is the patient stable or unstable? </label>    
                 <select id=patientStability> 
@@ -114,14 +138,12 @@
             <div id="valTx3Month" class="validation" hidden> Please confirm whether the patient has been recently transfused </div>
             <div id="valRecentTx" class="validation" hidden> Please enter valid transfusion date </div>
             
-
-            </div>
-                <div class="hospitalInfo">
+  <div class="hospitalInfo">
                 
-                    <h3> Hospital Information and Serological Results </h3>
-                    <label for="hospitalSearch"> Name of Hospital </label>
+        <h3> Hospital Information and Serological Results </h3>
+        <label for="hospitalSearch"> Name of Hospital </label>
 
-                <input id="hospitalNameList" list="hospitalNameListt" placeholder="Search hospital name..." > 
+        <input id="hospitalNameList" list="hospitalNameListt" placeholder="Search hospital name..." > 
                     <datalist id="hospitalNameListt">
                         <option value="Northwick Park Hospital"> </option>
                         <option value="James Paget"> </option>
@@ -173,7 +195,7 @@
                      <div id="valSerologicalResults" class="validation" hidden> Please enter serological results obtained </div>
                 </div>
 
-             <div class="testRequest">
+    <div class="testRequest">
             <h3> Test Request </h3> 
         
            <label for="testRequestSelect"> Please select test required: </label> 
@@ -190,16 +212,14 @@
                 <label for="additionalInformationInput"> Additional Info </label> 
                 <input type="text" id="additionalInformationInput">
 
-          </div>
+    </div>
 
-            <div id="dtrq" class="dtrq" hidden>
+    <div id="dtrq" class="dtrq" hidden>
                 <label id='datetimerq'> Date and time required: </label> <input type='date' id="dtrqDate"> <input type='time' id="dtrqTime"> 
             </div>
-            <div id="valDtrq" class="validation" hidden> Please Enter date and time required.</div>
+     <div id="valDtrq" class="validation" hidden> Please Enter date and time required.</div>
             
-            </div>
-            
-            <div id="sampleTransport">
+    <div id="sampleTransport">
 
                 <label for="sampleTransportInput"> Please specify how the sample will be transported? </label> 
                 <input type="text" id="sampleTransportInput"> <br>
@@ -208,9 +228,9 @@
                 <input id ="dateSampleArrival" type="date">
                 <input id="timeSampleArrival" type="time"> 
 
-            </div>
+     </div>
             
-            <div id="crossmatchInfo" hidden>
+    <div id="crossmatchInfo" hidden>
 
                 <div id="unitno">
                 
@@ -270,10 +290,13 @@
                 </div>
             
           
-            </div>
-            <div id="submit">
+    </div>
+    
+    <div id="submit">
            <input type="submit" id="submitButton" value="Submit">   
            </div>
+            
+
         
       
         </div>
@@ -281,8 +304,10 @@
 
     </div>
           </form>    
-</div>
 
+        
+</div>
+</div>
 <script src="https://cdn.auth0.com/js/auth0-spa-js/1.22/auth0-spa-js.production.js"></script>
 <script src="auth.js"></script>
 <script src="script.js"></script>

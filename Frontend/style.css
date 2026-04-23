@@ -3,13 +3,69 @@
 
 
 body {
-    background-color: #b80000;
+    background-color: #F4F6F8;
+     font-family: Frutiger W01,arial,sans-serif;
+}
+
+.headerBar{
+  background-color: #005EB8;
+  display:inline-flex;
+  height: clamp(60px, 6vw, 90px);
+  max-width:100%;
+  min-width:100%;
+
+}
+
+
+.headerLogo {
+height: clamp(40px, 7vw, 100px);
+  padding: 0 1rem;
+
+}
+
+
+.headerLogo {
+height: clamp(40px, 7vw, 100px);
+  padding: 0 1rem;
+
+}
+
+.navBar{
+  display:flex;
+  margin-top:auto;
+  margin-bottom:auto;
+  margin-left:10%;
+  padding:auto;
+
+}
+
+a{
+  color:white;
+
+}
+
+a:active{
+  color:white;
+  font-style:normal;
+}
+
+a:hover{
+  color:rgb(245, 242, 242);
+
+}
+
+.sectionHeader{
+ color:rgb(60, 58, 58);
+  margin-left:10%;
+  font-size:1.5rem;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-weight:600;
 }
 
 h1 {
-    color: white;
+    color: #212b32;
     text-align: center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: Frutiger W01,arial,sans-serif;
     font-size: 80px;
     font-style: bold;
 }
@@ -26,17 +82,25 @@ h1 {
   font-weight: 700;
   font-style: normal;
 }
-/* Google fonts */
-
+/* Google fonts 
+ display:grid;
+    margin: auto;
+    text-align:center;
+    2 columns 
+    gap: 30px;
+    padding: 40px;
+    max-width: 1500px;
+    */
 .requestForm{
-  display: flex;
-    flex-direction: column;
+  display: grid;
+   grid-template-columns: repeat(2, 1fr);
+    
     align-items: center;        /* centers horizontally */
     justify-content: center;    /* centers vertically */
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: Frutiger W01,arial,sans-serif;
     text-align: center;         /* centers text within elements */
     background-color:white; 
-    max-width: 1000px; /* limits the width of the container */
+    max-width: 80%; /* limits the width of the container */
     margin:0 auto; /* centers the container horizontally */
     padding: 10px; /* adds some padding around the content */
     list-style-type: none;
@@ -58,6 +122,7 @@ input, button, select {
 
 
 label{
+  display:block;
   margin-right:10px;
 }
 
@@ -68,6 +133,33 @@ input, button, select {
 }
 #patientd{
 list-style-type: none;
+
+}
+
+#patientDemographics{
+  display:flex;
+  flex-direction:column;
+  margin:auto;
+  margin-top:5%;
+  width:90%;
+  padding-bottom:10px;
+
+}
+
+
+.patientDemoHeader{
+  color:white;
+  background-color:#005EB8;
+
+}
+
+#clinicalInfo{
+  display:flex;
+  flex-direction:column;
+  margin:auto;
+  margin-top:5%;
+  width:90%;
+  padding-bottom:10px;
 
 }
 
