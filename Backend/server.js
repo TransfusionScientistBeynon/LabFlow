@@ -1,6 +1,8 @@
 // server.js
 const express = require('express');
 const path = require('path');
+const auth = require("./middleware/auth"); //required to connect middleware for authentication
+
 
 const app = express();
 const cors = require('cors'); // means app will use CORS
@@ -9,6 +11,20 @@ const cors = require('cors'); // means app will use CORS
 app.use(cors());
 app.use(express.json()); // This allows us to parse JSON bodies in incoming requests
 app.use(express.static(path.join(__dirname, '../Frontend')));
+
+//Routes for authentication
+// Public route (no login needed)
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
+
+// Protected route (requires Auth0 login)
+app.get("/api/protected", auth, (req, res) => {
+  res.json({
+    message: "You are authenticated",
+    user: req.auth,
+  });
+});
 
 
 // database initialization code
@@ -321,12 +337,13 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
 
 // A route to update the status of a request. 
 app.post('/api/validateStatusChange', async (req, res) => {
-  
+ 
   const requestedAction = req.body.action;
   
   const buttonClicked = req.body;
+   console.log(buttonClicked)
   const match = await locateMatchingRequest(buttonClicked);
-  
+  console.log(match,"hey")
   console.log("Action before update", requestedAction)
   
  function actionTranslationTable(requestedAction, requestState) {
