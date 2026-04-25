@@ -32,8 +32,6 @@ height: clamp(40px, 7vw, 100px);
   margin-bottom:auto;
   margin-left:10%;
   padding:auto;
-  
-
 
 }
 
@@ -162,7 +160,6 @@ td:last-child {
     flex-direction: column;
     align-items: center;        /* centers horizontally */
     justify-content: center;    /* centers vertically */
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-family: Frutiger W01,arial,sans-serif;
     text-align: center;         /* centers text within elements */
     max-width: 98%; /* limits the width of the container */

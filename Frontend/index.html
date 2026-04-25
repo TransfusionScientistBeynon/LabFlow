@@ -38,51 +38,70 @@
     
 <div id="formContainer" class="formContainer">
 
+
+
+
   <form class="requestForm">
         
     
          
     <div id="patientDemographics" class="patientDemographics">
     
-    <div id="patientDemoHeader" class="patientDemoHeader">
+    <div id="patientDemoHeader" class="subSectionHeader">
         
         <h3> Patient Demographics </h3>
 
     </div>
     
     <div id ="patientDemoInput">
-         <br>
+         
+            <div class="formField">
             <label for="forenameInput"> Forename: </label>
-             <input type="text" id="forenameInput">   </br>
+             <input type="text" id="forenameInput"/>   
              <div id="valForename" hidden class="validation"> Please enter the patient's forename </div>
+            </div>
 
+            <div class="formField">
             <label for="surnameInput"> Surname: </label>
-            <input type="text" id="surnameInput"> </br>
+            <input type="text" id="surnameInput"/> 
             <div id="valSurname" class="validation" hidden> Please enter the patient's surname </div>
+            </div>
+            
+            <div class="formField">
+            <label for="dobInput"> Date of Birth: </label>
+            <input type="date" max="today" id="dobInput"/> 
+
+            <div id="valDob" class="validation" hidden> Please enter a valid DOB </div>
+            </div>
 
             
-            <label for="dobInput"> Date of Birth </label>
-            <input type="date" max="today" id="dobInput"> </br>
-            <div id="valDob" class="validation" hidden> Please enter a valid DOB </div>
+            <div class="formField">
+            <label for="hospNoInput"> Hospital Number: </label> 
+            <input type="text" pattern="[0-9]*" inputmode="numeric" id="hospNoInput"/> 
+            <div id="valHospNo" class="validation" hidden> Please enter a Hospital number </div> 
+            
 
-            <label for="hospNoInput"> Hospital Number </label> 
-            <input type="text" pattern="[0-9]*" inputmode="numeric" id="hospNoInput"> 
-            <div id="valHospNo" class="validation" hidden> Please enter a Hospital number </div> <br>
-
-            <label for="nhsNomInput"> NHS Number </label>
-            <input type="text" pattern="[0-9]*" inputmode="numeric" id="nhsNomInput">
+            <div class="formField">
+            <label for="nhsNomInput"> NHS Number: </label>
+            <input type="text" pattern="[0-9]*" inputmode="numeric" id="nhsNomInput"/>
             <div id="valNhsNo" class="validation" hidden > Please enter ten digit NHS number </div>
-            <br>
-
+            
             <div id="valDemo" class="validation"> Please enter hospital number and/or NHS number </div>
+    </div>
+    </div>
+    </div>
+    </div>
 
-        </div>
-
-        </div>
     <div id="clinicalInfo" class="clinicalInfo">
-    <h3> Clinical Information </h3> <br>
 
-                <label for="patientStability"> Is the patient stable or unstable? </label>    
+         <div id="clinicalInfoHeader" class="subSectionHeader">
+        
+        <h3> Clinical Information </h3>
+
+        </div>
+        
+        <div class="formField">
+        <label for="patientStability"> Is the patient stable or unstable? </label>    
                 <select id=patientStability> 
 
                 <option value="">Select an option</option>
@@ -90,9 +109,10 @@
                 <option value="unstable">Unstable</option>
                 </select>
             <div id="valStability" class="validation" hidden> Please enter if patient is stable or unstable </div>
-                <br> <br>
+        </div>
 
 
+                <div class="formField">
                 <label for="bleedinghaemolysis"> Is the patient bleeding or haemolysing? </label>
                  <select id=bleedinghaemolysis>   
                 <option value="">Select an option</option>
@@ -101,9 +121,11 @@
                 <option value="neither">Neither</option>
                 </select>
                 <div id="valBleeding" class="validation" hidden> Please specify if patient is bleeding or haemolysing  </div>
-                <br> <br>
+                </div>
 
-                <label for="currentHbInput"> Patient's current Haemoglobin (g/l) </label>
+
+                <div class="formField">
+                <label for="currentHbInput"> Patient's current Haemoglobin (g/l): </label>
                 <select id=currentHbInput>
                 <option value="">Select an option</option>
                 <option value="20-29"> 20-29g/l</option>
@@ -118,11 +140,15 @@
 
              <div id="valCurrentHb" class="validation" hidden> Please select HB range </div>
 
-                <br> <br/>
-                <label for="clinicalInfoinput"> Clinical Details: </label>
-                <input type="text" id="clinicalInfoInput"> <br>
-                <div id="valClinicalInfo" class="validation" hidden> Please provide clinical details </div>
+            </div>
 
+                <div class="formField">
+                <label for="clinicalInfoinput"> Clinical Details: </label>
+                <input type="text" id="clinicalInfoInput"> 
+                <div id="valClinicalInfo" class="validation" hidden> Please provide clinical details </div>
+                </div>
+
+                <div class="formField">
                 <label for="recentTxInput"> Has the patient been transfused in the last 3 months? </label>
                 <select id=recentTxInput>
                 <option value="">Select an option</option>          
@@ -130,18 +156,37 @@
                 <option value="no">No</option>  
                 </select>    
                 
-                <br>
+            <div class="formField">
             <div id="datetx" hidden> Please enter date of last transfusion: <input id="datetxinput" type="date"> 
+            </div>
             
             </div>
             </div>
-            <div id="valTx3Month" class="validation" hidden> Please confirm whether the patient has been recently transfused </div>
-            <div id="valRecentTx" class="validation" hidden> Please enter valid transfusion date </div>
             
-  <div class="hospitalInfo">
+            
+            <div id="valTx3Month" class="validation" hidden> 
+            Please confirm whether the patient has been recently transfused 
+            </div>
+            
+
+            
+            <div id="valRecentTx" class="validation" hidden>
+            Please enter valid transfusion date
+            </div>
+            
+
+    </div>
+            
+  <div id="hospitalInfo"class="hospitalInfo">
+
+    <div id="hospitalInformationHeader" class="subSectionHeader">
+        
+        <h3> Hospital Information and Serological Results </h3>  
+
+        </div>
                 
-        <h3> Hospital Information and Serological Results </h3>
-        <label for="hospitalSearch"> Name of Hospital </label>
+        <div class="formField">
+        <label for="hospitalSearch"> Name of requesting hospital: </label>
 
         <input id="hospitalNameList" list="hospitalNameListt" placeholder="Search hospital name..." > 
                     <datalist id="hospitalNameListt">
@@ -153,12 +198,14 @@
                     </datalist>
 
                 <div id="valHospitalName" class="validation"> Please select hospital name </div>
-                 <br>
+        </div>
 
+        <div class="formField">
                     <label for="labContactNumberInput"> Laboratory contact number: </label>  
-                    <input type="text" id="labContactNumberInput"> <br>
+                    <input type="text" id="labContactNumberInput"> 
                     <div id="valContactNumber" class="validation" hidden> Please enter a laboratory contact number </div>
-
+        </div>
+                    <div class="formField">
                     <label for="aboGroupInput">  ABO group if known: </label> 
                     <select id="aboGroupInput"> 
                         <option value="">Select an option</option>
@@ -173,10 +220,12 @@
                         <option value="bombay"> Bombay </option>
                         <option value="parabombay"> Parabombay </option>
                         <option value="inconclusive"> Inconclusive </option>
-                    </select> </br>
-
+                    </select> 
+                    
                     <div id="valAboGroup" class="validation" hidden> Please enter the patient's ABO group </div>
+                </div>
 
+                    <div class="formField">
                     <label for="rhdGroup"> RhD type if known: </label>
                         <select id="rhdGroupInput"> 
                             <option value=""> Select an option </option>   
@@ -187,17 +236,25 @@
                         </select>
 
                         <div id="valRhDGroup" class="validation" hidden> Please select a RhD group</div>
-                        <br>
+                        
+                    </div>
 
+                    <div class="formField">
                     <label for="serohosp"> Serological results obtained at hospital: </label>
                      <textarea id="serologicalResultsInput" type="textbox"> </textarea>
 
                      <div id="valSerologicalResults" class="validation" hidden> Please enter serological results obtained </div>
+
+                    </div>
                 </div>
 
-    <div class="testRequest">
-            <h3> Test Request </h3> 
-        
+    <div id="testRequest" class="testRequest">
+
+    <div id="testRequestHeader" class="subSectionHeader">
+         <h3> Test Request </h3> 
+        </div>
+
+            <div class="formField">
            <label for="testRequestSelect"> Please select test required: </label> 
             <select id="testRequestSelect"> 
                 <option value="">Select a test</option>
@@ -207,35 +264,48 @@
                 </select>   
                 
             <div id="valTestRequest" class="validation" hidden> Please select test required </div>
-                <br> <br>
-                
-                <label for="additionalInformationInput"> Additional Info </label> 
-                <input type="text" id="additionalInformationInput">
-
-    </div>
-
-    <div id="dtrq" class="dtrq" hidden>
-                <label id='datetimerq'> Date and time required: </label> <input type='date' id="dtrqDate"> <input type='time' id="dtrqTime"> 
             </div>
-     <div id="valDtrq" class="validation" hidden> Please Enter date and time required.</div>
-            
-    <div id="sampleTransport">
+                
+            <div class="formField">
+                <label for="additionalInformationInput"> Additional Information </label> 
+                <input type="text" id="additionalInformationInput">
+                </div>
 
-                <label for="sampleTransportInput"> Please specify how the sample will be transported? </label> 
-                <input type="text" id="sampleTransportInput"> <br>
 
-                <label for="arrivalTime"> Please estimate date and time of arrival at referral lab: </label>
+                <div class="formField">
+                <label for="sampleTransportInput"> How the sample will be transported? </label> 
+                <input type="text" id="sampleTransportInput"> 
+                </div>
+
+                <div class="formField">
+                <label for="arrivalTime"> Please estimate date and time of sample arrival at referral lab: </label>
                 <input id ="dateSampleArrival" type="date">
                 <input id="timeSampleArrival" type="time"> 
+                </div>
+
+                
+                <div id="dtrq" class="dtrq" >
+                <div class="formField">
+                <label id='datetimerq'> Date and time test(s) required for: </label> <input type='date' id="dtrqDate"> <input type='time' id="dtrqTime"> 
+                </div>
+                <div id="valDtrq" class="validation" hidden>
+                 Please Enter date and time required.
+                </div>
+                </div>
 
      </div>
-            
-    <div id="crossmatchInfo" hidden>
 
-                <div id="unitno">
+      <div id="crossmatchInfo" class="" hidden>
+
                 
-                <h4> Crossmatch Information </h4> 
                 
+        <div id="crossmatchInformationHeader" class="subSectionHeader">
+         <h3> Crossmatch Information </h3> 
+        </div>
+        
+        
+        <div id="unitno">
+        <div class="formField">
                 <label for="unitNoInput"> How many units are required? </label> 
                 <select id="unitNoInput"> 
                     <option value=""> Select an option </option>
@@ -256,7 +326,7 @@
                 <div id="valUnitNo" class="validation" hidden> 
                     Please specify how many units are required
                 </div>
-
+                </div>
                 </div>
                 
 
@@ -264,10 +334,12 @@
 
                 <h4> Special Requirements</h4>
 
-                <label for="spqrInput"> Please specify the patients special requirements: </label> 
+                
+                
                 
                 <div id="spqrInput" class="spqrCheckboxes">  
-                    Irradiated <input value='Irradiated' type='checkbox' name="spqrBoxes">
+                    
+                    Irradiated <input id="Irradiated" value='Irradiated' type='checkbox' name="spqrBoxes">
                     Washed <input value='Washed' type='checkbox' name="spqrBoxes"> 
                     CMV Negative <input value='CMVNegative' type='checkbox' name="spqrBoxes"> 
                     HbS Negative <input value='HbS' type='checkbox' name="spqrBoxes">
@@ -276,22 +348,34 @@
                 </div>
                 <div id="valSpqr" class="validation" hidden>Please specify the patients special requirements </div> 
                 </div>
-            
-                <h4> Unit Transportation </h4>
+
+                  <h4> Unit Transportation </h4>
                 
-                <label for="unitTransportationInput"> How should the units be transported? </label>
+                
+                
+
                 <div id="unitTransportationInput">
-                    Routine <input value="Routine" type="checkbox" name="unitTransport">
+                    
+                    Routine <input value="Routine" type="checkbox" name="unitTransport" class="checkbox-wrapper-4">
                     AdHoc <input value="AdHoc" type="checkbox" name="unitTransport"> 
                     Collect <input value="Collect" type="checkbox" name="unitTransport">
                     Blue Light <input value="blueLight" type="checkbox" name="unitTransport">
-                    Hospital services to arrange <input value="Hospital services to arrange" type="checkbox" name="unitTransport">
                     Not stated <input value="Not stated" type="checkbox" name="unitTransport">   
                 </div>
-            
+                </div>
+                </div>
+
+              
           
     </div>
+     
+    </div>
+
+
+   
     
+    </div>
+
     <div id="submit">
            <input type="submit" id="submitButton" value="Submit">   
            </div>
@@ -300,14 +384,12 @@
         
       
         </div>
-        
-
-    </div>
-          </form>    
-
+</form>    
         
 </div>
-</div>
+
+
+
 <script src="https://cdn.auth0.com/js/auth0-spa-js/1.22/auth0-spa-js.production.js"></script>
 <script src="auth.js"></script>
 <script src="script.js"></script>

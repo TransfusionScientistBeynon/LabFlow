@@ -9,13 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
 // These are elements required for state
 const dtrq= 
     document.getElementById("dtrq"); 
-    dtrq.hidden = true;
 
 const dtrqDate =
     document.getElementById("dtrqDate");
 
 const dtrqTime =
     document.getElementById("dtrqTime");
+
 const patientStability = 
 document.getElementById("patientStability");
 
@@ -51,7 +51,7 @@ document.getElementById("bleedinghaemolysis");
 
 const crossmatchInfo=
 document.getElementById("crossmatchInfo");
-crossmatchInfo.hidden=true;
+crossmatchInfo.hidden = true;
 
 const currentHbInput =
 document.getElementById("currentHbInput");
@@ -524,12 +524,14 @@ function showBackupAlert(){
 
 function showCrossmatchFields() {
     crossmatchInfo.hidden = false;
+    crossmatchInfo.classList.add ("crossmatchInfo")
 }
 
 //hideCrossmatchFields
 
 function hideCrossmatchFields() {
     crossmatchInfo.hidden=true;
+    crossmatchInfo.classList.remove("crossmatchInfo")
 }
 
 //showdate
@@ -539,13 +541,6 @@ function showdate() {
 }
 
 
-function showDateTimeRequest() {
-    dtrq.hidden = false;
-}
-
-function hideDateTimeRequest(){
-    dtrq.hidden = true;
-}
 
 
 //Rules - These decide what code triggers
@@ -556,6 +551,8 @@ function runRules() {
 
     state.showCrossmatch =
     state.testRequest === "Antibody identification and crossmatch";
+console.log(state.showCrossmatch)
+console.log(crossmatchInfo.hidden)
 
     state.showDateTimeRequired =
     state.testRequest === "Antibody identification with phone call" ||
@@ -594,7 +591,8 @@ function render() {
 
     if  (state.showCrossmatch){
 
-        showCrossmatchFields(); }
+        showCrossmatchFields();
+     }
     else{
         hideCrossmatchFields();
 
@@ -611,6 +609,7 @@ function render() {
 }
 
 
+console.log(state.testRequest)
 
 //Elements required for page submission and event listener
 
@@ -711,6 +710,7 @@ const requestState = {
     sampleComplete :"Complete"
 
 }
+
 
     const formData ={
     Forename : forenameInput.value,
