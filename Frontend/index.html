@@ -105,8 +105,8 @@
                 <select id=patientStability> 
 
                 <option value="">Select an option</option>
-                <option value="stable">Stable</option>
-                <option value="unstable">Unstable</option>
+                <option value="Stable">Stable</option>
+                <option value="Unstable">Unstable</option>
                 </select>
             <div id="valStability" class="validation" hidden> Please enter if patient is stable or unstable </div>
         </div>
@@ -116,9 +116,9 @@
                 <label for="bleedinghaemolysis"> Is the patient bleeding or haemolysing? </label>
                  <select id=bleedinghaemolysis>   
                 <option value="">Select an option</option>
-                <option value="bleeding">Bleeding</option>
-                <option value="haemolysis">Haemolysing</option>
-                <option value="neither">Neither</option>
+                <option value="Bleeding">Bleeding</option>
+                <option value="Haemolysing">Haemolysing</option>
+                <option value="Neither">Neither</option>
                 </select>
                 <div id="valBleeding" class="validation" hidden> Please specify if patient is bleeding or haemolysing  </div>
                 </div>
@@ -152,8 +152,8 @@
                 <label for="recentTxInput"> Has the patient been transfused in the last 3 months? </label>
                 <select id=recentTxInput>
                 <option value="">Select an option</option>          
-                <option value="yes">Yes</option>
-                <option value="no">No</option>  
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>  
                 </select>    
                 
             <div class="formField">
@@ -206,7 +206,7 @@
                     <div id="valContactNumber" class="validation" hidden> Please enter a laboratory contact number </div>
         </div>
                     <div class="formField">
-                    <label for="aboGroupInput">  ABO group if known: </label> 
+                    <label for="aboGroupInput">  ABO Group </label> 
                     <select id="aboGroupInput"> 
                         <option value="">Select an option</option>
                         <option value="O"> O </option>
@@ -233,6 +233,7 @@
                             <option value="RhD Neg"> RhD Negative</option>
                             <option value="Weak D"> Weak D </option>
                             <option value="RhD Variant"> RhD Variant </option>
+                            <option value="inconclusive"> Inconclusive </option>
                         </select>
 
                         <div id="valRhDGroup" class="validation" hidden> Please select a RhD group</div>
@@ -376,9 +377,9 @@
     
     </div>
 
-    <div id="submit">
+    <div id="submit" class="submitButton">
            <input type="submit" id="submitButton" value="Submit">   
-           </div>
+    </div>
             
 
         
