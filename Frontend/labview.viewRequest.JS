@@ -62,7 +62,6 @@ function renderRequest(match){
     //Formats date and time of request
     function dateAndTimeRequestsFormatter(){
     dateRequested = new Date(match.daterequested)
-    console.l
     formattedDateOfRequest = dateRequested.toLocaleDateString("en-GB")
     console.log(formattedDateOfRequest)
 
@@ -76,11 +75,16 @@ function renderRequest(match){
     function formatDateofRecentTransfusion(){
             console.log(match.transfusiondate)
 
+
         if (match.transfusiondate === null){
-            match.transfusiondate = "N/A"
+            formattedTransfusionDate =  "N/A"
+
+        }else{
+
+            formattedTransfusionDate = new Date(match.transfusiondate).toLocaleDateString("en-GB")
 
         }
-
+        console.log(formattedTransfusionDate)
     }
 
     //Formats Date and time of sample of arrival
@@ -156,7 +160,7 @@ function renderRequest(match){
     <li> <strong> Haemoglobin range (g/l): </strong> <span>${match.hb} </span></li>
     <li> <strong> Clinical details: </strong> <span> ${match.clinicaldetails}</span> </li>
     <li> <strong> Recently transfused: </strong> <span>${match.patienttransfusedinlastthreemonths}</span> </li>
-    <li> <strong> Date of recent transfusion: </strong> <span> ${match.transfusiondate} </span> </li>
+    <li> <strong> Date of recent transfusion: </strong> <span> ${formattedTransfusionDate} </span> </li>
      </ul> 
      </div>
      ` 

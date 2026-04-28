@@ -154,19 +154,20 @@
                 <option value="">Select an option</option>          
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>  
-                </select>    
+                </select>  
+                </div>  
                 
-            <div class="formField">
-            <div id="datetx" hidden> Please enter date of last transfusion: <input id="datetxinput" type="date"> 
+            <div id="datetx" hidden>
+                <label for="datetxinput">  Please enter date of last transfusion: </label>
+                <input id="datetxinput" type="date"> 
+                <div id="valTx3Month" class="validation" hidden> 
+                Please confirm whether the patient has been recently transfused 
+                </div>
             </div>
             
-            </div>
-            </div>
             
             
-            <div id="valTx3Month" class="validation" hidden> 
-            Please confirm whether the patient has been recently transfused 
-            </div>
+            
             
 
             
@@ -226,7 +227,7 @@
                 </div>
 
                     <div class="formField">
-                    <label for="rhdGroup"> RhD type if known: </label>
+                    <label for="rhdGroup"> RhD type </label>
                         <select id="rhdGroupInput"> 
                             <option value=""> Select an option </option>   
                             <option value="RhD Pos"> RhD Positive </option>

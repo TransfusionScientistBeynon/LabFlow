@@ -537,7 +537,12 @@ function hideCrossmatchFields() {
 //showdate
 
 function showdate() {
-    datetx.hidden = false;
+    datetx.classList.add("formField")
+}
+
+function hideDate(){
+    datetx.classList.remove("formField")
+
 }
 
 
@@ -547,24 +552,24 @@ function showdate() {
 
 function runRules() {
     state.showTxDate =
-    state.recentTx === "yes";
+    state.recentTx === "Yes";
+
+    state.hideTxDate = 
+    state.recentTx === "No";
 
     state.showCrossmatch =
     state.testRequest === "Antibody identification and crossmatch";
-console.log(state.showCrossmatch)
-console.log(crossmatchInfo.hidden)
 
-    state.showDateTimeRequired =
-    state.testRequest === "Antibody identification with phone call" ||
-    state.testRequest === "Antibody identification and crossmatch" ||
-    state.testRequest === "Antibody identification and elution with phone call ";
+
+
+  
 
     render();
 }
 
 function alertRule() {
     state.showBackupWarning =
-    state.stability === "unstable";
+    state.stability === "Unstable";
     alertRender();
 
 }
@@ -584,7 +589,7 @@ function render() {
     if (state.showTxDate) {
         showdate();
     }else{
-        datetx.hidden=true;
+        hideDate();
 
     }
     
@@ -597,14 +602,7 @@ function render() {
         hideCrossmatchFields();
 
     }
-
-
-    if (state.showDateTimeRequired) {
-      
-        showDateTimeRequest();}
-    else{
-        hideDateTimeRequest();
-    }
+    
 
 }
 
