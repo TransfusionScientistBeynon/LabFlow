@@ -209,7 +209,7 @@ function renderRequest(match){
         <li> <strong> No of units required </strong> <span> ${match.unitsrequired} </span> </li>
         <li> <strong> Additional information provided: </strong> <span> ${match.additionalinfo} </span> </li>
         <li> <strong> Date and time test required: </strong> <span> ${formattedDateOfRequest} ${formattedTimeOfRequest} </span> </li>
-        <li> <strong> Current sample Status: </strong> <span> ${match.request_status} </span>
+        <li> <strong> Current request status: </strong> <span> ${match.request_status} </span>
         
         </div>
         `

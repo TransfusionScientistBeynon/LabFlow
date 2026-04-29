@@ -1,93 +1,60 @@
+let auth0 = null;
 
-
-/**
- * Initialise Auth0 client
- */
-window.auth0 = null;
-window.authReady = false;
-
-window.initAuth = async function () {
-  window.auth0 = await createAuth0Client({
+// This function initialised the auth0 client
+async function initAuth(){
+  auth0 = await createAuth0Client({
     domain: "labdash.uk.auth0.com",
     client_id: "vSibEAAxaZrmYdFKyuhl6L0zLmpd6mjM",
     redirect_uri: window.location.origin,
     audience: "https://labdashapi"
+
   });
-
-  window.authReady = true;
-  console.log("Auth0 ready");
-
- // await window.handleRedirectCallback();
-  //await window.checkAuthStatus();
-  console.log("hello")
-};
+}
 
 
-/**
- * Handle redirect after login
- */
+//When the user is redirected back to the application handledirect
+//stores the code and state from the URL returned by auth0
+//and then replaces the URL with the original app URL.
 
-/*
-window.handleRedirectCallback = async function () {
-  if (window.location.search.includes("code=")) {
-    try {
-      await window.auth0.handleRedirectCallback();
-      window.history.replaceState({}, document.title, "/");
-    } catch (err) {
-      console.error("Redirect callback error:", err);
-    }
-  }
-};
+async function handleRedirect(){
+  if (window.location.search.includes("code=") && window.location.search.includes("state=")){
+    const result= await auth0.handleRedirectCallback();
+    const target = result.appState?.targetUrl || "/";
+    window.history.replaceState({}, document.title, target)
 
-/**
- * Login
- */
-
-window.login = async function () {
-  if (!window.authReady) {
-    console.log("Auth0 still loading");
-    return;
   }
 
-  await window.auth0.loginWithRedirect({
-    authorizationParams: {
-      audience: "https://labdashapi",
-      redirect_uri: window.location.origin
-    }
-  });
-};
+}
 
-/**
- * Logout
- */
-/*
-window.logout = async function () {
-  if (!window.auth0) return;
+async function protectPage(){
 
-  window.auth0.logout({
-    logoutParams: {
-      returnTo: window.location.origin
-    }
-  });
-};
+  //Checks with auth0 if user has been authenticated or not.
+  const isAuthenticated = await auth0.isAuthenticated();
 
-/**
- * Check login state
- */
-/*
-window.checkAuthStatus = async function () {
-  if (!window.auth0) return;
+  if (!isAuthenticated){
+    //This redirects the user to auth0 if the user isn't authenticated.
+    //Once they authenticate auth0 redirects to the page the user was previously on (myapp)
+    await auth0.loginWithRedirect({
+      appState: {targetUrl: window.location.pathname}
 
-  const isAuthenticated = await window.auth0.isAuthenticated();
-  console.log("Authenticated:", isAuthenticated);
+    })
 
-  if (isAuthenticated) {
-    const user = await window.auth0.getUser();
-    console.log("User:", user);
+  return;
+
   }
-};
 
-/**
- * Init
- */
-window.initAuth();
+  const overlay = 
+  document.getElementById("overlay");
+  overlay.classList.remove("overlayActive")
+  overlay.classList.add("overlayInactive")
+}
+
+
+//This is called an immediately invoked Async function expression.
+//This function has no name and is used to tell a script to run aynchronous function in a defined order once each script has finished.
+(async function () {
+await initAuth();
+await handleRedirect();
+await protectPage();
+})();
+

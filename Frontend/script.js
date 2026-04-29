@@ -5,6 +5,35 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("login").addEventListener("click", window.login);
 
 
+    //Creation of Website state and allows const to be updated depending on user input
+
+let state = {
+    stability: "",
+    hb: "",
+    testRequest: "",
+    recentTx: "",
+    antigenR: "",
+
+
+    showBackupWarning:false,
+    showTxDate:false,
+    showCrossmatch:false,
+    showDateTimeRequired:false,
+
+};
+
+
+//Modal Box for alerts
+const overlay = 
+document.getElementById("overlay")
+
+
+const modalBox=
+document.getElementById("modalBox")
+
+const confirmAdviceReadBox =
+document.getElementById("confirmAdviceReadBox")
+
 
 // These are elements required for state
 const dtrq= 
@@ -195,30 +224,22 @@ valSpqr.hidden=true;
 
 
 
-    //Creation of Website state and allows const to be updated depending on user input
-
-const state = {
-    stability: "",
-    hb: "",
-    testRequest: "",
-    recentTx: "",
-    antigenR: "",
-
-    //UI flags
-
-    showBackupWarning:false,
-    showTxDate:false,
-    showCrossmatch:false,
-    showDateTimeRequired:false,
-
-    //Validation
-};
-
 
 
 //Updates values of stability, Hb, test request and transfusion status when user changes the page and runs the relevant
+overlay.addEventListener("click", function(){
+    if (overlay.classList.contains("overlayActive") && modalBox.classList.contains("modalBoxActive")){
+        hideBackupAlert();
+
+    }
+
+});
+
+
 patientStability.addEventListener("change", function(){
+    confirmAdviceReadBox.checked = false;
     state.stability = patientStability.value;
+    
     alertRule();
 
 });
@@ -516,9 +537,32 @@ function validateForm() {
 //Backup alert
 
 function showBackupAlert(){
-    alert("Ensure a backup plan is made immediately! Inform your haematology consultant for further advice and promptly phone the RCI department")
+console.log(state.stability)
+    overlay.classList.remove("overlayInactive")
+    modalBox.classList.remove("modalBoxInactive")
+
+    overlay.classList.add("overlayActive")
+    modalBox.classList.add("modalBoxActive")
+    //alert("Ensure a backup plan is made immediately! Inform your haematology consultant for further advice and promptly phone the RCI department")
 
 }
+
+function hideBackupAlert() {
+    console.log(state.stability)
+    if (confirmAdviceReadBox.checked){
+        overlay.classList.remove("overlayActive")
+        modalBox.classList.remove("modalBoxActive")
+
+        overlay.classList.add("overlayInactive")
+        modalBox.classList.add("modalBoxInactive")
+    
+   
+    }
+
+     confirmAdviceReadBox.checked = false;
+
+}
+
 
 //show crossmatch fields
 
@@ -770,12 +814,13 @@ const requestState = {
 
 .then(res => res.json())
 .then (result => {
-    console.log(result.duplicate)
+    console.log(result)
+    console.log(result.Data_Submitted.id)
     if (result.duplicate){
         alert("Duplicate request detected. Please check your form.");
         return;
     }else{
-     window.location.href= `RCIRequestSubmission.html?requestId=${formData.requestId}`; 
+    window.location.href= `RCIRequestSubmission.html?requestId=${result.Data_Submitted.id}`; 
     }//this code redirects the user to the RCIREQUESTSUBMISSION PAGE and adds the request ID as a URL parameter so that the relevant request can be pulled up on the submission page
 //?requestId is a query parameter that allows us to pass the request ID to the next page, where we can use it to retrieve the specific request data from local storage or the backend server and display it on the RCIRequestSubmission.html page. This means
 //on the RCIRequestSubmission.html page, we can access the request ID from the URL parameters, use it to fetch the corresponding request data from local storage or the backend, and then display that data to the user in a meaningful way, such as showing the details of their transfusion request and its current status.

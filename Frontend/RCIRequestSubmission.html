@@ -20,37 +20,53 @@
 
 <body>
 
-    <h1> Test Request Summary </h1>
-
-
-<div id = requestOutput class="testSummary">
+<div id ="headerBar" class="headerBar"> 
+    <img id="appLogo" alt="LabDash" src="Images/labDashLogo7.png" class="headerLogo"> 
     
-    <div id="patientDemographicsContainer" class="block">
-    <div id="patientDemoHeader" class="blockHeader">  <h2> Patient Demographics </h2>  </div>
-    <div id="patientDemoOutput" class="blockContent"> </div>
+    <div id="navBar" class="navBar">
+        <a href="index.html"> Home </a>
     </div>
 
-    <div id="clinicalDetailsContainer" class="block">
-    <div id="clinicalDetailsHeader" class="blockHeader"> <h2> Clinical Details </h2> </div>
-    <div id="clinicalDetailsOutput" class="blockContent"> </div>
     </div>
 
-    <div id="requestDetailsHeader" class="block">
-    <div id="hospitalDetailsHeader" class="blockHeader"> <h2> Hospital Details and Serological Results </h2> </div>
-    <div id="hospitalDetailsOutput" class="blockContent"> </div>
+<div id="sectionHeader" class="sectionHeader">
+    <h2> Test Request Summary </h2>
+</div>
+
+
+<div id="fullRequestContainer" data-id="">
+
+        
+        <div id ="patientDemographics">
+            
+
+        </div>
+        
+        
+        <div id="clinicalInformation">
+
+
+        </div>
+
+        <div id="hospitalInformation">
+
+
+        </div>
+
+        
+        <div id="testRequestInformation">
+
+
+        </div>
+
+
     </div>
 
-    <div id="testDetailsContainer" class="block">
-    <div id="testDetailsHeader" class="blockHeader"> <h2> Tests ordered </h2> </div>
-    <div id="testDetailsOutput" class="blockContent"> </div>
-    </div>
-    
-  
 </div>
 
   <div id="buttons" class="footer">
-    <input type="button" value="View Laboratory view" onclick="goToLabView()" class="button-30" /> 
-    <input type="button" value="Print 🖨" onclick="window.print()" class="button-30" />
+    <input type="button" value="View Laboratory view" onclick="goToLabView()" class="Buttons" /> 
+    <input type="button" value="Print 🖨" onclick="window.print()" class="Buttons" />
     </div>
     
 
