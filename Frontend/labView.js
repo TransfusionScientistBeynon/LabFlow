@@ -145,7 +145,7 @@ console.log(item.request_status)
     }
 
      if (item.request_status === requestState.requestSampleReceived){
-        item.request_status = `<img src="Images/sampleReceivedImgV2.PNG" alt="Sample received" class="statusImgSample">`
+        item.request_status = `<img src="Images/sampleReceivedImgV2.png" alt="Sample received" class="statusImgSample">`
      }
     
      if (item.request_status === requestState.requestInProgress){
