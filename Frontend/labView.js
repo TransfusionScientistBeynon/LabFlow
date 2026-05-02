@@ -119,7 +119,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
     //Image formating based on test requested
 
     if (item.testrequested === "Antibody identification with phone call"){
-        item.testrequested = `<img src="Images/abid+call.PNG" alt = "Antibody Identification and Phone Call" class="testReqImg">`
+        item.testrequested = `<img src="Images/abidcall.PNG" alt = "Antibody Identification and Phone Call" class="testReqImg">`
     }
 
      if (item.testrequested === "Antibody identification and crossmatch"){
