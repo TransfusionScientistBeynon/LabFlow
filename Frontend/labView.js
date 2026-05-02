@@ -76,25 +76,36 @@ document.getElementById("status");
 
 
 function renderTable(){
-    
-    tableDataHTML = ""
+
+  tableDataHTML = ""
     tableData.innerHTML = tableDataHTML;
 
 allRequests.sort(function (a,b) {
-       
-a.DateRequested
-a.TimeRequested
 
-b.DateRequested
-b.TimeRequested
+//This sort function gets the date and time from the database.
+//The date object from daterequested is split to incorporate the correct time
+//The date and time combination is then trimmed to remove whitespace and converted into date objects for comparison.
 
-a.dateTime = `${a.DateRequested} ${a.TimeRequested}`
-b.dateTime = `${b.DateRequested} ${b.TimeRequested}`
+a.date = a.daterequested.split("T")[0]
+a.time = `T${a.timerequested}.000Z`
 
-a.dateTimeObject = new Date(a.dateTime);
-b.dateTimeObject = new Date(b.dateTime);
+b.date = b.daterequested.split("T")[0]
+b.time = `T${b.timerequested}.000Z`
 
-return (a.dateTimeObject) - b.dateTimeObject; 
+
+a.dateTimeRequested = `${a.date}${a.time}`
+b.dateTimeRequested = `${b.date}${b.time}`
+
+a.cleanDateTime = a.dateTimeRequested.trim()
+b.cleanDateTime = b.dateTimeRequested.trim()
+
+console.log(a.cleanDateTime)
+a.dateObject = new Date(a.cleanDateTime)
+b.dateObject = new Date(b.cleanDateTime)
+
+
+
+return (a.dateObject) - (b.dateObject); 
 
     });
     allRequests.forEach (function (item) { ///This line states that for each item in the allRequests array add a line in the table
@@ -134,7 +145,7 @@ console.log(item.request_status)
     }
 
      if (item.request_status === requestState.requestSampleReceived){
-        item.request_status = `<img src="Images/sampleReceivedImg.PNG" alt="Sample received" class="statusImgSample">`
+        item.request_status = `<img src="Images/sampleReceivedImgV2.PNG" alt="Sample received" class="statusImgSample">`
      }
     
      if (item.request_status === requestState.requestInProgress){

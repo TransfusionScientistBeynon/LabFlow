@@ -135,6 +135,9 @@ document.getElementById("forenameInput");
 let surnameInput=
 document.getElementById("surnameInput");
 
+const unitTransportInput=
+document.getElementById("unitTransportInput")
+
 const valHospNo= 
 document.getElementById("valHospNo");
 valHospNo.hidden=true;
@@ -223,9 +226,11 @@ valSampleTransport.hidden = true;
 const valDateSampleArrival = 
 document.getElementById("valDateSampleArrival")
 
-const timeOfSampleArrival = 
+const valTimeOfSampleArrival = 
 document.getElementById("valTimeSampleArrival");
 
+const valUnitTransport=
+document.getElementById("valUnitTransport")
 
 
 
@@ -274,9 +279,9 @@ testRequestSelect.addEventListener("change", function(){
 
 // Event listeners for form validation and hospital search
 
-hospNoInput.addEventListener("blur", validateForm);
-nhsNomInput.addEventListener ("blur", validateForm);
-dobInput.addEventListener ("blur", validateForm);
+hospNoInput.addEventListener("blur", validateDobNhsHospital);
+nhsNomInput.addEventListener ("blur", validateDobNhsHospital);
+dobInput.addEventListener ("blur", validateDobNhsHospital);
 datetxinput.addEventListener("input",validateRecentTxDate);
 forenameInput.addEventListener("blur", validateForename);
 surnameInput.addEventListener("blur", validateSurname);
@@ -294,9 +299,10 @@ testRequestSelect.addEventListener("blur", validateTestRequest);
 dtrqDate.addEventListener("blur", validateDtrq);
 dtrqTime.addEventListener("blur", validateDtrq);
 unitNoInput.addEventListener("blur", validateUnitNo);
-sampleTransportInput.addEventListener("blur", validateSampleTransport)
-dateSampleArrival.addEventListener("blur", validateDateSampleArrival)
-timeSampleArrival.addEventListener("blur", validateTimeSampleArrival)
+sampleTransportInput.addEventListener("blur", validateSampleTransport);
+dateSampleArrival.addEventListener("blur", validateDateSampleArrival);
+timeSampleArrival.addEventListener("blur", validateTimeSampleArrival);
+unitTransportInput.addEventListener("change", validateUnitTransport);
 
 
 
@@ -501,7 +507,7 @@ function validateSpqr(){
         return;
     }
     const checkedboxes = document.querySelectorAll('input[name="spqrBoxes"]:checked');
-
+console.log(checkedboxes)
     if (checkedboxes.length >0) {
         valSpqr.hidden = true;
 
@@ -514,7 +520,7 @@ function validateSpqr(){
 
 
 
-function validateForm() {
+function validateDobNhsHospital() {
         let getTodaysDate = new Date();
         let dob = new Date(dobInput.value);
 
@@ -578,6 +584,9 @@ function validateSampleTransport(){
     if (!sampleTransportInput.value){
         valSampleTransport.hidden = false;
 
+    }else{
+        valSampleTransport.hidden = true;
+
     }
 
 }
@@ -585,6 +594,9 @@ function validateSampleTransport(){
 function validateDateSampleArrival(){
     if (!dateSampleArrival.value){
         valDateTimeSampleArrival.hidden = false;
+    }else{
+        valDateTimeSampleArrival.hidden = true;
+
     }
 
 }
@@ -593,8 +605,28 @@ function validateTimeSampleArrival(){
     if (!timeSampleArrival.value){
         valDateTimeSampleArrival.hidden = false;
 
+    }else{
+        valDateTimeSampleArrival.hidden = true;
+
     }
 
+}
+
+
+function validateUnitTransport(){
+    if (crossmatchInfo.hidden){
+        return;
+    }
+    const checkedboxes = document.querySelectorAll('input[name="unitTransport"]:checked');
+console.log(checkedboxes)
+    if (checkedboxes.length >0) {
+        valUnitTransport.hidden = true;
+
+    }else{
+        valUnitTransport.hidden = false;
+
+    }
+   
 }
 
 
@@ -706,17 +738,9 @@ function performFullValidationCheck(){
 
     if (state.testRequest === "Antibody identification and crossmatch"){
     
-    validateDtrq();
-    validateUnitNo();
-    validateSpqr();
-    validateForm();
-
-    }else{
-        console.log(valUnitNo.hidden)
-        console.log(testRequestSelect.value)
-
     validateForename();
     validateSurname();
+    validateDobNhsHospital();
     validateStability();
     validateBleeding();
     validateCurrentHb();
@@ -729,6 +753,36 @@ function performFullValidationCheck(){
     validateRhdGroup();
     validateSerologicalResults();
     validateTestRequest();
+    validateDtrq();
+    validateSampleTransport();
+    validateDateSampleArrival();
+    validateUnitNo();
+    validateSpqr();
+    validateDobNhsHospital();
+
+    }else{
+        console.log(valUnitNo.hidden)
+        console.log(testRequestSelect.value)
+    
+    validateForename();
+    validateSurname();
+    validateDobNhsHospital();
+    validateStability();
+    validateBleeding();
+    validateCurrentHb();
+    validateClinicalDetails();
+    validateRecentTx3month();
+    validateRecentTxDate();
+    validateHospitalName();
+    validateLabContactNumber();
+    validateAboGroup();
+    validateRhdGroup();
+    validateSerologicalResults();
+    validateTestRequest();
+    validateDtrq();
+    validateSampleTransport();
+    validateDateSampleArrival();
+
 
     }
 

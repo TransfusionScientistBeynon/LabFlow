@@ -77,7 +77,7 @@ height: clamp(40px, 7vw, 100px);
 
 a{
   color:white;
-
+  margin-right:20px;
 }
 
 a:active{
