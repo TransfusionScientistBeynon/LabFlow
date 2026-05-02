@@ -123,7 +123,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
     }
 
      if (item.testrequested === "Antibody identification and crossmatch"){
-        item.testrequested = `<img src ="Images/abidxmimprove.png" alt = "Antibody Identificatoin and Crossmatch" class="xmImg"`
+        item.testrequested = `<img src ="Images/abidxmimprove.PNG" alt = "Antibody Identificatoin and Crossmatch" class="xmImg"`
 
     }
 console.log(item.request_status)
