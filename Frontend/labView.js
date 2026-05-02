@@ -119,11 +119,11 @@ return (a.dateTimeObject) - b.dateTimeObject;
     //Image formating based on test requested
 
     if (item.testrequested === "Antibody identification with phone call"){
-        item.testrequested = `<img src="Images/abid+call.png" alt = "Antibody Identification and Phone Call" class="testReqImg">`
+        item.testrequested = `<img src="Images/abid+call.PNG" alt = "Antibody Identification and Phone Call" class="testReqImg">`
     }
 
      if (item.testrequested === "Antibody identification and crossmatch"){
-        item.testrequested = `<img src ="Images/abidxmimprove.PNG" alt = "Antibody Identificatoin and Crossmatch" class="xmImg"`
+        item.testrequested = `<img src ="Images/abidxmimprove.png" alt = "Antibody Identificatoin and Crossmatch" class="xmImg"`
 
     }
 console.log(item.request_status)
