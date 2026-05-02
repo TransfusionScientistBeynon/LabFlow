@@ -2,7 +2,7 @@
 const BASE_URL = window.location.origin;
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("login").addEventListener("click", window.login);
+
 
 
     //Creation of Website state and allows const to be updated depending on user input
@@ -115,6 +115,7 @@ document.getElementById("timeSampleArrival")
 const additionalInformationInput =
 document.getElementById("additionalInformationInput")
 
+
 //Elements for validation of request form
 
 const dobInput =
@@ -215,8 +216,15 @@ const valSpqr =
 document.getElementById("valSpqr");
 valSpqr.hidden=true;
 
+const valSampleTransport=
+document.getElementById("valSampleTransport");
+valSampleTransport.hidden = true;
 
+const valDateSampleArrival = 
+document.getElementById("valDateSampleArrival")
 
+const timeOfSampleArrival = 
+document.getElementById("valTimeSampleArrival");
 
 
 
@@ -286,6 +294,9 @@ testRequestSelect.addEventListener("blur", validateTestRequest);
 dtrqDate.addEventListener("blur", validateDtrq);
 dtrqTime.addEventListener("blur", validateDtrq);
 unitNoInput.addEventListener("blur", validateUnitNo);
+sampleTransportInput.addEventListener("blur", validateSampleTransport)
+dateSampleArrival.addEventListener("blur", validateDateSampleArrival)
+timeSampleArrival.addEventListener("blur", validateTimeSampleArrival)
 
 
 
@@ -560,6 +571,29 @@ function hideBackupAlert() {
     }
 
      confirmAdviceReadBox.checked = false;
+
+}
+
+function validateSampleTransport(){
+    if (!sampleTransportInput.value){
+        valSampleTransport.hidden = false;
+
+    }
+
+}
+
+function validateDateSampleArrival(){
+    if (!dateSampleArrival.value){
+        valDateTimeSampleArrival.hidden = false;
+    }
+
+}
+
+function validateTimeSampleArrival(){
+    if (!timeSampleArrival.value){
+        valDateTimeSampleArrival.hidden = false;
+
+    }
 
 }
 

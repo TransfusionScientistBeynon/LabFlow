@@ -43,7 +43,6 @@
     
     <div id="navBar" class="navBar">
         <a href="index.html"> Home </a>
-        <button onclick="window.login()" id="login">Login</button>
     </div>
 
     </div>
@@ -293,14 +292,19 @@
 
 
                 <div class="formField">
-                <label for="sampleTransportInput"> How the sample will be transported? </label> 
+                <label for="sampleTransportInput"> How will the sample will be transported? </label> 
                 <input type="text" id="sampleTransportInput"> 
+                
+                <div id="valSampleTransport" class="validation" hidden> Please state how the sample will be transported </div>
                 </div>
 
                 <div class="formField">
                 <label for="arrivalTime"> Please estimate date and time of sample arrival at referral lab: </label>
                 <input id ="dateSampleArrival" type="date">
                 <input id="timeSampleArrival" type="time"> 
+
+                <div id="valDateTimeSampleArrival" class="validation" hidden> Please provide the date and time of sample arrival  </div>
+           
                 </div>
 
                 

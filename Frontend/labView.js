@@ -119,7 +119,7 @@ return (a.dateTimeObject) - b.dateTimeObject;
     //Image formating based on test requested
 
     if (item.testrequested === "Antibody identification with phone call"){
-        item.testrequested = `<img src="Images/ABID+CALL IMG.png" alt = "Antibody Identification and Phone Call" class="testReqImg">`
+        item.testrequested = `<img src="Images/abid+call.png" alt = "Antibody Identification and Phone Call" class="testReqImg">`
     }
 
      if (item.testrequested === "Antibody identification and crossmatch"){
@@ -130,19 +130,19 @@ console.log(item.request_status)
     //Image formatting based on current status of request
 
     if (item.request_status === requestState.requestReceived){
-        item.request_status = `<img src="Images/sampleInTransitimg.png" alt ="Request Received" class="statusImg"`
+        item.request_status = `<img src="Images/sampleInTransit.PNG" alt ="Request Received" class="statusImg"`
     }
 
      if (item.request_status === requestState.requestSampleReceived){
-        item.request_status = `<img src="Images/sampleReceivedImg.png" alt="Sample received" class="statusImgSample">`
+        item.request_status = `<img src="Images/sampleReceivedImg.PNG" alt="Sample received" class="statusImgSample">`
      }
     
      if (item.request_status === requestState.requestInProgress){
-        item.request_status = `<img src="Images/sampleInProgressImg.png" alt="Sample in Progress" class="statusImg">`
+        item.request_status = `<img src="Images/sampleInProgressImg.PNG" alt="Sample in Progress" class="statusImg">`
     }
     
     if (item.request_status === requestState.requestComplete){
-        item.request_status = `<img src="Images/testingCompleteButton.png" alt="Request Complete" class="statusImg">`
+        item.request_status = `<img src="Images/testingCompleteButton.PNG" alt="Request Complete" class="statusImg">`
 
     }
 
