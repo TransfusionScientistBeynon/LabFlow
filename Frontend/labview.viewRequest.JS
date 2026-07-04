@@ -127,7 +127,7 @@ function renderRequest(match){
 
     patientDemographics.innerHTML = 
     `  <div class="contentHeader"> 
-    <div class="contentHeaderImg"> <img src = "Images/patientDemoSymbol.png" alt="Patient profile image"/> </div>
+    <div class="contentHeaderImg"> <img src = "Images/patientDemoSymbol.PNG" alt="Patient profile image"/> </div>
     <div class="contentHeaderHeading"> <h2> Patient Demographics </h2> </div>
     
     </div>
@@ -150,7 +150,7 @@ function renderRequest(match){
 
     clinicalInformation.innerHTML =
     `<div class="contentHeader"> 
-    <div class="contentHeaderImg"> <img src="Images/clinicalInfoSymbol.png" alt="Clinical Notepad"> </div>
+    <div class="contentHeaderImg"> <img src="Images/clinicalInfoSymbol.PNG" alt="Clinical Notepad"> </div>
     <div class="contentHeaderHeading">  <h2> Clinical Information </h2> </div> </div>
 
     <div class="sectionContent">
@@ -174,7 +174,7 @@ function renderRequest(match){
         
         `
         <div class="contentHeader">
-        <div class="contentHeaderImg"> <img src="Images/hospitalInfoSymbol.png" alt="Hospital symbol">  </div>
+        <div class="contentHeaderImg"> <img src="Images/hospitalInfoSymbol.PNG" alt="Hospital symbol">  </div>
         <div class="contentHeaderHeading"> <h2> Hospital Information </h2> </div>
         </div>
 
@@ -199,7 +199,7 @@ function renderRequest(match){
         testRequestInformation.innerHTML =
         `
         <div class="contentHeader">
-        <div class="contentHeaderImg"> <img src="Images/testRequestSymbol2.png" alt="Test Request"> </div>
+        <div class="contentHeaderImg"> <img src="Images/testRequestSymbol2.PNG" alt="Test Request"> </div>
         <div class="contentHeaderHeading"> <h2> Test Request Information</h2> </div>
         </div>
 
