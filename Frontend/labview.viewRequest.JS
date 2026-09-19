@@ -217,3 +217,9 @@ function renderRequest(match){
     }
 }
 
+function getAuditTrailView(){
+    const rowRequest = new URLSearchParams(window.location.search).get("requestId");
+
+    window.location.href = `auditTrail.html?requestId=${rowRequest}`
+
+}

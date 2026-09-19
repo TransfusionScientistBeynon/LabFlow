@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 
 // Protected route (requires Auth0 login)
 app.get("/api/protected", auth, (req, res) => {
+  console.log("AUTH INFORMATION:", req.auth);
   res.json({
     message: "You are authenticated",
     user: req.auth,
@@ -627,6 +628,25 @@ if (data.status === "valid"){
   }
 
 }
+
+app.get('/api/auditTrail/:requestId', async (req,res)=> {
+
+const requestId = req.params.requestId
+
+console.log(requestId);
+
+  await db.query (
+    `SELECT * FROM audit_log WHERE request_id = $1 ORDER BY id ASC`,
+    [requestId]
+
+
+  )
+
+  .then (auditLogData => {
+    res.json(auditLogData)
+  })
+
+})
 
 // Start the server
 const PORT = process.env.PORT || 3000;

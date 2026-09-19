@@ -5,7 +5,7 @@
 <head> 
     <meta charset="UTF-8">
     <title> Laboratory Dashboard </title>
-     <link rel="stylesheet" href="labView.viewRequest.CSS">
+     <link rel="stylesheet" href="auditTrail.CSS">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -31,36 +31,26 @@
 </div>
 
     <div id="sectionHeader" class="sectionHeader">
-         <h2> Full Request View </h2> 
+         <h2> Audit Trail </h2> 
     </div>
 
 <div id = "requestContainer">
 
 
-    <div id="fullRequestContainer" data-id="">
+    <div id="auditTrailContainer" data-id="" class="table" >
 
+        <table id="auditTrailTable">
         
-        <div id ="patientDemographics">
-            
+        <tr>
+            <th> Status changed from </th>
+            <th> Status changed to </th>
+            <th> Reason for change </th>
+            <th> Date/Time of change </th>
+            <th> User </th> 
+        </tr>
 
-        </div>
-        
-        
-        <div id="clinicalInformation">
-
-
-        </div>
-
-        <div id="hospitalInformation">
-
-
-        </div>
-
-        
-        <div id="testRequestInformation">
-
-
-        </div>
+        </table>
+    
 
 
     </div>
@@ -68,11 +58,12 @@
 </div>
 
     <div id="bottomMenu"> 
+        <input id="previousRequestButton" type="button" value="Back to full request view" class="allRequestsButton">   
         <input id="labViewReturnButton" type="button" value="Return to all Requests" class="allRequestsButton" onclick="window.location.href='labview.html' ">   
-        <input id="auditTrailButton" type="button" value="Audit Trail View" class="allRequestsButton" onclick = 'getAuditTrailView()'>   
+        
     </div>
 
-    <script src="labview.viewRequest.JS"></script>
+    <script src="auditTrail.js"></script>
     
 </body>
 
