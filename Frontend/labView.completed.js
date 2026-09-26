@@ -160,7 +160,7 @@ console.log(item.request_status)
     }
 
     
-    if (item.request_status !== `<img src=\"Images/testingCompleteButton.PNG\" alt=\"Request Complete\" class=\"statusImg\">`){
+    if (item.request_status === `<img src=\"Images/testingCompleteButton.PNG\" alt=\"Request Complete\" class=\"statusImg\">`){
     tableDataHTML += `<tr> </tr>`;
 
     tableDataHTML += 
@@ -318,21 +318,20 @@ function renderReasonBox(event){
 
 
     //VALIDATE REASON COLLECTS THE INPUT FROM REASON AND IF NO REASON GIVEN IT CREATES AN ERROR MESSAGE
-async function  validateReason(){
+async function validateReason(){
+    
+const token = await window.getAuth0Token();
 
     const modalBoxRequestId = overlay.dataset.id
  reason = revertStatusReasonInput.value
     const submitAction = overlay.dataset.action
 
-const token = await window.getAuth0Token();
-console.log(token)
 
  fetch(`${BASE_URL}/api/validateModalReason`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
-            
         },
         body: JSON.stringify({
             reason,

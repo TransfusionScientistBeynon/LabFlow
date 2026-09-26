@@ -22,8 +22,8 @@ app.get("/", (req, res) => {
 app.get("/api/protected", auth, (req, res) => {
   console.log("AUTH INFORMATION:", req.auth);
   res.json({
-    message: "You are authenticated",
-    user: req.auth,
+    message: "You are authenticated"
+   
   });
 });
 
@@ -337,12 +337,16 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
 });
 
 // A route to update the status of a request. 
-app.post('/api/validateStatusChange', async (req, res) => {
+app.post('/api/validateStatusChange', auth, async (req, res) => {
+
+  const token = req.headers.authorization
+  console.log("Charlie look", token)
  
   const requestedAction = req.body.action;
   
   const buttonClicked = req.body;
    console.log(buttonClicked)
+
   const match = await locateMatchingRequest(buttonClicked);
   console.log(match,"hey")
   console.log("Action before update", requestedAction)
@@ -378,10 +382,10 @@ app.post('/api/validateStatusChange', async (req, res) => {
     requestId: match.id,
     oldMatchStatus: match.request_status,
     newMatchStatus: actionTranslationTable(requestedAction, requestState) ,
-    ChangedBy: "to be updated with user authentication" 
+    ChangedBy: req.auth.sub //This line obtains the Auth0 token from the middleware to identify the user
   }
 
-
+console.log(req.auth)
   
 
   const updatedVariables = await validateStatusChange(buttonClicked, updateStatusResponse, match)
@@ -499,7 +503,11 @@ return updateStatusResponse
 
 
 
-app.post('/api/validateModalReason', async (req, res) => {
+app.post('/api/validateModalReason', auth, async (req, res) => {
+
+  const token = req.headers.authorization
+
+  console.log("Token in the console", token)
 
   const reason = req.body.reason
   const requestId = req.body.modalBoxRequestId
@@ -514,7 +522,7 @@ app.post('/api/validateModalReason', async (req, res) => {
     requestedAction: action,
     requestId: requestId,
     reason,
-    ChangedBy: "to be updated",
+    ChangedBy: req.auth.sub,
     newMatchStatus: actionTranslationTable(action, requestState)
   }
 

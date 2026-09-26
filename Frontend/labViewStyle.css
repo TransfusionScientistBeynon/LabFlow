@@ -37,6 +37,7 @@ height: clamp(40px, 7vw, 100px);
 
 a{
   color:white;
+  margin-right:20px;
 
 }
 
@@ -253,6 +254,10 @@ td:last-child {
   background-color:#036bcd;
   	border-color:#005eb8;
 
+}
+
+.hideTableRow{
+  display:none; 
 }
 
 /*
