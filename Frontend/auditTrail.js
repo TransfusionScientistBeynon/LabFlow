@@ -1,6 +1,6 @@
 const BASE_URL = 'window.location.origin';
 
-
+ 
 
 async function getUserInfo(){
      const user = await auth0.getUser();

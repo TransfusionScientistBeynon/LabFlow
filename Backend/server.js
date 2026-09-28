@@ -51,6 +51,34 @@ db.connect()
   .catch(console.error);
 
 
+//This route is used for obtaining the users details on login
+
+app.post('/api/getUserInfo', auth, async (req, res) => {
+  const user = req.body
+  console.log ("This is the user logging in", user)
+
+  const userData = await db.query(
+   `INSERT INTO users (auth0_sub, full_name, email, workplace, job_role, authorisation_status)
+        VALUES ($1, $2, $3, $4, $5, $6) 
+        RETURNING id`,
+        [
+        user.auth0_sub,
+        user.full_name,
+        user.email,
+        user.workplace,
+        user.job_role,
+        user.authorisation_status,
+      ]
+
+        );
+
+
+
+  res.json(user);
+
+})
+
+
 
 //In memory storage that will act as a temporary database for the form data. This is just for demonstration purposes and should be replaced with a proper database in a production application.
 let allRequests = [];

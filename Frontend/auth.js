@@ -37,6 +37,8 @@ async function protectPage(){
     console.log("Is authenticated:", isAuthenticated);
   console.log("Current URL:", window.location.href);
 
+ await getUserInfo();
+
   if (!isAuthenticated){
 
       console.log("Not authenticated - redirecting to Auth0");
@@ -74,3 +76,33 @@ window.getAuth0Token = async function() {
 
     return await auth0.getTokenSilently();
 };
+
+
+//This function creates a user variable and uses auth0's getuser function to retrieve the person logging in information.
+//The token is also obtained and is used in the authorisation header so that my app knows authorisation is given.
+async function getUserInfo(){
+  const user = await auth0.getUser();
+  const token = await getAuth0Token();
+
+  await fetch ("/api/getUserInfo", {
+    method: "POST",
+    headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+
+  },
+
+  body: JSON.stringify({
+  auth0_sub : user.sub,
+  full_name: user.name,
+  email: user.email,
+  workplace: "to be updated",
+  job_role: "to be updated",
+  authorisation_status: "to be updated"
+
+  })
+
+});
+
+}
+

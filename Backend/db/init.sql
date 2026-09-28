@@ -1,10 +1,11 @@
 CREATE TABLE IF NOT EXISTS users(
 id SERIAL PRIMARY KEY,
-auth0_sub TEXT NOT NULL
+auth0_sub TEXT NOT NULL,
 full_name TEXT NOT NULL,
 email TEXT NOT NULL,
 workplace TEXT NOT NULL,
-job_role TEXT NOT NULL
+job_role TEXT NOT NULL,
+authorisation_status TEXT NOT NULL
 ); 
 
 
