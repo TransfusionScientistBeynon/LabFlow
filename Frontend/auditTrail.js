@@ -1,5 +1,16 @@
 const BASE_URL = 'window.location.origin';
 
+
+
+async function getUserInfo(){
+     const user = await auth0.getUser();
+    console.log(user)
+
+}
+
+getUserInfo();
+
+
 const auditTrailData = document.getElementById("auditTrailData");
 
 
@@ -65,3 +76,4 @@ auditTrailTable.innerHTML = auditTrailHtml;
 
 
  }
+

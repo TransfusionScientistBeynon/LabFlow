@@ -340,7 +340,7 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
 app.post('/api/validateStatusChange', auth, async (req, res) => {
 
   const token = req.headers.authorization
-  console.log("Charlie look", token)
+
  
   const requestedAction = req.body.action;
   
@@ -385,7 +385,7 @@ app.post('/api/validateStatusChange', auth, async (req, res) => {
     ChangedBy: req.auth.sub //This line obtains the Auth0 token from the middleware to identify the user
   }
 
-console.log(req.auth)
+
   
 
   const updatedVariables = await validateStatusChange(buttonClicked, updateStatusResponse, match)
