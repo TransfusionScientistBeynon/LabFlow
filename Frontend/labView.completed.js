@@ -218,7 +218,7 @@ console.log(item.request_status)
        const token = await window.getAuth0Token();
         
         fetch(`${BASE_URL}/api/validateStatusChange`,{
-        method: "POST",
+        method: "POST",     
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
@@ -319,8 +319,9 @@ function renderReasonBox(event){
 
     //VALIDATE REASON COLLECTS THE INPUT FROM REASON AND IF NO REASON GIVEN IT CREATES AN ERROR MESSAGE
 async function validateReason(){
-    
+
 const token = await window.getAuth0Token();
+console.log("this is the token", token)
 
     const modalBoxRequestId = overlay.dataset.id
  reason = revertStatusReasonInput.value

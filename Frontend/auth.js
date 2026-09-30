@@ -31,13 +31,14 @@ async function handleRedirect(){
 
 async function protectPage(){
 
+
   //Checks with auth0 if user has been authenticated or not.
   const isAuthenticated = await auth0.isAuthenticated();
 
     console.log("Is authenticated:", isAuthenticated);
   console.log("Current URL:", window.location.href);
 
- await getUserInfo();
+ 
 
   if (!isAuthenticated){
 
@@ -67,8 +68,10 @@ async function protectPage(){
 //This function has no name and is used to tell a script to run aynchronous function in a defined order once each script has finished.
 (async function () {
 await initAuth();
+
 await handleRedirect();
 await protectPage();
+
 
 })();
 
@@ -84,11 +87,13 @@ async function getUserInfo(){
   const user = await auth0.getUser();
   const token = await getAuth0Token();
 
+  console.log(token)
+
   await fetch ("/api/getUserInfo", {
     method: "POST",
     headers: { 
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
+    "Authorization": `Bearer ${token}`,
 
   },
 
