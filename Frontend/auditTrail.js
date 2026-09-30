@@ -61,7 +61,8 @@ let formattedDate = new Date(item.changed_at).toLocaleString('en-GB');
         <td> ${item.status_changed_to} </td>
         <td> ${item.reason} </td>
         <td> ${formattedDate} </td>
-        <td> ${item.changed_by} </td>
+        <td> ${item.changed_by_name} </td> 
+        
 
     </tr>
     

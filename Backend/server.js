@@ -54,8 +54,24 @@ db.connect()
 //This route is used for obtaining the users details on login
 
 app.post('/api/getUserInfo', auth, async (req, res) => {
+  
   const user = req.body
-  console.log ("This is the user logging in", user)
+  console.log ("Hello I'm running")
+
+  console.log(user)
+const checkUser = await db.query (
+ `SELECT * FROM users WHERE auth0_sub = $1` , 
+ [user.auth0_sub]
+);
+
+console.log(checkUser.rows[0])
+
+const currentUser = checkUser.rows[0]
+const currentUserSub = checkUser.auth0_sub
+
+
+// If the current user is not known then add the user to the database. This prevents user duplicates and is important for the audit trail.
+if (!currentUser) {
 
   const userData = await db.query(
    `INSERT INTO users (auth0_sub, full_name, email, workplace, job_role, authorisation_status)
@@ -71,11 +87,7 @@ app.post('/api/getUserInfo', auth, async (req, res) => {
       ]
 
         );
-
-
-
-  res.json(user);
-
+      }
 })
 
 
@@ -368,6 +380,34 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
 app.post('/api/validateStatusChange', auth, async (req, res) => {
 
   const token = req.headers.authorization
+  const currentUser = req.auth.sub
+
+  console.log("This is the sub", currentUser)
+
+  await locateUserInfo(currentUser);
+  
+  async function locateUserInfo(currentUser){
+    const userInfo = await db.query(
+      `SELECT * FROM users WHERE auth0_sub = $1`,
+      [currentUser]
+
+    );
+
+    const matchingUserInfo = userInfo.rows[0];
+    console.log(matchingUserInfo, "LOOK HERE");
+    
+    return matchingUserInfo
+
+  }  
+
+  const name = await locateUserInfo(currentUser)
+
+  
+  const displayName = JSON.stringify(name.full_name)
+
+  console.log("This is the displayName", displayName);
+
+
 
  
   const requestedAction = req.body.action;
@@ -401,6 +441,7 @@ app.post('/api/validateStatusChange', auth, async (req, res) => {
 
 } 
 
+console.log(displayName, "next to updateStatusResponse")
   
   let updateStatusResponse = {
     status:"",
@@ -410,7 +451,8 @@ app.post('/api/validateStatusChange', auth, async (req, res) => {
     requestId: match.id,
     oldMatchStatus: match.request_status,
     newMatchStatus: actionTranslationTable(requestedAction, requestState) ,
-    ChangedBy: req.auth.sub //This line obtains the Auth0 token from the middleware to identify the user
+    ChangedBy: req.auth.sub
+
   }
 
 
@@ -533,13 +575,14 @@ return updateStatusResponse
 
 app.post('/api/validateModalReason', auth, async (req, res) => {
 
-  const token = req.headers.authorization
 
-  console.log("Token in the console", token)
+  const token = req.headers.authorization
 
   const reason = req.body.reason
   const requestId = req.body.modalBoxRequestId
   const action = req.body.submitAction
+
+
 
     
 
@@ -669,10 +712,20 @@ app.get('/api/auditTrail/:requestId', async (req,res)=> {
 
 const requestId = req.params.requestId
 
-console.log(requestId);
+console.log(requestId, "this is the request id");
 
   await db.query (
-    `SELECT * FROM audit_log WHERE request_id = $1 ORDER BY id ASC`,
+    `SELECT
+     audit_log.*,
+     users.full_name AS changed_by_name
+
+     FROM audit_log
+     LEFT JOIN users
+     ON
+      audit_log.changed_by = users.auth0_sub
+      WHERE audit_log.request_Id = $1
+
+    ORDER BY audit_log.id ASC`,
     [requestId]
 
 

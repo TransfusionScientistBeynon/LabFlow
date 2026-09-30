@@ -40,7 +40,10 @@ async function protectPage(){
 
  
 
+ 
+
   if (!isAuthenticated){
+
 
       console.log("Not authenticated - redirecting to Auth0");
 
@@ -59,35 +62,15 @@ async function protectPage(){
   document.getElementById("overlay");
   overlay.classList.remove("overlayActive")
   overlay.classList.add("overlayInactive")
+
 }
 
 
-
-
-//This is called an immediately invoked Async function expression.
-//This function has no name and is used to tell a script to run aynchronous function in a defined order once each script has finished.
-(async function () {
-await initAuth();
-
-await handleRedirect();
-await protectPage();
-
-
-})();
-
-window.getAuth0Token = async function() {
-
-    return await auth0.getTokenSilently();
-};
-
-
-//This function creates a user variable and uses auth0's getuser function to retrieve the person logging in information.
-//The token is also obtained and is used in the authorisation header so that my app knows authorisation is given.
 async function getUserInfo(){
+
   const user = await auth0.getUser();
   const token = await getAuth0Token();
 
-  console.log(token)
 
   await fetch ("/api/getUserInfo", {
     method: "POST",
@@ -111,3 +94,22 @@ async function getUserInfo(){
 
 }
 
+//This is called an immediately invoked Async function expression.
+//This function has no name and is used to tell a script to run aynchronous function in a defined order once each script has finished.
+(async function () {
+
+await initAuth();
+await handleRedirect();
+await protectPage();
+await getUserInfo();
+
+})();
+
+window.getAuth0Token = async function() {
+
+    return await auth0.getTokenSilently();
+};
+
+
+//This function creates a user variable and uses auth0's getuser function to retrieve the person logging in information.
+//The token is also obtained and is used in the authorisation header so that my app knows authorisation is given.
