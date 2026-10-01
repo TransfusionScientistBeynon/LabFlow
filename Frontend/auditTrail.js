@@ -21,6 +21,7 @@ retrieveAuditTrailFromDatabase();
 const requestId = new URLSearchParams(window.location.search).get("requestId"); // gets request Id from URL parameter
 
 
+
 const response = await fetch(`/api/auditTrail/${requestId}`,{
     method: "GET",
     headers: {
@@ -78,3 +79,7 @@ auditTrailTable.innerHTML = auditTrailHtml;
 
  }
 
+function auditTrailReturn() {
+    const requestId = new URLSearchParams(window.location.search).get("requestId");
+    window.location.href = `labView.viewRequest.html?requestId= ${requestId}`
+}
