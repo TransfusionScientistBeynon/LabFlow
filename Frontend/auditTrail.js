@@ -81,7 +81,7 @@ auditTrailTable.innerHTML = auditTrailHtml;
 
 function auditTrailReturn() {
     const requestId = new URLSearchParams(window.location.search).get("requestId");
-    window.location.href = `labView.viewRequest.HTML?requestId=${requestId}`
+    window.location.href = `labview.viewRequest.HTML?requestId=${requestId}`
 }
 
 console.log("hello")
