@@ -139,6 +139,11 @@ return (a.dateObject) - (b.dateObject);
         item.testrequested = `<img src ="Images/abidxmimprove.png" alt = "Antibody Identificatoin and Crossmatch" class="xmImg"`
 
     }
+
+    if (item.testrequested === "Antibody identification and elution with phone call"){
+        item.testrequested = `<img src="Images/Elution_Icon.png" alt="Elution and Call" class="Elution_Image">`
+
+    }
 console.log(item.request_status)
     //Image formatting based on current status of request
 

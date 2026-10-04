@@ -51,6 +51,20 @@ CREATE TABLE IF NOT EXISTS requests (
   
 );
 
+CREATE TABLE IF NOT EXISTS communication_log (
+  id SERIAL PRIMARY KEY,
+  request_id INTEGER NOT NULL REFERENCES requests(id),
+  date_of_communication DATE NOT NULL,
+  time_of_communication TIME NOT NULL,
+  name_of_contact TEXT NOT NULL,
+  conversation_details TEXT NOT NULL,
+  action_details TEXT NOT NULL,
+  submitted_by TEXT NOT NULL,
+  submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  
+);
+
+
 CREATE TABLE IF NOT EXISTS audit_log (
   id SERIAL PRIMARY KEY,
   request_id INTEGER NOT NULL REFERENCES requests(id),

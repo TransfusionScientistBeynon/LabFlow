@@ -260,6 +260,12 @@ td:last-child {
   display:none; 
 }
 
+.Elution_Image{
+  height:2em;  
+  width:3em;
+
+}
+
 /*
     text-size-adjust: 100%;
     font-family: Frutiger W01,arial,sans-serif;

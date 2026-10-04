@@ -56,7 +56,9 @@ db.connect()
 app.post('/api/getUserInfo', auth, async (req, res) => {
   
   const user = req.body
-  console.log ("Hello I'm running")
+  const roles = req.auth["https://labflow.uk/roles"];
+
+  console.log("Look here for roles", roles)
 
   console.log(user)
 const checkUser = await db.query (
@@ -379,7 +381,7 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
 // A route to update the status of a request. 
 app.post('/api/validateStatusChange', auth, async (req, res) => {
 
-  const token = req.headers.authorization
+    const token = req.headers.authorization
   const currentUser = req.auth.sub
 
   console.log("This is the sub", currentUser)
@@ -452,7 +454,7 @@ console.log(displayName, "next to updateStatusResponse")
     oldMatchStatus: match.request_status,
     newMatchStatus: actionTranslationTable(requestedAction, requestState) ,
     ChangedBy: req.auth.sub
-
+  
   }
 
 
@@ -715,7 +717,7 @@ const requestId = req.params.requestId
 console.log(requestId, "this is the request id");
 
   await db.query (
-    `SELECT
+  `SELECT
      audit_log.*,
      users.full_name AS changed_by_name
 
@@ -733,6 +735,69 @@ console.log(requestId, "this is the request id");
 
   .then (auditLogData => {
     res.json(auditLogData)
+  })
+
+})
+
+
+app.post(`/api/communicationLog/:requestId`, auth, async (req,res) => {
+  const communicationLogData = req.body;
+  const user = req.auth.sub
+  console.log("The users name is...", user)
+  const requestId = req.params.requestId;
+  console.log("This is the data received from the communication log page", communicationLogData)
+
+ const logData = await db.query (`INSERT INTO communication_log (request_id, date_of_communication, time_of_communication, name_of_contact, conversation_details, action_details, submitted_by)
+        VALUES ($1, $2, $3, $4, $5, $6, $7) 
+        RETURNING id`,
+        [
+        requestId,
+        communicationLogData.Date,
+        communicationLogData.Time,
+        communicationLogData.Contact_Name,
+        communicationLogData.Conversation_Details,
+        communicationLogData.Action,
+        user
+        
+      ]
+
+        );
+
+  res.json({
+  Message: "Communication data received by server",
+  
+
+})
+
+
+})
+    
+app.get(`/api/communicationLogRetrieval/:requestId`, auth, async (req,res) => {
+
+   const communicationLogData = req.body;
+  const user = req.auth.sub
+  console.log("The users name is...", user)
+  const requestId = req.params.requestId;
+
+const response = await db.query(`SELECT
+     communication_log.*,
+     users.full_name AS submitted_by
+
+     FROM communication_log
+     LEFT JOIN users
+     ON
+      communication_log.submitted_by = users.auth0_sub
+      WHERE communication_log.request_Id = $1
+
+    ORDER BY communication_log.id ASC`,
+    [requestId]
+
+
+  )
+
+  res.json({
+    response
+
   })
 
 })

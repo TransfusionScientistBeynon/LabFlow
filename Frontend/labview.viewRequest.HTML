@@ -34,7 +34,54 @@
          <h2> Full Request View </h2> 
     </div>
 
+    <div class="communicationLogContainer">
+
+    <div id="communicationLog" class="communicationLog">
+        <button id="communicationButton" class="allRequestsButton" onclick='openCommunicationLog(communicationLogDate, communicationLogTime, communicationLogForm, totalClicks)'> Add Communication </button> </button>
+
+        <form id="communicationLogForm" class="communicationLogFormInactive"> 
+
+            
+            <label for="date">  Date of communication:  </label>
+            <input id="communicationLogDate" type="date">
+            
+
+            
+            <label for="time"> Time of communication </label>
+            <input id="communicationLogTime" type="time"> 
+            
+
+            
+            <label for="communicationLogName"> Name of Contact:</label>
+            <input id="communicationLogName" type="text" placeholder = "Please enter contact name..." />
+            
+            
+            
+                <label for="communicationLogDetails"> Conversation Details: </label>
+                <textarea id="communicationLogDetails" type="text" placeholder= "Please enter conversation details..." >     </textarea>
+                <label for="communicationLogAction"> Action Details: </label>
+                <input id = "communicationLogAction" type="text" placeholder = "Please enter planned actions from conversation..." />
+            
+            <div id="communicationLogValidation" hidden class="validation">
+                Please fill in all fields before submitting
+            </div>
+            
+                    
+                <input type="button" value="Submit" onclick="submitCommunicationlog()"/>
+
+        </form>
+
+    
+    </div>
+    <div id="communicationLogSuccessful" hidden class="success"> 
+                New communication updated successfully!
+            </div>
+
+</div>
+
 <div id = "requestContainer">
+
+      
 
 
     <div id="fullRequestContainer" data-id="">
@@ -65,14 +112,20 @@
 
     </div>
 
-</div>
+
+
+
 
     <div id="bottomMenu"> 
         <input id="labViewReturnButton" type="button" value="Return to all Requests" class="allRequestsButton" onclick="window.location.href='labview.html' ">   
         <input id="auditTrailButton" type="button" value="Audit Trail View" class="allRequestsButton" onclick = 'getAuditTrailView()'>   
+        <input id="communicationLogButton" type="button" value="View Communication Log" class="allRequestsButton" onclick='getCommunicationLogView()'>
     </div>
 
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.22/auth0-spa-js.production.js"></script>
+    <script src="auth.js"></script>
     <script src="labview.viewRequest.JS"></script>
+
     
 </body>
 

@@ -17,7 +17,7 @@ fetch(`${BASE_URL}/api/getformData/fullRequestView`,{
 .then (res => res.json())
 .then (allRequestData => { 
 allRequests = allRequestData;
-console.log("request data from backend received:", allRequests)
+
 
 requestRetrieval(allRequests, rowRequest)
 })
@@ -33,12 +33,11 @@ const testRequestInformation = document.getElementById("testRequestInformation")
 const hospitalInformation = document.getElementById("hospitalInformation")
 
 const rowRequest = new URLSearchParams(window.location.search).get("requestId");
-console.log("row request is: ", rowRequest)
+
 
 
  function requestRetrieval(allRequests, rowRequest){
-    console.log(allRequests)
-    console.log(rowRequest)
+ 
     
    const match = allRequests.find(item => item.id == rowRequest) // Item.id is an object and row request is a string so had to use unstrict operator
    renderRequest(match);
@@ -63,17 +62,16 @@ function renderRequest(match){
     function dateAndTimeRequestsFormatter(){
     dateRequested = new Date(match.daterequested)
     formattedDateOfRequest = dateRequested.toLocaleDateString("en-GB")
-    console.log(formattedDateOfRequest)
-
+   
     formattedTimeOfRequest = match.timerequested.slice(0,5);
-    console.log(formattedTimeOfRequest)
+   
 
     }
 
 
     //Formats transfusion date
     function formatDateofRecentTransfusion(){
-            console.log(match.transfusiondate)
+            
 
 
         if (match.transfusiondate === null){
@@ -84,7 +82,7 @@ function renderRequest(match){
             formattedTransfusionDate = new Date(match.transfusiondate).toLocaleDateString("en-GB")
 
         }
-        console.log(formattedTransfusionDate)
+
     }
 
     //Formats Date and time of sample of arrival
@@ -217,7 +215,116 @@ function renderRequest(match){
     }
 }
 
+
+
+
+const communicationLogDate = document.getElementById("communicationLogDate")
+const communicationLogTime = document.getElementById("communicationLogTime")
+const communicationLogForm = document.getElementById("communicationLogForm")
+const communicationLogName = document.getElementById("communicationLogName")
+const communicationLogDetails = document.getElementById("communicationLogDetails")
+const communicationLogAction = document.getElementById("communicationLogAction")
+const communicationLogSuccessful = document.getElementById("communicationLogSuccessful")
+
+
+
+let totalClicks = 1
+
+console.log(totalClicks)
+
+function openCommunicationLog(communicationLogDate, communicationLogTime, communicationLogForm){
+    totalClicks++;
+    console.log(totalClicks)
+    communicationLogSuccessful.hidden=true;
+
+    if (totalClicks % 2 === 0){
+        communicationLogForm.classList.remove("communicationLogFormInactive")
+        communicationLogForm.classList.add("communicationLogForm")
+
+    }else{
+        communicationLogForm.classList.add("communicationLogFormInactive")
+        communicationLogForm.classList.remove("communicationLogForm")
+
+    }
+
+    date = new Date()
+
+    const today =
+    date.getFullYear() + "-" +
+    String(date.getMonth() + 1).padStart(2, "0") + "-" +
+    String(date.getDate()).padStart(2, "0");
+
+    time = date.toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit"})
+
+    communicationLogDate.value = today
+    communicationLogTime.value = time
+
+}
+
+async function submitCommunicationlog(){
+
+const communicationLogData = {
+    Date: communicationLogDate.value,
+    Time: communicationLogTime.value,
+    Contact_Name: communicationLogName.value,
+    Conversation_Details: communicationLogDetails.value,
+    Action: communicationLogAction.value
+
+}
+
+    if (communicationLogDate.value === "" || communicationLogTime.value === "" || communicationLogName.value === "" || communicationLogDetails.value === "" || communicationLogAction.value === "") {
+        document.getElementById("communicationLogValidation").hidden = false;
+}else{
+    document.getElementById("communicationLogValidation").hidden = true;
+    const requestId = new URLSearchParams(window.location.search).get("requestId")
+    console.log(requestId)
+    const token = await window.getAuth0Token()
+    console.log(token)
+    
+
+const response =  await fetch(`/api/communicationLog/${requestId}`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    },
+
+body: JSON.stringify(communicationLogData)
+
+
+})
+
+console.log(await response.status)
+if (await response.status === 200){
+    totalClicks++
+communicationLogForm.classList.add("communicationLogFormInactive")
+communicationLogSuccessful.hidden = false;
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+}
+
+function getCommunicationLogView(){
+    const requestId = new URLSearchParams(window.location.search).get("requestId")
+
+    window.location.href = `communicationLogView.html?requestId=${requestId}`
+
+}
+
 function getAuditTrailView(){
+
     const rowRequest = new URLSearchParams(window.location.search).get("requestId");
 
     window.location.href = `auditTrail.html?requestId=${rowRequest}`

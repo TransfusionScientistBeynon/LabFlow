@@ -1,0 +1,75 @@
+<!doctype html> 
+
+<html>
+
+<head> 
+    <meta charset="UTF-8">
+    <title> Laboratory Dashboard </title>
+     <link rel="stylesheet" href="auditTrail.CSS">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Delius+Unicase:wght@400;700&display=swap" rel="stylesheet">
+<!-- Google Fonts-->
+
+<link rel="shortcut icon" href="#">
+</head>
+
+<body>
+
+
+<div id ="headerBar" class="headerBar"> 
+    <img id="appLogo" alt="LabDash" src="Images/labDashLogo7.png" class="headerLogo"> 
+    
+    <div id="navBar" class="navBar">
+        <a href="index.html"> Home </a>
+        
+    </div>
+
+</div>
+
+    <div id="sectionHeader" class="sectionHeader">
+         <h2> Communication Log View </h2> 
+    </div>
+
+<div id = "requestContainer">
+
+
+    <div id="communicationLogContainer" data-id="" class="table" >
+
+        <table id="CommunicationLogTable">
+        
+        
+
+        </table>
+    
+
+
+    </div>
+
+</div>
+
+    <div id="bottomMenu"> 
+        <input id="previousRequestButton" type="button" value="Back to full request view" class="allRequestsButton">   
+        <input id="labViewReturnButton" type="button" value="Return to all Requests" class="allRequestsButton" onclick="window.location.href='labview.html' ">   
+        
+    </div>
+
+<script src="https://cdn.auth0.com/js/auth0-spa-js/1.22/auth0-spa-js.production.js"></script>
+<script src="auth.js"></script>
+    <script src="communicationLogView.js"></script>
+    
+    
+</body>
+
+
+
+
+
+
+
+
+
+</html>
