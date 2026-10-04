@@ -50,13 +50,14 @@ let communicationLogHTML =
 response.response.rows.forEach(item =>{
 
 
-let formattedDate = new Date(item.changed_at).toLocaleString('en-GB');
+let date = new Date(item.date_of_communication).toLocaleString('en-GB');
+let formattedDate = date.split(',') [0] //This means split the string by the comma and 0 means the first part of the string. One would be the part of the string after the comma.
 
     communicationLogHTML += `
 
     <tr>
     
-        <td> ${item.date_of_communication} </td> 
+        <td> ${formattedDate} </td> 
         <td> ${item.time_of_communication} </td>
         <td> ${item.name_of_contact} </td>
         <td> ${item.conversation_details} </td>
