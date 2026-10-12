@@ -2,6 +2,30 @@
 const BASE_URL = window.location.origin;
 
 
+async function getUserInfo(){
+    const user = await auth0.getUser();
+    console.log("This is the", user)
+
+    const profilePictureHTML = document.getElementById("profilePicture")
+
+    const profilePicture = user.picture
+    console.log(profilePicture)
+
+    profilePictureHTML.src = profilePicture
+
+    console.log(profilePictureHTML.src)
+
+}
+
+getUserInfo();
+
+function openProfileWindow(){
+console.log("You're hovering");
+
+}
+
+
+
 
 
 let allRequests = [];

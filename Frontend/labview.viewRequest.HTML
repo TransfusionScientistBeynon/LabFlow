@@ -25,6 +25,7 @@
     
     <div id="navBar" class="navBar">
         <a href="index.html"> Home </a>
+        <a> <img src="" alt="Profile Picture">  </a>
         
     </div>
 
@@ -58,9 +59,21 @@
             
             
                 <label for="communicationLogDetails"> Conversation Details: </label>
-                <textarea id="communicationLogDetails" type="text" placeholder= "Please enter conversation details..." >     </textarea>
+                <textarea id="communicationLogDetails" type="text" placeholder="Please provide conversation details..."></textarea>
                 <label for="communicationLogAction"> Action Details: </label>
-                <input id = "communicationLogAction" type="text" placeholder = "Please enter planned actions from conversation..." />
+                <select id = "communicationLogAction" type="dropdown" placeholder = "Please enter planned actions from conversation..."> 
+                    <option value =""> Default </option>
+                    <option value="Obtain_Clinical_info"> Gather Clinical Information </option>
+                    <option value="Amend XM"> Amend Delivery Date/Time of Crossmatch </option>
+                    <option value="Amend ABID"> Amend ABID Results Date/Time </option>
+                    <option value="Customer Query"> Resolve Customer Query </option>
+                    <option value="Consultant information"> Consultant Discussion </option>
+                    <option value="Other"> Other </option>
+
+
+
+
+                </select>
             
             <div id="communicationLogValidation" hidden class="validation">
                 Please fill in all fields before submitting

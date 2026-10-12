@@ -763,6 +763,29 @@ app.post(`/api/communicationLog/:requestId`, auth, async (req,res) => {
 
         );
 
+updateAuditLog(user, requestId)
+    async function updateAuditLog (user, requestId){
+      console.log("THIS IS THE USER", user)
+      console.log("THIS IS THE REQUEST ID", requestId)
+      await db.query (`INSERT INTO audit_log (request_id, action, status_changed_from, status_changed_to, reason, changed_by)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id`,
+        [
+          requestId,
+          "Communication Log Update",
+          "Communication Log Update",
+          "Communication Log Update",
+          "System update",
+          user
+    
+
+        ]
+      
+      );
+
+
+    }
+
   res.json({
   Message: "Communication data received by server",
   

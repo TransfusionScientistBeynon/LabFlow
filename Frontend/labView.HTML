@@ -53,8 +53,25 @@
     <img id="appLogo" alt="LabDash" src="Images/labDashLogo7.png" class="headerLogo"> 
     
     <div id="navBar" class="navBar">
+
+        <div id="headerLinks" class="headerLinks">
         <a href="index.html"> Home </a>
         <a href="labView.completed.html"> Completed Requests </a>
+        </div>
+
+        <div id="profilePictureContainer" class="profilePictureContainer">
+        <a onmouseover='openProfileWindow()'> <img id="profilePicture" src="" alt="Profile Picture" class="profilePicture" />  </a>
+
+        <div id="profileInformation" hidden>
+            <p> Your name is ${user} </p>
+            <p> Your Hospital is ${user.hospital}</p>
+
+
+        </div>
+
+
+
+        </div>
     </div>
 
     </div>
