@@ -1,0 +1,76 @@
+LabFlow Change Log
+==================
+
+
+
+2026-10-13 — Auth0 authentication and approval-gate investigation
+---------------------------------------------------------------
+
+Changed / observed
+- The Auth0 Post-Login Action was configured to add the user's roles to the access token using the custom claim:
+  https://labflow.uk/roles
+- A token observed in the frontend contained the roles claim with the value ["Admin"].
+- The frontend console reported that authentication was successful (`Is authenticated: true`).
+- The frontend attempted to call `POST http://localhost:3000/api/getUserInfo`.
+
+Issues investigated
+- The API request failed with `net::ERR_CONNECTION_REFUSED`.
+- Requests for `style.css` and `favicon.ico` at `localhost:3000` also failed with `net::ERR_CONNECTION_REFUSED`, indicating that the local server was not accepting connections at that address at the time.
+- The browser console also reported a `RegisterClientLocalizationsError` stating that a message could not be delivered because the receiving end did not exist. This appeared likely to be unrelated to the application/API connection failure.
+- The message `Unauthorized is not valid JSON` was investigated as a possible consequence of the frontend parsing an authentication/error response as JSON.
+
+Auth0 approval requirement — design decision
+--------------------------------------------
+- The requirement was established that Auth0, rather than frontend-only logic, should deny access to users who have not been approved.
+- The approval flag should be stored in each user's Auth0 **App Metadata**, not User Metadata.
+- The intended field is `app_metadata.isApproved`.
+- The intended policy is fail-closed: only the Boolean value `true` is approved; `false`, a missing value, or a value of another type should be denied.
+- Approval metadata is per user. Updating one user's App Metadata does not automatically update all other users.
+- New accounts should be assigned `isApproved: false` through a trusted registration/provisioning process. An administrator or trusted backend should change it to `true` when approved.
+- The login Action should not depend on setting metadata and denying the same login transaction to initialize the approval flag.
+
+Auth0 Action troubleshooting
+----------------------------
+- An approval-checking Post-Login Action was added during troubleshooting, using `api.access.deny()` for users whose `isApproved` value was not Boolean `true`.
+- The application then experienced login/loading issues, and Auth0 logs did not appear to show the expected login attempts.
+- The Auth0 Actions were deleted during troubleshooting; after that, the user reported being able to log in again.
+- At the latest reported state, the remaining Action was the roles-claim Action. The approval gate had not yet been confirmed as working successfully.
+- A combined Action was proposed to check approval first and then add the roles claim. This was a recommendation, not a confirmed successful deployment.
+
+Frontend error handling — pending work
+--------------------------------------
+- The application may need to handle Auth0 access-denied callback errors explicitly.
+- The intended behavior is to stop the loading state and display or redirect to an access-denied page for approval denials, while handling other authentication errors separately.
+- Ensure the app does not automatically retry login in a loop after an access denial.
+- The exact callback implementation in `auth.js` has not yet been reviewed, so this remains pending.
+
+Recommended next steps
+----------------------
+1. Confirm the local frontend/backend server startup and ports; resolve `ERR_CONNECTION_REFUSED` before interpreting API failures.
+2. Keep the working roles-claim Action and test it independently.
+3. Implement approval provisioning so all new users default to `isApproved: false`.
+4. Reintroduce the approval check in a separate test, verify the Action is attached to the Login flow, and inspect Auth0 logs.
+5. Update `auth.js` to handle Auth0 access-denied errors without leaving the page loading or triggering repeated login redirects.
+6. Test with separate accounts: one explicitly approved (`true`) and one pending (`false` or missing flag).
+7. Ensure the backend independently validates access tokens and enforces authorization for protected API routes.
+
+
+Additional LabFlow development work reported by the user
+========================================================
+
+Communication log
+-----------------
+- A communication log was added to LabFlow.
+
+Audit trail updates
+-------------------
+- Updates were made to LabFlow's audit-trail functionality.
+
+Audit-trail UI improvements
+---------------------------
+- The UI was improved to display audit-trail changes more clearly.
+- The available history confirms the user-reported UI work, but does not establish the exact layout, components, filters, or presentation changes.
+
+Documentation note
+------------------
+The communication log, audit-trail updates, and audit-trail UI improvements above are included as user-reported project changes. 

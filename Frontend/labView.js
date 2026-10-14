@@ -1,28 +1,103 @@
 
 const BASE_URL = window.location.origin;
+const token = window.getAuth0Token();
+
+let currentUser = ""
+
+retrieveUserInfo()
 
 
-async function getUserInfo(){
-    const user = await auth0.getUser();
-    console.log("This is the", user)
+async function logout(){
 
-    const profilePictureHTML = document.getElementById("profilePicture")
+await auth0.logout({
+  logoutParams: {
+    returnTo: window.location.origin
+  }
+});
 
-    const profilePicture = user.picture
-    console.log(profilePicture)
+}   
 
-    profilePictureHTML.src = profilePicture
 
-    console.log(profilePictureHTML.src)
+async function retrieveUserInfo(){
+
+const functionToken =  await window.getAuth0Token();
+console.log(functionToken)
+
+    const response = await fetch ("/api/getUserInfo", {
+    method: "POST",
+    headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${functionToken}`
+    }
+});
+    
+const user = await response.json();
+console.log(user)
+
+updateProfileInfo(user)
+return user
+}
+
+
+
+async function updateProfileInfo(user){
+
+const profilePicture = document.getElementById("profilePicture")
+const profileInformationElement = document.getElementById("profileInformation");
+
+profilePicture.src = user.picture
+
+profileInformationElement.hidden = true;
+
+
+profilePicture.addEventListener("click", async () =>{
+
+    renderProfileWindow(event, user)
+
+})
+
+// profilePicture.addEventListener("click" , hideProfileWindow(event))
+
+
+console.log("THIS IS THE TOKEN:", token)
+async function renderProfileWindow(event, user){
+    
+    console.log(user)
+
+    if (profileInformationElement.hidden === true){
+        
+    const profileInfoShort = document.getElementById("profileInfoShort")
+    
+    profileInfoShort.innerHTML = `
+    <th> Name: </th> 
+    <td> ${user.name} </td>
+    <th> Hospital: </th>
+    <td> ${user.workplace} </td>
+    <th> Role: </th>
+    <td> ${user.role} </td>
+    <th> Sign Out </th>
+    <td> <a class="signOut" onclick='logout()'> Sign Out </a> </td>
+    `
+    
+
+         profileInformationElement.hidden = false;
+        console.log(profileInformationElement.hidden)
+
+    }else if (profileInformationElement.hidden === false){
+        profileInformationElement.hidden = true;
+    }
 
 }
 
-getUserInfo();
+/*function hideProfileWindow(event){
+    profileInformationElement.hidden = true;
 
-function openProfileWindow(){
-console.log("You're hovering");
+} */
 
 }
+
+
+
 
 
 
@@ -353,7 +428,7 @@ async function  validateReason(){
  reason = revertStatusReasonInput.value
     const submitAction = overlay.dataset.action
 
-const token = await window.getAuth0Token();
+
 console.log(token)
 
  fetch(`${BASE_URL}/api/validateModalReason`,{

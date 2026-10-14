@@ -2,7 +2,6 @@
 const BASE_URL = window.location.origin;
 
 
-
 document.addEventListener("DOMContentLoaded", () => {
 
 

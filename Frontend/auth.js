@@ -9,6 +9,7 @@ async function initAuth(){
     client_id: "vSibEAAxaZrmYdFKyuhl6L0zLmpd6mjM",
     redirect_uri: window.location.origin,
     audience: "https://labdashapi",
+    scope: "openid profile email",
     cacheLocation: "localstorage"
 
   });
@@ -67,10 +68,9 @@ async function protectPage(){
 
 
 async function getUserInfo(){
-
-  const user = await auth0.getUser();
+//This Function sends a token to the server, which obtains the users login details upon login
   const token = await getAuth0Token();
-
+  console.log(token)
 
   await fetch ("/api/getUserInfo", {
     method: "POST",
@@ -80,19 +80,11 @@ async function getUserInfo(){
 
   },
 
-  body: JSON.stringify({
-  auth0_sub : user.sub,
-  full_name: user.name,
-  email: user.email,
-  workplace: "to be updated",
-  job_role: "to be updated",
-  authorisation_status: "to be updated"
 
   })
 
-});
-
 }
+
 
 //This is called an immediately invoked Async function expression.
 //This function has no name and is used to tell a script to run aynchronous function in a defined order once each script has finished.

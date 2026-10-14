@@ -51,45 +51,74 @@ db.connect()
   .catch(console.error);
 
 
-//This route is used for obtaining the users details on login
+
+  //This route is used for obtaining the users details on login directly from the server
 
 app.post('/api/getUserInfo', auth, async (req, res) => {
-  
-  const user = req.body
-  const roles = req.auth["https://labflow.uk/roles"];
+
+console.log(req.headers.authorization)
+
+    const response = await fetch(
+            "https://labdash.uk.auth0.com/userinfo",
+            {
+                headers: {
+                    Authorization: `${req.headers.authorization}`
+                }
+            }
+        );
+
+        
+
+const user = await response.json()
+console.log(user)
+const roles = await req.auth["https://labflow.uk/roles"];
+const hospital = await req.auth ["https://labflow.uk/referral_lab_name"];
+console.log(req.auth.payload, "this is the payload");
+console.log(req.auth)
+console.log("this is the users hospital", hospital)
+user.role = roles
+user.workplace = hospital
+
 
   console.log("Look here for roles", roles)
 
-  console.log(user)
+  console.log("This is the current User", user)
 const checkUser = await db.query (
  `SELECT * FROM users WHERE auth0_sub = $1` , 
- [user.auth0_sub]
+ [user.sub]
 );
 
 console.log(checkUser.rows[0])
 
 const currentUser = checkUser.rows[0]
+console.log(currentUser)
 const currentUserSub = checkUser.auth0_sub
-
 
 // If the current user is not known then add the user to the database. This prevents user duplicates and is important for the audit trail.
 if (!currentUser) {
+
+  user.authorisation_status = "pending"
 
   const userData = await db.query(
    `INSERT INTO users (auth0_sub, full_name, email, workplace, job_role, authorisation_status)
         VALUES ($1, $2, $3, $4, $5, $6) 
         RETURNING id`,
         [
-        user.auth0_sub,
-        user.full_name,
+        user.sub,
+        user.name,
         user.email,
         user.workplace,
-        user.job_role,
+        user.role,
         user.authorisation_status,
       ]
 
         );
+          
       }
+  
+   
+   console.log("this is role", roles)
+  res.json(user)
 })
 
 

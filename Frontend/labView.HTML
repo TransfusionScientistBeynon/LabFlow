@@ -60,11 +60,16 @@
         </div>
 
         <div id="profilePictureContainer" class="profilePictureContainer">
-        <a onmouseover='openProfileWindow()'> <img id="profilePicture" src="" alt="Profile Picture" class="profilePicture" />  </a>
+        <a> <img id="profilePicture" src="" alt="Profile Picture" class="profilePicture" />  </a>
 
         <div id="profileInformation" hidden>
-            <p> Your name is ${user} </p>
-            <p> Your Hospital is ${user.hospital}</p>
+            
+        <table id="profileInfoShort" class="profileInfoShort"> 
+            <th> Name: </th> 
+            <th> Hospital: </th>
+            <th> Role:</th>
+
+        </table>
 
 
         </div>

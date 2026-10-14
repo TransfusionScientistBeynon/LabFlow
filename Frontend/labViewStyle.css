@@ -52,6 +52,11 @@ a:hover{
 
 }
 
+.signOut{
+  color:black;
+
+}
+
 .headerLinks{
   display:flex;
   flex-direction:row;
@@ -77,7 +82,7 @@ width:100%;
 }
 
     
-  .tableContainer{
+.tableContainer{
     display:flex;
     flex-direction:column;
     width:80%;
@@ -195,9 +200,6 @@ td:last-child {
     list-style-type: none;
     border-radius: 10px;
 }
-
-
-
 
 .overlay{
   
