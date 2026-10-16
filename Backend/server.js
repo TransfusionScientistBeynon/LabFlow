@@ -56,8 +56,6 @@ db.connect()
 
 app.post('/api/getUserInfo', auth, async (req, res) => {
 
-console.log(req.headers.authorization)
-
     const response = await fetch(
             "https://labdash.uk.auth0.com/userinfo",
             {
@@ -70,28 +68,24 @@ console.log(req.headers.authorization)
         
 
 const user = await response.json()
-console.log(user)
+
 const roles = await req.auth["https://labflow.uk/roles"];
 const hospital = await req.auth ["https://labflow.uk/referral_lab_name"];
-console.log(req.auth.payload, "this is the payload");
-console.log(req.auth)
-console.log("this is the users hospital", hospital)
+
 user.role = roles
 user.workplace = hospital
 
 
-  console.log("Look here for roles", roles)
-
-  console.log("This is the current User", user)
+ 
 const checkUser = await db.query (
  `SELECT * FROM users WHERE auth0_sub = $1` , 
  [user.sub]
 );
 
-console.log(checkUser.rows[0])
+
 
 const currentUser = checkUser.rows[0]
-console.log(currentUser)
+
 const currentUserSub = checkUser.auth0_sub
 
 // If the current user is not known then add the user to the database. This prevents user duplicates and is important for the audit trail.
@@ -117,7 +111,7 @@ if (!currentUser) {
       }
   
    
-   console.log("this is role", roles)
+   
   res.json(user)
 })
 
@@ -288,8 +282,12 @@ function checkDuplicateRequest(pageData, allRequests){
 }
 
 //First route to retrieve the stored form data. It sends the entire array of form data back to the frontend as a JSON response.
-app.get('/api/getformData', async (req, res) => {
-  
+app.get("/api/getformData", auth, async (req, res) => {
+   let currentUser = req.auth
+ console.log(currentUser)
+   
+if (currentUser['https://labflow.uk/referral_lab_id'].includes ("RCI") ) {
+
   try {
     const requests = await db.query(
       `SELECT 
@@ -330,24 +328,12 @@ app.get('/api/getformData', async (req, res) => {
 
   }
  //res.json(allRequests); 
+}else{
+console.log("You are not admin, you may not view data")
 
+}
 });
 
-
-
-/*app.get('/api/getformData/:requestId', (req, res) => {
-
-    const requestId = req.params.requestId; // Get the request ID from the URL parameters
-    formSubmissionHandler(requestId, allRequests)
-    
-    const match = formSubmissionHandler(requestId, allRequests)
-    res.json({match}); // Send the matched form data back to the frontend as a JSON response});
-});
-
-function formSubmissionHandler (requestId, allRequests){ // This function takes the request ID and the array of all requests as parameters. It uses the find method to search through the allRequests array for an item that has a requestId that matches the requestId parameter. If a match is found, it returns the matched item. If no match is found, it returns undefined.
-  const match = allRequests.find(item => item.requestId == requestId);
-  return match;
-}*/
 
 app.get('/api/getformData/fullRequestView', async (req, res) => {
   
@@ -390,7 +376,7 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
       ORDER BY requests.created_at DESC`
       
     );
-
+  
     // The join statement in the SQL query combines data from the requests and patients tables based on the patients_id foreign key. This allows us to retrieve both the request data and the associated patient demographics in a single query. The results are ordered by the created_at timestamp in descending order, so the most recent requests will be returned first.
 
     res.json(requests.rows);
@@ -402,7 +388,7 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
       fullMessage: err.message,
       fullError: err
     })
-
+  
   }
 
 });

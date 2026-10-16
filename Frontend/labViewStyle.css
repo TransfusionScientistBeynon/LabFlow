@@ -52,25 +52,145 @@ a:hover{
 
 }
 
+
+
+
+.profileInfoShort {
+  width:20%;
+  position:absolute;
+  right: 10px;
+  padding:15px;
+  background-color:white;
+  border-radius:4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transform-origin: top right;
+  transition:
+  opacity 0.2s ease,
+  transform 0.2s ease,
+  display 0.2s allow-discrete;
+}
+
+.profileInfoShort[hidden] {
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+}
+
+@starting-style {
+    .profileInfoShort:not([hidden]) {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+}
+
+
+.profileInfoShort strong{
+  color:#202B3A
+
+ 
+
+}
+
+
+.nameSignIn span{
+  display:flex;
+  padding:5px;
+
+}
+.nameSignIn img{
+   clip-path: circle(50%);
+  max-height:50px; 
+  max-width:50px;
+}
+
+.nameSignIn span{
+color: #70738C;
+
+}
+
+.workplace{
+  border-top:2px solid #e7eaf0;
+
+}
+
+.signOutBorder{
+  display:flex;
+  width:100%;
+  border-top:2px solid #e7eaf0;
+
+}
+
+
 .signOut{
+  margin-top:5px;
+  display:flex;
+  padding:10px;
+  border-radius:3px;
+  
+  color:#b13c3a;
+  cursor:pointer;
+  align-items:center;
+
+   background: transparent;
+    box-shadow: none;
+    transition: background-color 0.2s ease;
+  
+}
+
+.signOut strong{
+ 
+  color:#b13c3a;
+
+}
+
+
+.signOut:hover{
+  background-color: #fff0f0;
+
+}
+
+
+.profileInfoShort a{
   color:black;
 
 }
 
-.headerLinks{
+.profileInfoShort img{
+  max-height:50px;
+  max-width:50px;
+
+}
+
+.headerButtons{
   display:flex;
   flex-direction:row;
   width:100%;
-  justify-content:center;
+  justify-content:right;
   align-items:center;
+}
+
+.headerButtons button{
+  color:#005EB8;
+  background-color:white;
+  padding:0.5rem;
+  border: solid white;
+  border-radius:4px;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 600;
+  margin-right:2%
 
 }
+
 
 .profilePictureContainer {
  display:flex;
 justify-content: right;
-margin-right:5%;
-width:100%;
+margin-right:0.2%;
+width:6%;
 
 }
 
@@ -93,12 +213,24 @@ width:100%;
   }
 
 .sectionHeader{
-  color:rgb(60, 58, 58);
-  margin-left:4%;
-  font-size:1.5rem;
+  display:flex;
+  flex-direction:column;
+  margin-left:3.5%;
   font-family: Frutiger W01,arial,sans-serif;
-  font-weight:600;
-  
+
+}
+
+.sectionHeader h2{
+  font-style:bold;
+  font-size:1.8rem;
+  color:rgb(60, 58, 58);
+  margin-bottom:0.4rem;
+}
+
+.sectionHeader p{
+  color: #697586;
+  font-size:1.4rem;
+  margin-top:0rem;
   
 }
   
@@ -294,89 +426,3 @@ td:last-child {
 
 }
 
-/*
-    text-size-adjust: 100%;
-    font-family: Frutiger W01,arial,sans-serif;
-    --nhsuk-frontend-version: "10.4.2";
-    --nhsuk-breakpoint-mobile: 20rem;
-    --nhsuk-breakpoint-tablet: 40.0625rem;
-    --nhsuk-breakpoint-desktop: 48.0625rem;
-    --nhsuk-breakpoint-large-desktop: 61.875rem;
-    --nhsuk-blue-colour: #005eb8;
-    --nhsuk-white-colour: #fff;
-    --nhsuk-black-colour: #212b32;
-    --nhsuk-green-colour: #007f3b;
-    --nhsuk-purple-colour: #330072;
-    --nhsuk-dark-pink-colour: #7c2855;
-    --nhsuk-red-colour: #d5281b;
-    --nhsuk-yellow-colour: #ffeb3b;
-    --nhsuk-dark-blue-colour: #003087;
-    --nhsuk-pale-yellow-colour: #fff9c4;
-    --nhsuk-warm-yellow-colour: #ffb81c;
-    --nhsuk-orange-colour: #ed8b00;
-    --nhsuk-aqua-green-colour: #00a499;
-    --nhsuk-pink-colour: #ae2573;
-    --nhsuk-grey-1-colour: #4c6272;
-    --nhsuk-grey-2-colour: #768692;
-    --nhsuk-grey-3-colour: #aeb7bd;
-    --nhsuk-grey-4-colour: #d8dde0;
-    --nhsuk-grey-5-colour: #f0f4f5;
-    --nhsuk-brand-colour: #005eb8;
-    --nhsuk-text-colour: #212b32;
-    --nhsuk-reverse-text-colour: #fff;
-    --nhsuk-template-background-colour: #d8dde0;
-    --nhsuk-body-background-colour: #f0f4f5;
-    --nhsuk-card-background-colour: #fff;
-    --nhsuk-print-text-colour: #000;
-    --nhsuk-secondary-text-colour: #4c6272;
-    --nhsuk-focus-colour: #ffeb3b;
-    --nhsuk-focus-text-colour: #212b32;
-    --nhsuk-error-colour: #d5281b;
-    --nhsuk-success-colour: #007f3b;
-    --nhsuk-border-colour: #d8dde0;
-    --nhsuk-border-hover-colour: #aeb7bd;
-    --nhsuk-secondary-border-colour: hsla(0,0%,100%,.2);
-    --nhsuk-reverse-border-colour: #337ec6;
-    --nhsuk-input-border-colour: #4c6272;
-    --nhsuk-hover-colour: #aeb7bd;
-    --nhsuk-input-background-colour: #fff;
-    --nhsuk-code-colour: #d5281b;
-    --nhsuk-link-colour: #005eb8;
-    --nhsuk-link-visited-colour: #330072;
-    --nhsuk-link-hover-colour: #7c2855;
-    --nhsuk-link-active-colour: #002f5c;
-    --nhsuk-button-colour: #007f3b;
-    --nhsuk-button-text-colour: #fff;
-    --nhsuk-button-hover-colour: #00662f;
-    --nhsuk-button-active-colour: #00401e;
-    --nhsuk-button-shadow-colour: #00401e;
-    --nhsuk-secondary-button-colour: transparent;
-    --nhsuk-secondary-button-solid-background-colour: #fff;
-    --nhsuk-secondary-button-border-colour: #005eb8;
-    --nhsuk-secondary-button-text-colour: #005eb8;
-    --nhsuk-secondary-button-hover-colour: #d9e7f4;
-    --nhsuk-secondary-button-active-colour: #c7dcef;
-    --nhsuk-secondary-button-shadow-colour: #005eb8;
-    --nhsuk-reverse-button-colour: #fff;
-    --nhsuk-reverse-button-text-colour: #212b32;
-    --nhsuk-reverse-button-hover-colour: #d9d9d9;
-    --nhsuk-reverse-button-active-colour: #b3b3b3;
-    --nhsuk-reverse-button-shadow-colour: #b3b3b3;
-    --nhsuk-warning-button-colour: #d5281b;
-    --nhsuk-warning-button-hover-colour: #aa2016;
-    --nhsuk-warning-button-active-colour: #6b140e;
-    --nhsuk-warning-button-shadow-colour: #6b140e;
-    --nhsuk-login-button-colour: #005eb8;
-    --nhsuk-login-button-hover-colour: #004b93;
-    --nhsuk-login-button-active-colour: #002f5c;
-    --nhsuk-login-button-shadow-colour: #002f5c;
-    -webkit-font-smoothing: antialiased;
-    color: #212b32;
-    box-sizing: inherit;
-    display: block;
-    font-weight: 600;
-    margin-top: 0;
-    font-size: 3rem;
-    line-height: 1.125;
-    margin-bottom: 48px;
-    max-width: 14.5em;

@@ -3,8 +3,48 @@ const BASE_URL = window.location.origin;
 const token = window.getAuth0Token();
 
 let currentUser = ""
-
 retrieveUserInfo()
+
+
+//Used to establish page the page state ? Outstanding requests or pastRequest View
+const outstandingRequests = document.getElementById("outstandingRequests");
+const pastRequests = document.getElementById("pastRequests")
+let pageDisplayed = {
+    outstanding_requests: false,
+    pastRequests: false
+
+}
+
+
+outstandingRequests.addEventListener("click", decidePageState)
+pastRequests.addEventListener("click", decidePageState)
+
+
+
+function decidePageState(event){
+ console.log("Function Running")
+ console.log("Button clicked is", event.target.id)
+    if (event.target.id === "outstandingRequests"){
+        pageDisplayed.outstanding_requests = true;
+        pageDisplayed.pastRequests = false;
+        console.log(pageDisplayed.outstanding_requests)
+        console.log(pageDisplayed.pastRequests)
+        
+        renderTable();
+
+    }
+    if (event.target.id === "pastRequests"){
+        pageDisplayed.outstanding_requests = false;
+        pageDisplayed.pastRequests = true;
+
+        renderTable();
+
+    }
+
+
+}
+
+ retrieveRequestData();
 
 
 async function logout(){
@@ -42,12 +82,11 @@ return user
 
 async function updateProfileInfo(user){
 
-const profilePicture = document.getElementById("profilePicture")
-const profileInformationElement = document.getElementById("profileInformation");
+const profilePicture = document.getElementById("profilePicture");
+
 
 profilePicture.src = user.picture
 
-profileInformationElement.hidden = true;
 
 
 profilePicture.addEventListener("click", async () =>{
@@ -56,48 +95,78 @@ profilePicture.addEventListener("click", async () =>{
 
 })
 
-// profilePicture.addEventListener("click" , hideProfileWindow(event))
 
 
-console.log("THIS IS THE TOKEN:", token)
 async function renderProfileWindow(event, user){
     
-    console.log(user)
+   const profileMenu = document.getElementById("profileInfoShort")
 
-    if (profileInformationElement.hidden === true){
+    if (profileMenu.hidden === true){
         
-    const profileInfoShort = document.getElementById("profileInfoShort")
+    profileMenu.innerHTML = `
+
+            <div id="nameSignIn" class="nameSignIn">
+            <span> <img src="${user.picture}"/>  </span>
+            <span> <strong> ${"         " + user.name} </strong> </span>
+            <span> <p> Signed in </p> </span>
+            </div>
+
+            <div id="workplace" class="workplace">
+            <h4> WORKPLACE </h4>
+            <span> <img src="Images/WorkplaceIcon.png"/> ${user.workplace} </span>
+            </div>
+
+            <div id="role" class="role">
+            <h4> ROLE </h4>
+            <span> <img src="Images/RoleIcon.png"/> ${user.role} </span>
+            </div>
+            
+            <div class="signOutBorder"> </div>
+
+            <div id="signOut" class="signOut" onclick='logout()'>
+            <span> <img src="Images/SignOutIcon.png"/>  </span>
+            <span> <strong> Sign out </strong> </span>
+            </div>
     
-    profileInfoShort.innerHTML = `
-    <th> Name: </th> 
-    <td> ${user.name} </td>
-    <th> Hospital: </th>
-    <td> ${user.workplace} </td>
-    <th> Role: </th>
-    <td> ${user.role} </td>
-    <th> Sign Out </th>
-    <td> <a class="signOut" onclick='logout()'> Sign Out </a> </td>
     `
-    
+         profileMenu.hidden = false;
 
-         profileInformationElement.hidden = false;
-        console.log(profileInformationElement.hidden)
-
-    }else if (profileInformationElement.hidden === false){
-        profileInformationElement.hidden = true;
+    }else if (profileMenu.hidden === false){
+        profileMenu.hidden = true;
     }
 
 }
 
-/*function hideProfileWindow(event){
-    profileInformationElement.hidden = true;
-
-} */
-
 }
 
 
 
+
+
+
+async function retrieveRequestData(){
+    console.log("request DATA IS RUNNING")
+    const functionToken = await window.getAuth0Token()
+
+    await fetch("/api/getformData", {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${functionToken}`
+    }
+
+})
+
+.then (res => res.json())
+.then (allRequestData => { 
+allRequests = allRequestData;
+console.log("request data from backend received:", allRequests)
+decidePageState()
+
+})
+
+}
+ // without this the table doesn't render until the page is refreshed. This is because the fetch request is asynchronous and the table is trying to render before the data has been received from the backend. By calling renderTable() after the data has been received, it ensures that the table is rendered with the correct data.
 
 
 
@@ -105,23 +174,11 @@ async function renderProfileWindow(event, user){
 
 let allRequests = [];
 let tableDataHTML = ""
-fetch(`${BASE_URL}/api/getformData`,{
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json"
-    }
-
-})
 
 
 
-.then (res => res.json())
-.then (allRequestData => { 
-allRequests = allRequestData;
-console.log("request data from backend received:", allRequests)
-renderTable(); // without this the table doesn't render until the page is refreshed. This is because the fetch request is asynchronous and the table is trying to render before the data has been received from the backend. By calling renderTable() after the data has been received, it ensures that the table is rendered with the correct data.
 
-})
+
 
 
 
@@ -176,7 +233,8 @@ document.getElementById("status");
 
 function renderTable(){
 console.log(allRequests)
-
+console.log(pageDisplayed.outstanding_requests)
+if (pageDisplayed.outstanding_requests === true){
 
   tableDataHTML = ""
     tableData.innerHTML = tableDataHTML;
@@ -292,7 +350,7 @@ console.log(item.request_status)
 });
     tableData.innerHTML = tableDataHTML;
 
-
+}
 }
 
 
