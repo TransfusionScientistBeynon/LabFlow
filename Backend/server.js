@@ -70,6 +70,7 @@ app.post('/api/getUserInfo', auth, async (req, res) => {
 const user = await response.json()
 
 const roles = await req.auth["https://labflow.uk/roles"];
+const labId = await req.auth["https://labflow.uk/referral_lab_id"]
 const hospital = await req.auth ["https://labflow.uk/referral_lab_name"];
 
 user.role = roles
@@ -91,7 +92,7 @@ const currentUserSub = checkUser.auth0_sub
 // If the current user is not known then add the user to the database. This prevents user duplicates and is important for the audit trail.
 if (!currentUser) {
 
-  user.authorisation_status = "pending"
+  user.authorisation_status = "Authorised"
 
   const userData = await db.query(
    `INSERT INTO users (auth0_sub, full_name, email, workplace, job_role, authorisation_status)
@@ -396,7 +397,7 @@ app.get('/api/getformData/fullRequestView', async (req, res) => {
 // A route to update the status of a request. 
 app.post('/api/validateStatusChange', auth, async (req, res) => {
 
-    const token = req.headers.authorization
+  const token = req.headers.authorization
   const currentUser = req.auth.sub
 
   console.log("This is the sub", currentUser)

@@ -8,6 +8,14 @@ job_role TEXT NOT NULL,
 authorisation_status TEXT NOT NULL
 ); 
 
+CREATE TABLE IF NOT EXISTS workplaces(
+id SERIAL PRIMARY KEY,
+hospital_name TEXT NOT NULL,
+telephone_number_routine_hours TEXT NOT NULL,
+telephone_number_out_of_hours TEXT NOT NULL,
+blood_bank_administrator TEXT NOT NULL
+);
+
 
 CREATE TABLE IF NOT EXISTS patients (
   id SERIAL PRIMARY KEY,
