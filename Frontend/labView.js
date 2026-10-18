@@ -102,7 +102,7 @@ async function logout(){
 
 await auth0.logout({
   logoutParams: {
-    returnTo: "https://labdash.uk.auth0.com/"
+    returnTo: "https://labflow-production-cbfd.up.railway.app"
   }
 });
 
