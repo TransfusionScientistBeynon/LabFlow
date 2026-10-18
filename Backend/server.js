@@ -117,6 +117,34 @@ if (!currentUser) {
 })
 
 
+app.post("/api/redirectUserBasedOnRole", auth, async (req, res) => {
+console.log("accessed")
+
+let redirectPage = ""
+
+const role = await req.auth["https://labflow.uk/roles"];
+
+if (role.includes("Admin" || "RCI")){
+
+  redirectPage = "labView"
+  res.status(200)
+  res.json(redirectPage)
+
+}else if (role.includes("hospitalStaff")){
+  redirectPage = "hospitalView"
+  res.json(redirectPage)
+
+}else if (!role){
+res.status(400)
+res.json ("An error has occurred. Please contact system administrator")
+
+}
+
+
+
+})
+
+
 
 //In memory storage that will act as a temporary database for the form data. This is just for demonstration purposes and should be replaced with a proper database in a production application.
 let allRequests = [];
@@ -131,6 +159,7 @@ const requestState = {
 
 }
 
+//This dictates the order that status changes should go through. This is used for error handling so if the request goes backwards the user has to validate why.
 const orderOfStateTransition = [
   requestState.requestSampleReceived, 
   requestState.SampleReceived,
@@ -283,13 +312,20 @@ function checkDuplicateRequest(pageData, allRequests){
 }
 
 //First route to retrieve the stored form data. It sends the entire array of form data back to the frontend as a JSON response.
-app.get("/api/getformData", auth, async (req, res) => {
+app.post("/api/getformData", auth, async (req, res) => {
+
+  const data = req.body;
+
+  console.log(data.pageDisplayed.outstanding_requests)
+
+  console.log(req.body, "This is the data from the labView page")
    let currentUser = req.auth
  console.log(currentUser)
    
 if (currentUser['https://labflow.uk/referral_lab_id'].includes ("RCI") ) {
 
-  try {
+  if (data.pageDisplayed.outstanding_requests) {
+
     const requests = await db.query(
       `SELECT 
         requests.id,
@@ -311,29 +347,53 @@ if (currentUser['https://labflow.uk/referral_lab_id'].includes ("RCI") ) {
         patients.hospital_number,
         patients.NHS_number
       FROM requests JOIN patients ON requests.patients_id = patients.id 
+      WHERE requests.request_status <> 'Complete'
       ORDER BY requests.created_at DESC`
       
     );
+  
+    res.json(requests.rows);
+
+  }else if (data.pageDisplayed.completedRequests){
+
+    const requests = await db.query(
+      
+      `
+      SELECT  
+        requests.id,
+        patients.forename,
+        patients.surname,
+        patients.date_of_birth,
+        patients.hospital_number,
+        patients.NHS_number,
+        requests.HospitalName,
+        requests.TestRequested,
+        requests.UnitsRequired,
+        requests.DateRequested,
+        requests.TimeRequested,
+        requests.request_status,
+        requests.created_at,
+        
+     
+        
+        patients.hospital_number,
+        patients.NHS_number
+
+        
+        FROM requests JOIN patients ON requests.patients_id = patients.id 
+        WHERE requests.request_status = 'Complete'
+      ORDER BY requests.created_at DESC
+      `
+  );
+  res.json(requests.rows);
+}
+}
+})
 
     // The join statement in the SQL query combines data from the requests and patients tables based on the patients_id foreign key. This allows us to retrieve both the request data and the associated patient demographics in a single query. The results are ordered by the created_at timestamp in descending order, so the most recent requests will be returned first.
-
-    res.json(requests.rows);
     
-  }catch (err){
-    console.error(err);
-    res.status(500).json(
-      {Message: "Unable to retrieve all requests from database",
-      fullMessage: err.message,
-      fullError: err
-    })
+ 
 
-  }
- //res.json(allRequests); 
-}else{
-console.log("You are not admin, you may not view data")
-
-}
-});
 
 
 app.get('/api/getformData/fullRequestView', async (req, res) => {
