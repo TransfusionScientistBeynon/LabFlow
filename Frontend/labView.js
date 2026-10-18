@@ -2,41 +2,92 @@
 const BASE_URL = window.location.origin;
 const token = window.getAuth0Token();
 
+
+const tableData =
+document.getElementById("tableData");
+
 let currentUser = ""
+let allRequests = [];
+let tableDataHTML = ""
+
 retrieveUserInfo()
+retrieveRequestData()
 
 
-//Used to establish page the page state ? Outstanding requests or pastRequest View
+//Used to establish page the page state ? Outstanding requests or Completed request View
 const outstandingRequests = document.getElementById("outstandingRequests");
-const pastRequests = document.getElementById("pastRequests")
+const completedRequests = document.getElementById("completedRequests");
+
+const outstanding_requests_header = document.getElementById("outstanding_requests_header")
+const completed_requests_header = document.getElementById("completed_requests_header")
+
+const outstanding_requests_para = document.getElementById("outstanding_requests_para")
+const completed_requests_para = document.getElementById("completed_requests_para")
+
 let pageDisplayed = {
-    outstanding_requests: false,
-    pastRequests: false
+    outstanding_requests: true,
+    completedRequests: false,
+
 
 }
 
-
-outstandingRequests.addEventListener("click", decidePageState)
-pastRequests.addEventListener("click", decidePageState)
+ // This function collects the data from the backend
 
 
 
+outstandingRequests.addEventListener("click", decidePageState) // Event listeners fo the page state buttons
+completedRequests.addEventListener("click", decidePageState)
+
+
+// This function decides the pages state when the user clicks on a button e.g. outstanding requests vs completed requests
 function decidePageState(event){
+
  console.log("Function Running")
  console.log("Button clicked is", event.target.id)
     if (event.target.id === "outstandingRequests"){
+
+        
         pageDisplayed.outstanding_requests = true;
-        pageDisplayed.pastRequests = false;
-        console.log(pageDisplayed.outstanding_requests)
-        console.log(pageDisplayed.pastRequests)
+        pageDisplayed.completedRequests = false;
+       
+        outstanding_requests_header.hidden = false;
+        completed_requests_header.hidden = true;
+
+        outstanding_requests_para.hidden = false;
+        completed_requests_para.hidden = true;
+
+        completedRequests.classList.add("completedRequests_inactive")
+        completedRequests.classList.remove("completedRequests")
+        
+        outstandingRequests.classList.add("outstandingRequests")
+        outstandingRequests.classList.remove("outstandingRequests_inactive")
+
+
+        retrieveRequestData();
         
         renderTable();
 
     }
-    if (event.target.id === "pastRequests"){
+    if (event.target.id === "completedRequests"){
         pageDisplayed.outstanding_requests = false;
-        pageDisplayed.pastRequests = true;
+        pageDisplayed.completedRequests = true;
 
+        console.log(completed_requests_header)
+
+        outstanding_requests_header.hidden = true;
+        completed_requests_header.hidden = false;
+
+        outstanding_requests_para.hidden = true;
+        completed_requests_para.hidden = false;
+
+        outstandingRequests.classList.add("outstandingRequests_inactive")
+        outstandingRequests.classList.remove("outstandingRequests")
+
+        completedRequests.classList.add("completedRequests")
+        completedRequests.classList.remove("completedRequests_inactive")
+
+
+        retrieveRequestData();
         renderTable();
 
     }
@@ -44,7 +95,7 @@ function decidePageState(event){
 
 }
 
- retrieveRequestData();
+
 
 
 async function logout(){
@@ -149,11 +200,16 @@ async function retrieveRequestData(){
     const functionToken = await window.getAuth0Token()
 
     await fetch("/api/getformData", {
-    method: 'GET',
+    method: 'POST',
     headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${functionToken}`
-    }
+    },
+
+    body: JSON.stringify({
+        pageDisplayed
+
+    })
 
 })
 
@@ -161,7 +217,7 @@ async function retrieveRequestData(){
 .then (allRequestData => { 
 allRequests = allRequestData;
 console.log("request data from backend received:", allRequests)
-decidePageState()
+renderTable();
 
 })
 
@@ -172,8 +228,8 @@ decidePageState()
 
 
 
-let allRequests = [];
-let tableDataHTML = ""
+
+
 
 
 
@@ -212,8 +268,7 @@ let reason = revertStatusReasonInput.value;
         console.log(reason)
 const valModalBox = document.getElementById("valModalBox")
 
-const tableData =
-document.getElementById("tableData");
+
 
 
 
@@ -233,8 +288,8 @@ document.getElementById("status");
 
 function renderTable(){
 console.log(allRequests)
-console.log(pageDisplayed.outstanding_requests)
-if (pageDisplayed.outstanding_requests === true){
+console.log("This is the state of page displayed", pageDisplayed.outstanding_requests)
+
 
   tableDataHTML = ""
     tableData.innerHTML = tableDataHTML;
@@ -321,10 +376,10 @@ console.log(item.request_status)
         
     }
 
-    
-    if (item.request_status !== `<img src=\"Images/testingCompleteButton.PNG\" alt=\"Request Complete\" class=\"statusImg\">`){
-    tableDataHTML += `<tr> </tr>`;
+    // This line of code dictates whether completed requests are shown in the table or not
+        console.log("Line 336, ", pageDisplayed.completedRequests)
 
+    
     tableDataHTML += 
     
     `<tr id=${item.id} class="requestRow">
@@ -346,12 +401,12 @@ console.log(item.request_status)
 
     }
 
-
-});
+    
+);
     tableData.innerHTML = tableDataHTML;
 
 }
-}
+
 
 
 //This Table data listener looks for when the user clicks an update button. When the status is updated it gets the buttons id and finds item id within all requests which matches the buttons Id
@@ -378,6 +433,8 @@ console.log(item.request_status)
     if (event.target.type === 'button'){
 
        const token = await window.getAuth0Token();
+
+       console.log("LOOKK HERE FOR BOOTY", token)
         
         fetch(`${BASE_URL}/api/validateStatusChange`,{
         method: "POST",
@@ -486,14 +543,14 @@ async function  validateReason(){
  reason = revertStatusReasonInput.value
     const submitAction = overlay.dataset.action
 
-
+const functionToken = await window.getAuth0Token();
 console.log(token)
 
  fetch(`${BASE_URL}/api/validateModalReason`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            "Authorization": `Bearer ${functionToken}`
             
         },
         body: JSON.stringify({
@@ -518,7 +575,9 @@ console.log(token)
         overlay.classList.remove("overlayActive")
         modalBox.hidden = true;
         resetCheckboxes();
-        window.location.reload();
+        
+        retrieveRequestData();
+        renderTable();
 
     }
         

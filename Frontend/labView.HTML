@@ -55,8 +55,8 @@
     <div id="navBar" class="navBar">
 
         <div id="headerButtons" class="headerButtons">
-        <button id="outstandingRequests">  Outstanding Requests </button>
-        <button id="pastRequests"> Past Requests </button> 
+        <button id="outstandingRequests" class="outstandingRequests">   Outstanding Requests </button>
+        <button id="completedRequests" class="completedRequests_inactive"> Completed Requests </button> 
         </div>
 
         <div id="profilePictureContainer" class="profilePictureContainer">
@@ -84,8 +84,10 @@
     <div id="tableContainer" class="tableContainer">
     
     <div id="sectionHeader" class="sectionHeader">
-    <span> <h2> Outstanding Requests </h2> </span>
-    <span> <p> Manage incoming requests and their progress </p> </span>
+    <span id="outstanding_requests_header"> <h2> Outstanding Requests </h2> </span>
+    <span id="completed_requests_header" hidden> <h2> Completed Requests </h2> </span>
+    <span id="completed_requests_para" hidden> <p> View previously completed requests</p></span>
+    <span id="outstanding_requests_para"> <p> Manage incoming requests and their progress </p> </span>
     </div>
 
     <div id="tableDiv" class="labView">

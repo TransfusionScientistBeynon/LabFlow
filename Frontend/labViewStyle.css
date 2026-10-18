@@ -53,8 +53,6 @@ a:hover{
 }
 
 
-
-
 .profileInfoShort {
   width:20%;
   position:absolute;
@@ -172,7 +170,8 @@ color: #70738C;
   align-items:center;
 }
 
-.headerButtons button{
+
+.outstandingRequests{
   color:#005EB8;
   background-color:white;
   padding:0.5rem;
@@ -181,6 +180,44 @@ color: #70738C;
   font-family: Frutiger W01,arial,sans-serif;
   font-size:12pt;
   font-weight: 600;
+  margin-right:2%
+
+
+}
+
+.completedRequests{
+  color:#005EB8;
+  background-color:white;
+  padding:0.5rem;
+  border: solid white;
+  border-radius:4px;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 600;
+  margin-right:2%
+
+}
+
+.outstandingRequests_inactive{
+  color:white;
+  background-color:#005EB8;
+  padding:0.5rem;
+  border:none;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 300;
+  margin-right:2%
+
+}
+
+.completedRequests_inactive{
+  color:white;
+  background-color:#005EB8;
+  padding:0.5rem;
+  border:none;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 300;
   margin-right:2%
 
 }
