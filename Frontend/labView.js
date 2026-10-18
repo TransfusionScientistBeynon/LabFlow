@@ -102,7 +102,7 @@ async function logout(){
 
 await auth0.logout({
   logoutParams: {
-    returnTo: window.location.origin
+    returnTo: "https://labdash.uk.auth0.com/"
   }
 });
 
