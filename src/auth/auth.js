@@ -73,45 +73,6 @@ export async function protectPage(){
 
 }
 
- //This function is called to redirect the user to the correct page based on their role.
-
-export async function redirectUserBasedOnRole(){ 
-
-    const functionToken = await getAuth0Token();
-
-
-await fetch("/api/redirectUserBasedOnRole",{ 
-    method:"POST",
-    headers:{
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${functionToken}`
-
-    },
-    
-
-
-})
-
-.then(res => res.json())
-.then (result => {
-   console.log(result)
-
-   if (result === "labView"){
-    window.location.href = "labView.HTML"
-
-    return;
-
-   }else if (result === "hospitalStaff"){
-    window.location.href = "hospitalView.html"
-    return;
-
-   }else if (result === "An error has occurred. Please contact system administrator"){
-    window.location.href = "error.html"
-
-   }
-})
-
-}
 
 
 
