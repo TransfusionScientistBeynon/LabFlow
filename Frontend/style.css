@@ -3,8 +3,29 @@
 
 
 body {
-    background-color: #F4F6F8;
-     font-family: Frutiger W01,arial,sans-serif;
+    background-color:#F4F6F8;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color:#212b32;
+    font-family: Frutiger W01,arial,sans-serif;
+}
+
+.tableContainer{
+    display:flex;
+    flex-direction:column;
+    width:80%;
+    height:100%;
+    margin-left:auto;
+    margin-right:auto;
+    color:white;
+  }
+
+.formContainer{
+  display:flex;
+  color:black;
+  width:100%
+
 }
 
 .overlayActive{
@@ -52,12 +73,7 @@ body {
 
 }
 
-
-.headerLogo {
-height: clamp(40px, 7vw, 100px);
-  padding: 0 1rem;
-
-}
+ 
 
 
 .headerLogo {
@@ -66,13 +82,210 @@ height: clamp(40px, 7vw, 100px);
 
 }
 
+
+.headerLogo {
+height: clamp(40px, 7vw, 100px);
+  padding: 0 1rem;
+
+}
+
+
+ 
 .navBar{
   display:flex;
   margin-top:auto;
   margin-bottom:auto;
-  margin-left:10%;
+  margin-left:auto;
   padding:auto;
+  width:100%;
 
+}
+
+
+
+.headerButtons{
+  display:flex;
+  flex-direction:row;
+  width:100%;
+  justify-content:right;
+  align-items:center;
+}
+
+
+.newRequest{
+  color:#005EB8;
+  background-color:white;
+  padding:0.5rem;
+  border: solid white;
+  border-radius:4px;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 600;
+  margin-right:2%
+
+
+}
+
+.completedRequests{
+  color:#005EB8;
+  background-color:white;
+  padding:0.5rem;
+  border: solid white;
+  border-radius:4px;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 600;
+  margin-right:2%
+
+}
+
+.newRequest_inactive{
+  color:white;
+  background-color:#005EB8;
+  padding:0.5rem;
+  border:none;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 300;
+  margin-right:2%
+
+}
+
+.completedRequests_inactive{
+  color:white;
+  background-color:#005EB8;
+  padding:0.5rem;
+  border:none;
+  font-family: Frutiger W01,arial,sans-serif;
+  font-size:12pt;
+  font-weight: 300;
+  margin-right:2%
+
+}
+
+.profileInfoShort {
+  width:20%;
+  position:absolute;
+  right: 10px;
+  padding:15px;
+  background-color:white;
+  border-radius:4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transform-origin: top right;
+  transition:
+  opacity 0.2s ease,
+  transform 0.2s ease,
+  display 0.2s allow-discrete;
+}
+
+.profileInfoShort[hidden] {
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+}
+
+@starting-style {
+    .profileInfoShort:not([hidden]) {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+}
+
+
+.profileInfoShort strong{
+  color:#202B3A
+
+ 
+
+}
+
+
+.nameSignIn span{
+  display:flex;
+  padding:5px;
+
+}
+.nameSignIn img{
+   clip-path: circle(50%);
+  max-height:50px; 
+  max-width:50px;
+}
+
+.nameSignIn span{
+color: #70738C;
+
+}
+
+.workplace{
+  border-top:2px solid #e7eaf0;
+
+}
+
+.signOutBorder{
+  display:flex;
+  width:100%;
+  border-top:2px solid #e7eaf0;
+
+}
+
+
+.signOut{
+  margin-top:5px;
+  display:flex;
+  padding:10px;
+  border-radius:3px;
+  
+  color:#b13c3a;
+  cursor:pointer;
+  align-items:center;
+
+   background: transparent;
+    box-shadow: none;
+    transition: background-color 0.2s ease;
+  
+}
+
+.signOut strong{
+ 
+  color:#b13c3a;
+
+}
+
+
+.signOut:hover{
+  background-color: #fff0f0;
+
+}
+
+
+.profileInfoShort a{
+  color:black;
+
+}
+
+.profileInfoShort img{
+  max-height:50px;
+  max-width:50px;
+
+}
+
+
+.profilePictureContainer {
+ display:flex;
+justify-content: right;
+margin-right:0.2%;
+width:6%;
+
+}
+
+.profilePictureContainer  img{
+
+ clip-path: circle(50%);
+  max-height:50px; 
+  max-width:50px;
 }
 
 a{
@@ -90,12 +303,27 @@ a:hover{
 
 }
 
+
 .sectionHeader{
- color:rgb(60, 58, 58);
-  margin-left:10%;
-  font-size:1.5rem;
+  display:flex;
+  flex-direction:column;
+  margin-left:3.5%;
   font-family: Frutiger W01,arial,sans-serif;
-  font-weight:600;
+
+}
+
+.sectionHeader h2{
+  font-style:bold;
+  font-size:1.8rem;
+  color:rgb(60, 58, 58);
+  margin-bottom:0.4rem;
+}
+
+.sectionHeader p{
+  color: #697586;
+  font-size:1.4rem;
+  margin-top:0rem;
+  
 }
 
 h1 {
@@ -135,7 +363,7 @@ h1 {
     font-family: Frutiger W01,arial,sans-serif;
     text-align: center;         /* centers text within elements */
     background-color:white; 
-    max-width: 80%; /* limits the width of the container */
+    width:90%; /* limits the width of the container */
     margin:0 auto; /* centers the container horizontally */
     padding: 10px; /* adds some padding around the content */
     list-style-type: none;

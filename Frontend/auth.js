@@ -68,7 +68,7 @@ async function protectPage(){
   overlay.classList.remove("overlayActive")
   overlay.classList.add("overlayInactive")
 
-  redirectUserBasedOnRole()
+ // Need to reactivate this redirectUserBasedOnRole() !!!!!!!!
 
 }
 

@@ -2,7 +2,97 @@
 const BASE_URL = window.location.origin;
 
 
+async function logout(){
 
+await auth0.logout({
+  logoutParams: {
+    returnTo: "https://labflow-production-cbfd.up.railway.app"
+  }
+});
+
+}   
+
+retrieveUserInfo()
+
+async function retrieveUserInfo(){
+
+const functionToken =  await window.getAuth0Token();
+console.log(functionToken)
+
+    const response = await fetch ("/api/getUserInfo", {
+    method: "POST",
+    headers: { 
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${functionToken}`
+    }
+});
+    
+const user = await response.json();
+console.log(user)
+
+updateProfileInfo(user)
+return user
+}
+
+
+
+async function updateProfileInfo(user){
+
+const profilePicture = document.getElementById("profilePicture");
+
+
+profilePicture.src = user.picture
+
+
+
+profilePicture.addEventListener("click", async () =>{
+
+    renderProfileWindow(event, user)
+
+})
+
+
+
+async function renderProfileWindow(event, user){
+    
+   const profileMenu = document.getElementById("profileInfoShort")
+
+    if (profileMenu.hidden === true){
+        
+    profileMenu.innerHTML = `
+
+            <div id="nameSignIn" class="nameSignIn">
+            <span> <img src="${user.picture}"/>  </span>
+            <span> <strong> ${"         " + user.name} </strong> </span>
+            <span> <p> Signed in </p> </span>
+            </div>
+
+            <div id="workplace" class="workplace">
+            <h4> WORKPLACE </h4>
+            <span> <img src="Images/WorkplaceIcon.png"/> ${user.workplace} </span>
+            </div>
+
+            <div id="role" class="role">
+            <h4> ROLE </h4>
+            <span> <img src="Images/RoleIcon.png"/> ${user.role} </span>
+            </div>
+            
+            <div class="signOutBorder"> </div>
+
+            <div id="signOut" class="signOut" onclick='logout()'>
+            <span> <img src="Images/SignOutIcon.png"/>  </span>
+            <span> <strong> Sign out </strong> </span>
+            </div>
+    
+    `
+         profileMenu.hidden = false;
+
+    }else if (profileMenu.hidden === false){
+        profileMenu.hidden = true;
+    }
+
+}
+}
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -89,12 +179,6 @@ crossmatchInfo.hidden = true;
 
 const currentHbInput =
 document.getElementById("currentHbInput");
-
-const hospitalNameList =
-document.getElementById("hospitalNameList")
-
-const labContactNumberInput =
-document.getElementById("labContactNumberInput");
 
 const aboGroupInput =
 document.getElementById("aboGroupInput");
@@ -187,10 +271,6 @@ const valTx3Month=
 document.getElementById("valTx3Month");
 
 
-const valHospitalName=
-document.getElementById("valHospitalName")
-valHospitalName.hidden = true;
-
 const valAboGroup = 
 document.getElementById("valAboGroup");
 valAboGroup.hidden = true;
@@ -198,10 +278,6 @@ valAboGroup.hidden = true;
 const valRhDGroup =
 document.getElementById("valRhDGroup");
 valRhDGroup.hidden=true;
-
-const valContactNumber =
-document.getElementById("valContactNumber")
-valContactNumber.hidden = true;
 
 const valSerologicalResults =
 document.getElementById("valSerologicalResults");
@@ -295,8 +371,6 @@ bleedinghaemolysis.addEventListener("blur",validateBleeding);
 currentHbInput.addEventListener("blur", validateCurrentHb);
 clinicalInfoInput.addEventListener("blur", validateClinicalDetails);
 recentTxInput.addEventListener("blur", validateRecentTx3month);
-hospitalNameList.addEventListener("blur", validateHospitalName);
-labContactNumberInput.addEventListener("blur", validateLabContactNumber);
 aboGroupInput.addEventListener("blur", validateAboGroup);
 rhdGroupInput.addEventListener("blur", validateRhdGroup);
 serologicalResultsInput.addEventListener("blur", validateSerologicalResults);
@@ -411,25 +485,6 @@ function validateRecentTxDate(){
 
                 }
 
-
-function validateHospitalName(){
-    if (!hospitalNameList.value){
-        valHospitalName.hidden = false;
-
-    }else{
-        valHospitalName.hidden = true;
-    }
-}
-
-function validateLabContactNumber(){
-    if (!labContactNumberInput.value) {
-        valContactNumber.hidden = false;
-
-    }else{
-        valContactNumber.hidden = true;
-
-    }
-}
 
 function validateAboGroup(){
     if (!aboGroupInput.value){
@@ -752,8 +807,6 @@ function performFullValidationCheck(){
     validateClinicalDetails();
     validateRecentTx3month();
     validateRecentTxDate();
-    validateHospitalName();
-    validateLabContactNumber();
     validateAboGroup();
     validateRhdGroup();
     validateSerologicalResults();
@@ -778,8 +831,6 @@ function performFullValidationCheck(){
     validateClinicalDetails();
     validateRecentTx3month();
     validateRecentTxDate();
-    validateHospitalName();
-    validateLabContactNumber();
     validateAboGroup();
     validateRhdGroup();
     validateSerologicalResults();
@@ -800,7 +851,10 @@ function performFullValidationCheck(){
 
 }
 
-function submissionErrorCheck(){
+async function submissionErrorCheck(){
+
+    
+
     const validationError =
     document.querySelectorAll(".validation")
 
@@ -820,11 +874,12 @@ function submissionErrorCheck(){
 
 function getIdofCheckedBoxes(){
     const checkedboxes = document.querySelectorAll('input[name="spqrBoxes"]:checked');
-
-
 }
 
-function collectRequest(){
+async function collectRequest(){
+
+    const functionToken = await window.getAuth0Token()
+    console.log(functionToken)
 
     const checkedboxes = document.querySelectorAll('input[name="spqrBoxes"]:checked');
 
@@ -861,8 +916,7 @@ const requestState = {
     PatientTransfusedInLastThreeMonths: recentTxInput.value,
     TransfusionDate: datetxinput.value,
 
-    HospitalName: hospitalNameList.value,
-    LaboratoryContactNumber: labContactNumberInput.value,
+    
     ABOGroup: aboGroupInput.value,
     RhDGroup: rhdGroupInput.value,
     SerologicalResults: serologicalResultsInput.value,
@@ -897,7 +951,8 @@ const requestState = {
  fetch(`${BASE_URL}/api/formSubmit`,{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
     method:"POST",
     headers:{
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${functionToken}`
 
     },
     body: JSON.stringify(formData)

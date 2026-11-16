@@ -1,0 +1,912 @@
+// server.js
+const express = require('express');
+const path = require('path');
+const auth = require("./middleware/auth"); //required to connect middleware for authentication
+
+
+const app = express();
+const cors = require('cors'); // means app will use CORS
+
+// This allows us to accept JSON from the frontend and use CORS
+app.use(cors());
+app.use(express.json()); // This allows us to parse JSON bodies in incoming requests
+app.use(express.static(path.join(__dirname, '../Frontend')));
+
+//Routes for authentication
+// Public route (no login needed)
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
+
+// Protected route (requires Auth0 login)
+app.get("/api/protected", auth, (req, res) => {
+  console.log("AUTH INFORMATION:", req.auth);
+  res.json({
+    message: "You are authenticated"
+   
+  });
+});
+
+
+// database initialization code
+const fs = require("fs");
+const db = require('./db/connection');
+
+async function initDb() {
+  const sql = fs.readFileSync(
+    path.join(__dirname, "db", "init.sql"),
+    "utf-8"
+  );
+
+  await db.query(sql);
+  console.log("Database initialized ✅");
+}
+
+//Code to test Database connection
+db.connect()
+  .then(async () => {
+    console.log("Connected to PostgreSQL 🎉");
+    await initDb();
+  })
+  .catch(console.error);
+
+
+
+  //This route is used for obtaining the users details on login directly from the server
+
+app.post('/api/getUserInfo', auth, async (req, res) => {
+
+    const response = await fetch(
+            "https://labdash.uk.auth0.com/userinfo",
+            {
+                headers: {
+                    Authorization: `${req.headers.authorization}`
+                }
+            }
+        );
+
+        
+
+const user = await response.json()
+
+const roles = await req.auth["https://labflow.uk/roles"];
+const labId = await req.auth["https://labflow.uk/referral_lab_id"]
+const hospital = await req.auth ["https://labflow.uk/referral_lab_name"];
+
+user.role = roles
+user.workplace = hospital
+
+
+ 
+const checkUser = await db.query (
+ `SELECT * FROM users WHERE auth0_sub = $1` , 
+ [user.sub]
+);
+
+
+
+const currentUser = checkUser.rows[0]
+
+const currentUserSub = checkUser.auth0_sub
+
+// If the current user is not known then add the user to the database. This prevents user duplicates and is important for the audit trail.
+if (!currentUser) {
+
+  user.authorisation_status = "Authorised"
+
+  const userData = await db.query(
+   `INSERT INTO users (auth0_sub, full_name, email, workplace, job_role, authorisation_status)
+        VALUES ($1, $2, $3, $4, $5, $6) 
+        RETURNING id`,
+        [
+        user.sub,
+        user.name,
+        user.email,
+        user.workplace,
+        user.role,
+        user.authorisation_status,
+      ]
+
+        );
+          
+      }
+  
+   
+   
+  res.json(user)
+})
+
+
+app.post("/api/redirectUserBasedOnRole", auth, async (req, res) => {
+console.log("accessed")
+
+let redirectPage = ""
+
+const role = await req.auth["https://labflow.uk/roles"];
+
+if (role.includes("Admin" || "RCI")){
+
+  redirectPage = "labView"
+  res.status(200)
+  res.json(redirectPage)
+
+}else if (role.includes("hospitalStaff")){
+  redirectPage = "hospitalView"
+  res.json(redirectPage)
+
+}else if (!role){
+res.status(400)
+res.json ("An error has occurred. Please contact system administrator")
+
+}
+
+
+
+})
+
+
+
+//In memory storage that will act as a temporary database for the form data. This is just for demonstration purposes and should be replaced with a proper database in a production application.
+let allRequests = [];
+
+//Variable used to assign form data with request State for audit trail.
+const requestState = {
+    requestReceived: "Request Received",
+    requestSampleReceived : "Sample received in laboratory",
+    requestInProgress : "Sample in progress",
+    requestComplete : "Complete"
+
+
+}
+
+//This dictates the order that status changes should go through. This is used for error handling so if the request goes backwards the user has to validate why.
+const orderOfStateTransition = [
+  requestState.requestSampleReceived, 
+  requestState.SampleReceived,
+  requestState.requestInProgress,
+  requestState.requestComplete
+
+]
+
+
+
+
+//First route to handle form submission from the frontend. It receives the form data, stores it in the in-memory array.
+//Also checks for duplicate requests using the checkDuplicateRequest function and if a duplicate is found it returns a 400 status code with an error message. If no duplicate is found it stores the form data and returns a success message.
+
+
+app.post('/api/formSubmit', async (req, res) => {
+    const pageData = req.body; // Get the form data from the request body
+  
+
+  const duplicateRequest = checkDuplicateRequest(pageData, allRequests);
+
+  if (duplicateRequest){
+    console.log("duplicate is: ", duplicateRequest);
+    res.status(400).json({ 
+    message: "Duplicate request detected. Form data not stored.",
+    duplicate: duplicateRequest
+  });
+  }
+
+try {
+    pageData.TransfusionDate = pageData.TransfusionDate || null; 
+    pageData.DateOfSampleArrival = pageData.DateOfSampleArrival || null;
+    pageData.TimeOfSampleArrival = pageData.TimeOfSampleArrival || null;
+    pageData.UnitsRequired = pageData.UnitsRequired || null;
+
+    allRequests.push(pageData);// Store the form data in the in-memory array
+    console.log("duplicate is: ", duplicateRequest);
+
+      const patientDemoData = await db.query(
+      `INSERT INTO patients (forename, surname, date_of_birth, hospital_number, NHS_number)
+        VALUES ($1, $2, $3, $4, $5) 
+        RETURNING id`,
+        [
+        pageData.Forename,
+        pageData.Surname,
+        pageData.DateOfBirth,
+        pageData.HospitalNumber,
+        pageData.NHSNumber
+      ]
+
+        );
+   const patientId = patientDemoData.rows[0].id;
+
+   const requestData = await db.query(
+  `INSERT INTO requests (
+  patients_id,
+  PatientStability,
+  BleedingOrHaemolysing,
+  Hb,
+  ClinicalDetails,
+  PatientTransfusedInLastThreeMonths,
+  TransfusionDate, 
+  HospitalName,
+  LaboratoryContactNumber,
+  ABOGroup,
+  RhDGroup,
+  SerologicalResults,
+  TestRequested,
+  AdditionalInfo,
+  DateRequested,
+  TimeRequested,
+  SampleTransportMethod,
+  DateOfSampleArrival,
+  TimeOfSampleArrival,
+  UnitsRequired,
+  SpecialRequirements,
+
+  Requester,
+  request_status)
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
+  RETURNING id`,
+  [
+    patientId,
+    pageData.PatientStability,
+    pageData.BleedingOrHaemolysing,
+    pageData.Hb,
+    pageData.ClinicalDetails,
+    pageData.PatientTransfusedInLastThreeMonths,
+    pageData.TransfusionDate,
+    pageData.HospitalName,
+    pageData.LaboratoryContactNumber,
+    pageData.ABOGroup,
+    pageData.RhDGroup,
+    pageData.SerologicalResults,
+    pageData.TestRequested,
+    pageData.AdditionalInfo,
+    pageData.DateRequested,
+    pageData.TimeRequested,
+    pageData.SampleTransportMethod,
+    pageData.DateOfSampleArrival,
+    pageData.TimeOfSampleArrival,
+    pageData.UnitsRequired,
+    pageData.SpecialRequirements,
+
+   
+    pageData.requester || "Unknown Requester",
+    requestState.requestReceived,
+    
+   
+    
+  ]
+  
+   );
+      
+
+    return res.status(200).json({ 
+      message: "Successfully submitted and sent to database",
+      Data_Submitted: patientDemoData.rows[0] && requestData.rows[0],
+      duplicateRequest: duplicateRequest,
+  
+      
+    });
+    
+  }
+
+  catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+
+  }
+});
+
+
+function checkDuplicateRequest(pageData, allRequests){
+
+    const duplicateRequest = allRequests.some(item =>  //This some loop looks for a condition if all the key values of the form data match an existing request in the allRequests array. If a match is found it returns true and if not it returns false. This is used to prevent duplicate requests from being stored in the in-memory array.
+    pageData.forename === item.forename && 
+    pageData.surname === item.surname &&
+    pageData.dateOfBirth === item.dateOfBirth && 
+    pageData.testRequested === item.testRequested &&
+    pageData.DateRequested === item.DateRequested &&
+    pageData.TimeRequested === item.TimeRequested &&
+    pageData.hospitalNumber === item.hospitalNumber &&
+    pageData.NHSNumber === item.NHSNumber
+    
+     
+    
+    );
+   return duplicateRequest;
+}
+
+//First route to retrieve the stored form data. It sends the entire array of form data back to the frontend as a JSON response.
+app.post("/api/getformData", auth, async (req, res) => {
+
+  const data = req.body;
+
+  console.log(data.pageDisplayed.outstanding_requests)
+
+  console.log(req.body, "This is the data from the labView page")
+   let currentUser = req.auth
+ console.log(currentUser)
+   
+//if (currentUser['https://labflow.uk/referral_lab_id'].includes ("RCI") ) {
+
+  if (data.pageDisplayed.outstanding_requests) {
+
+    const requests = await db.query(
+      `SELECT 
+        requests.id,
+        patients.forename,
+        patients.surname,
+        patients.date_of_birth,
+        patients.hospital_number,
+        patients.NHS_number,
+        requests.HospitalName,
+        requests.TestRequested,
+        requests.UnitsRequired,
+        requests.DateRequested,
+        requests.TimeRequested,
+        requests.request_status,
+        requests.created_at,
+        
+     
+        
+        patients.hospital_number,
+        patients.NHS_number
+      FROM requests JOIN patients ON requests.patients_id = patients.id 
+      WHERE requests.request_status <> 'Complete'
+      ORDER BY requests.created_at DESC`
+      
+    );
+  
+    res.json(requests.rows);
+
+  }else if (data.pageDisplayed.completedRequests){
+
+    const requests = await db.query(
+      
+      `
+      SELECT  
+        requests.id,
+        patients.forename,
+        patients.surname,
+        patients.date_of_birth,
+        patients.hospital_number,
+        patients.NHS_number,
+        requests.HospitalName,
+        requests.TestRequested,
+        requests.UnitsRequired,
+        requests.DateRequested,
+        requests.TimeRequested,
+        requests.request_status,
+        requests.created_at,
+        
+     
+        
+        patients.hospital_number,
+        patients.NHS_number
+
+        
+        FROM requests JOIN patients ON requests.patients_id = patients.id 
+        WHERE requests.request_status = 'Complete'
+      ORDER BY requests.created_at DESC
+      `
+  );
+  res.json(requests.rows);
+}
+//}
+})
+
+    // The join statement in the SQL query combines data from the requests and patients tables based on the patients_id foreign key. This allows us to retrieve both the request data and the associated patient demographics in a single query. The results are ordered by the created_at timestamp in descending order, so the most recent requests will be returned first.
+    
+ 
+
+
+
+app.get('/api/getformData/fullRequestView', async (req, res) => {
+  
+  try {
+    const requests = await db.query(
+      `SELECT 
+        requests.id,
+        patients.forename,
+        patients.surname,
+        patients.date_of_birth,
+        patients.hospital_number,
+        patients.NHS_number,
+        requests.PatientStability,
+        requests.BleedingOrHaemolysing,
+        requests.Hb,
+        requests.ClinicalDetails,
+        requests.PatientTransfusedInLastThreeMonths,
+        requests.TransfusionDate,
+        requests.LaboratoryContactNumber,
+        requests.ABOGroup,
+        requests.RhDGroup,
+        requests.SerologicalResults,
+        requests.AdditionalInfo,
+        requests.SpecialRequirements,
+        requests.Requester,
+        requests.request_status,
+        requests.created_at,
+        requests.HospitalName,
+        requests.TestRequested,
+        requests.UnitsRequired,
+        requests.DateRequested,
+        requests.TimeRequested,
+        requests.request_status,
+        requests.created_at,
+        requests.SampleTransportMethod,
+        requests.DateOfSampleArrival,
+        requests.TimeOfSampleArrival
+       
+      FROM requests JOIN patients ON requests.patients_id = patients.id 
+      ORDER BY requests.created_at DESC`
+      
+    );
+  
+    // The join statement in the SQL query combines data from the requests and patients tables based on the patients_id foreign key. This allows us to retrieve both the request data and the associated patient demographics in a single query. The results are ordered by the created_at timestamp in descending order, so the most recent requests will be returned first.
+
+    res.json(requests.rows);
+    
+  }catch (err){
+    console.error(err);
+    res.status(500).json(
+      {Message: "Unable to retrieve all requests from database",
+      fullMessage: err.message,
+      fullError: err
+    })
+  
+  }
+
+});
+
+// A route to update the status of a request. 
+app.post('/api/validateStatusChange', auth, async (req, res) => {
+
+  const token = req.headers.authorization
+  const currentUser = req.auth.sub
+
+  console.log("This is the sub", currentUser)
+
+  await locateUserInfo(currentUser);
+  
+  async function locateUserInfo(currentUser){
+    const userInfo = await db.query(
+      `SELECT * FROM users WHERE auth0_sub = $1`,
+      [currentUser]
+
+    );
+
+    const matchingUserInfo = userInfo.rows[0];
+    console.log(matchingUserInfo, "LOOK HERE");
+    
+    return matchingUserInfo
+
+  }  
+
+  const name = await locateUserInfo(currentUser)
+
+  
+  const displayName = JSON.stringify(name.full_name)
+
+  console.log("This is the displayName", displayName);
+
+
+
+ 
+  const requestedAction = req.body.action;
+  
+  const buttonClicked = req.body;
+   console.log(buttonClicked)
+
+  const match = await locateMatchingRequest(buttonClicked);
+  console.log(match,"hey")
+  console.log("Action before update", requestedAction)
+  
+ function actionTranslationTable(requestedAction, requestState) {
+
+  if (requestedAction === "statusChangeToRequestReceived"){
+    console.log("match")
+    return requestState.requestReceived
+
+  }else if (requestedAction === "statusChangeTosampleReceived") {
+    
+    return requestState.requestSampleReceived
+
+  }else if (requestedAction === "statusChangeToSampleInProgress"){
+
+    return requestState.requestInProgress
+      
+
+  
+  }else if (requestedAction === "statusChangeToRequestComplete"){
+     return requestState.requestComplete
+  }
+
+} 
+
+console.log(displayName, "next to updateStatusResponse")
+  
+  let updateStatusResponse = {
+    status:"",
+    message:"",
+    requestedAction,
+    reason: "Reason not required",
+    requestId: match.id,
+    oldMatchStatus: match.request_status,
+    newMatchStatus: actionTranslationTable(requestedAction, requestState) ,
+    ChangedBy: req.auth.sub
+  
+  }
+
+
+  
+
+  const updatedVariables = await validateStatusChange(buttonClicked, updateStatusResponse, match)
+  await updateDatabaseAndAuditTrail(updatedVariables)
+
+console.log("UpdateStatusResponse before response to frontend", updateStatusResponse)
+
+  res.json(updateStatusResponse);
+});
+
+async function locateMatchingRequest(buttonClicked){
+      const result = await db.query(
+      'SELECT * FROM requests WHERE id = $1',
+       [buttonClicked.id]
+         
+    );
+    const matchingRequest = result.rows[0];
+
+    return matchingRequest;
+  }
+
+
+ async function validateStatusChange(buttonClicked, updateStatusResponse, match ){
+  await locateMatchingRequest(buttonClicked);
+  await match;
+
+    if (buttonClicked.action === 'statusChangeToRequestReceived' &&
+      (
+      match.request_status === requestState.requestReceived ||
+      match.request_status === requestState.requestSampleReceived ||
+      match.request_status === requestState.requestInProgress ||
+      match.request_status === requestState.requestComplete
+    )
+   ){ updateStatusResponse.status = "invalid"
+       updateStatusResponse.message = "Invalid request. Please provide reason"
+       updateStatusResponse.requestAction = buttonClicked.action;
+       
+
+       return updateStatusResponse
+
+      
+
+  }else if (buttonClicked.action === 'statusChangeTosampleReceived' && 
+
+      (
+      match.request_status === requestState.requestSampleReceived ||
+      match.request_status === requestState.requestInProgress ||
+      match.request_status === requestState.requestComplete
+    )
+    ){
+        
+        updateStatusResponse.status = "invalid"
+        updateStatusResponse.message = "Invalid request. Please provide reason"
+        updateStatusResponse.requestAction = buttonClicked.action;
+        
+
+      return updateStatusResponse
+
+
+    }else if (buttonClicked.action === 'statusChangeTosampleReceived') {
+      updateStatusResponse.status = "valid"
+      updateStatusResponse.message = "Valid request. Transition accepted" 
+      updateStatusResponse.requestAction = buttonClicked.action;
+      updateStatusResponse.newMatchStatus = requestState.requestSampleReceived
+      
+      return updateStatusResponse
+
+    }else if  (buttonClicked.action === 'statusChangeToSampleInProgress' &&
+      (
+      match.request_status === requestState.requestInProgress ||
+      match.request_status === requestState.requestComplete
+    )
+  ){
+     updateStatusResponse.status = "invalid"
+    updateStatusResponse.message = "Invalid request. Please provide reason"
+    updateStatusResponse.requestAction = buttonClicked.action;
+    return updateStatusResponse
+
+
+  }else if (buttonClicked.action === 'statusChangeToSampleInProgress'){
+
+      
+      updateStatusResponse.status = "valid"
+      updateStatusResponse.message = "Valid request. Transition accepted" 
+      updateStatusResponse.requestAction = buttonClicked.action;
+      updateStatusResponse.newMatchStatus = requestState.requestInProgress
+      return updateStatusResponse
+
+  }else if  (buttonClicked.action === 'statusChangeToRequestComplete' &&
+  (
+      match.request_status === requestState.requestComplete
+    )
+
+  ){
+    updateStatusResponse.status = "invalid"
+        updateStatusResponse.message = "Invalid request. Please provide reason"
+        updateStatusResponse.requestAction = buttonClicked.action;
+        return updateStatusResponse
+
+  }else if (buttonClicked.action === 'statusChangeToRequestComplete'){
+
+      updateStatusResponse.status = "valid"
+      updateStatusResponse.message = "Valid request. Transition accepted" 
+      updateStatusResponse.requestAction = buttonClicked.action;
+      updateStatusResponse.newMatchStatus = requestState.requestComplete
+
+       
+      
+      return updateStatusResponse
+
+  }
+return updateStatusResponse
+
+}    
+
+
+
+app.post('/api/validateModalReason', auth, async (req, res) => {
+
+
+  const token = req.headers.authorization
+
+  const reason = req.body.reason
+  const requestId = req.body.modalBoxRequestId
+  const action = req.body.submitAction
+
+
+
+    
+
+
+  let updateStatusResponse = {
+    status:"",
+    message:"",
+    requestedAction: action,
+    requestId: requestId,
+    reason,
+    ChangedBy: req.auth.sub,
+    newMatchStatus: actionTranslationTable(action, requestState)
+  }
+
+
+
+const validationOutput = await validateModalInput(reason, requestId, updateStatusResponse);
+
+updateDatabaseAndAuditTrail(validationOutput)
+
+if (validationOutput.status === "invalid"){
+ return res.status(400).json(validationOutput)
+}
+
+
+if (validationOutput.status === "valid"){
+  res.status(200).json(validationOutput)
+}
+
+
+
+});
+
+
+
+ function actionTranslationTable(action, requestState) {
+
+  if (action === "statusChangeToRequestReceived"){
+   
+    return requestState.requestReceived
+
+  }else if (action === "statusChangeTosampleReceived") {
+    
+    return requestState.requestSampleReceived
+
+  }else if (action === "statusChangeToSampleInProgress"){
+
+    return requestState.requestInProgress
+      
+
+  
+  }else if (action === "statusChangeToRequestComplete"){
+     return requestState.requestComplete
+  }
+
+} 
+
+
+async function validateModalInput (reason, requestId, updateStatusResponse){
+    
+if (!reason || reason === ""){
+  return {
+    ...updateStatusResponse,
+  status: "invalid", 
+  message: "No reason provided, please provide a reason"
+  }
+
+}else {
+return{
+...updateStatusResponse,
+status: "valid",
+message: "Reason updated Successfully",
+reason : reason
+}
+}
+
+return updateStatusResponse
+}
+
+
+
+async function updateDatabaseAndAuditTrail(data){ //This is a service function that takes data from validateStatusChange and updates the request status and audit trail in the database.
+console.log("Data sent to service function", data)
+  
+if (data.status === "invalid"){
+  return;
+
+}
+
+if (data.status === "valid"){
+
+  const currentStatus = await db.query (
+    `SELECT * FROM requests WHERE id=$1`,
+    [data.requestId]
+
+  ) 
+
+  const oldStatus = currentStatus.rows[0].request_status;
+  console.log("Old status is ", oldStatus)
+    await db.query(
+      `UPDATE requests
+      SET request_Status = $1
+      WHERE id = $2`,
+      [data.newMatchStatus,data.requestId] 
+
+    )
+      await db.query(
+        `INSERT INTO audit_log (request_id, action, status_changed_from, status_changed_to, reason, changed_by)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id `,
+        [
+          data.requestId,
+          data.requestedAction,
+          oldStatus,
+          data.newMatchStatus,
+          data.reason,
+          data.ChangedBy
+        ]
+      )
+     
+  
+  }
+
+}
+
+app.get('/api/auditTrail/:requestId', async (req,res)=> {
+
+const requestId = req.params.requestId
+
+console.log(requestId, "this is the request id");
+
+  await db.query (
+  `SELECT
+     audit_log.*,
+     users.full_name AS changed_by_name
+
+     FROM audit_log
+     LEFT JOIN users
+     ON
+      audit_log.changed_by = users.auth0_sub
+      WHERE audit_log.request_Id = $1
+
+    ORDER BY audit_log.id ASC`,
+    [requestId]
+
+
+  )
+
+  .then (auditLogData => {
+    res.json(auditLogData)
+  })
+
+})
+
+
+app.post(`/api/communicationLog/:requestId`, auth, async (req,res) => {
+  const communicationLogData = req.body;
+  const user = req.auth.sub
+  console.log("The users name is...", user)
+  const requestId = req.params.requestId;
+  console.log("This is the data received from the communication log page", communicationLogData)
+
+ const logData = await db.query (`INSERT INTO communication_log (request_id, date_of_communication, time_of_communication, name_of_contact, conversation_details, action_details, submitted_by)
+        VALUES ($1, $2, $3, $4, $5, $6, $7) 
+        RETURNING id`,
+        [
+        requestId,
+        communicationLogData.Date,
+        communicationLogData.Time,
+        communicationLogData.Contact_Name,
+        communicationLogData.Conversation_Details,
+        communicationLogData.Action,
+        user
+        
+      ]
+
+        );
+
+updateAuditLog(user, requestId)
+    async function updateAuditLog (user, requestId){
+      console.log("THIS IS THE USER", user)
+      console.log("THIS IS THE REQUEST ID", requestId)
+      await db.query (`INSERT INTO audit_log (request_id, action, status_changed_from, status_changed_to, reason, changed_by)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id`,
+        [
+          requestId,
+          "Communication Log Update",
+          "Communication Log Update",
+          "Communication Log Update",
+          "System update",
+          user
+    
+
+        ]
+      
+      );
+
+
+    }
+
+  res.json({
+  Message: "Communication data received by server",
+  
+
+})
+
+
+})
+    
+app.get(`/api/communicationLogRetrieval/:requestId`, auth, async (req,res) => {
+
+   const communicationLogData = req.body;
+  const user = req.auth.sub
+  console.log("The users name is...", user)
+  const requestId = req.params.requestId;
+
+const response = await db.query(`SELECT
+     communication_log.*,
+     users.full_name AS submitted_by
+
+     FROM communication_log
+     LEFT JOIN users
+     ON
+      communication_log.submitted_by = users.auth0_sub
+      WHERE communication_log.request_Id = $1
+
+    ORDER BY communication_log.id ASC`,
+    [requestId]
+
+
+  )
+
+  res.json({
+    response
+
+  })
+
+})
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../Frontend/index.html'));
+});

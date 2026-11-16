@@ -16,45 +16,41 @@
 
     <body>
 
-<div id="overlay" data-id="" class="overlayActive"> 
-        
-        <div id="modalBox" class="overlayInactive">
-              <p> <strong> Unstable patient </strong> </p>
-
-               <p> 
-
-                You have categoried this patient as unstable. 
-               Ensure a backup plan is made immediately! Inform your haematology consultant for further advice and promptly phone the RCI department. 
-                </p>
-
-                <p> Please confirm below that you have read the above advice </p>
-
-            Yes I have read the above advice <input id="confirmAdviceReadBox" type="checkbox" class="confirmAdviceReadBox" >
-
-        </div>
-     </div>
-    </div>
- 
     
-  
 
- <div id ="headerBar" class="headerBar"> 
+        <div id ="headerBar" class="headerBar"> 
     <img id="appLogo" alt="LabDash" src="Images/labDashLogo7.png" class="headerLogo"> 
     
     <div id="navBar" class="navBar">
-        <div>
-        <a href="index.html"> Home </a>
-         </div>
-         
-         <div>
-         <a href="labView.HTML"> View All Requests </a>
-         </div>
+
+         <div id="headerButtons" class="headerButtons">
+        <button id="newRequest" class="newRequest"> New Request  </button>
+        <button id="completedRequests" class="completedRequests_inactive"> Completed Requests </button> 
+        </div>
+
+        <div id="profilePictureContainer" class="profilePictureContainer">
+        <a> <img id="profilePicture" src="" alt="Profile Picture" class="profilePicture" />  </a>
+
+    </div>
     </div>
 
     </div>
+
+
+    </div>
+
+    <div id="profileInfoShort" class="profileInfoShort" hidden> 
+
+
+
+    </div>
+
+<div id="tableContainer" class="tableContainer">
+
 
 <div id="sectionHeader" class="sectionHeader">
     <h2> Urgent Test Request </h2>
+    <span> <p> Submit a new urgent test request </p> </span>
 
 </div>
 
@@ -205,30 +201,14 @@
 
     <div id="hospitalInformationHeader" class="subSectionHeader">
         
-        <h3> Hospital Information and Serological Results </h3>  
+        <h3> Hospital Group and Serological Results </h3>  
 
         </div>
                 
         <div class="formField">
-        <label for="hospitalSearch"> Name of requesting hospital: </label>
-
-        <input id="hospitalNameList" list="hospitalNameListt" placeholder="Search hospital name..." > 
-                    <datalist id="hospitalNameListt">
-                        <option value="Northwick Park Hospital"> </option>
-                        <option value="James Paget"> </option>
-                        <option value="University College London Hospital"> </option>  
-                        <option value="Luton and Dunstable Hospital"> </option>
-                        <option value="Homerton Hospital"> </option>
-                    </datalist>
-
-                <div id="valHospitalName" class="validation"> Please select hospital name </div>
+       
         </div>
 
-        <div class="formField">
-                    <label for="labContactNumberInput"> Laboratory contact number: </label>  
-                    <input type="text" id="labContactNumberInput"> 
-                    <div id="valContactNumber" class="validation" hidden> Please enter a laboratory contact number </div>
-        </div>
                     <div class="formField">
                     <label for="aboGroupInput">  ABO Group </label> 
                     <select id="aboGroupInput"> 
@@ -267,11 +247,17 @@
                     <div class="formField">
                     <label for="serohosp"> Serological results obtained at hospital: </label>
                      <textarea id="serologicalResultsInput" type="textbox"> </textarea>
+                    <div id="valSerologicalResults" class="validation" hidden> Please enter serological results obtained </div>
+                    </div>
 
-                     <div id="valSerologicalResults" class="validation" hidden> Please enter serological results obtained </div>
+                    <div class="formField">
+                        <label for="panelUpload"> Upload panel results </label>
+                     <input type="file" id="panelUpload" name="filename"/>
 
                     </div>
                 </div>
+
+                
 
     <div id="testRequest" class="testRequest">
 
@@ -291,20 +277,20 @@
             <div id="valTestRequest" class="validation" hidden> Please select test required </div>
             </div>
                 
-            <div class="formField">
+            <div className="formField">
                 <label for="additionalInformationInput"> Additional Information </label> 
                 <input type="text" id="additionalInformationInput">
                 </div>
 
 
-                <div class="formField">
+                <div className="formField">
                 <label for="sampleTransportInput"> How will the sample will be transported? </label> 
                 <input type="text" id="sampleTransportInput"> 
                 
-                <div id="valSampleTransport" class="validation" hidden> Please state how the sample will be transported </div>
+                <div id="valSampleTransport" className="validation" hidden> Please state how the sample will be transported </div>
                 </div>
 
-                <div class="formField">
+                <div className="formField">
                 <label for="arrivalTime"> Please estimate date and time of sample arrival at referral lab: </label>
                 <input id ="dateSampleArrival" type="date">
                 <input id="timeSampleArrival" type="time"> 
@@ -314,8 +300,8 @@
                 </div>
 
                 
-                <div id="dtrq" class="dtrq" >
-                <div class="formField">
+                <div id="dtrq" className="dtrq" >
+                <div className="formField">
                 <label id='datetimerq'> Date and time test(s) required for: </label> <input type='date' id="dtrqDate"> <input type='time' id="dtrqTime"> 
                 </div>
                 <div id="valDtrq" class="validation" hidden>
@@ -325,17 +311,17 @@
 
      </div>
 
-      <div id="crossmatchInfo" class="" hidden>
+      <div id="crossmatchInfo" className="" hidden>
 
                 
                 
-        <div id="crossmatchInformationHeader" class="subSectionHeader">
+        <div id="crossmatchInformationHeader" className="subSectionHeader">
          <h3> Crossmatch Information </h3> 
         </div>
         
         
         <div id="unitno">
-        <div class="formField">
+        <div className="formField">
                 <label for="unitNoInput"> How many units are required? </label> 
                 <select id="unitNoInput"> 
                     <option value=""> Select an option </option>
@@ -353,7 +339,7 @@
                     <option value='12'> 12 </option>
                 </select>
                 
-                <div id="valUnitNo" class="validation" hidden> 
+                <div id="valUnitNo" className="validation" hidden> 
                     Please specify how many units are required
                 </div>
                 </div>
@@ -367,7 +353,7 @@
                 
                 
                 
-                <div id="spqrInput" class="spqrCheckboxes">  
+                <div id="spqrInput" className="spqrCheckboxes">  
                     
                     Irradiated <input id="Irradiated" value='Irradiated' type='checkbox' name="spqrBoxes">
                     Washed <input value='Washed' type='checkbox' name="spqrBoxes"> 
@@ -376,7 +362,7 @@
                     Less than 5 days old <input value="Less than 5 days old" type="checkbox" name="spqrBoxes">
                     Other <input value="other" type="checkbox" name="spqrBoxes"> None <input value="None" type="checkbox" name="spqrBoxes">
                 </div>
-                <div id="valSpqr" class="validation" hidden> Please specify the patients special requirements </div> 
+                <div id="valSpqr" className="validation" hidden> Please specify the patients special requirements </div> 
                 </div>
 
                   <h4> Unit Transportation </h4>
@@ -419,6 +405,32 @@
 </form>    
         
 </div>
+
+</div>
+
+<div id="overlay" data-id="" class="overlayActive"> 
+        
+        <div id="modalBox" class="overlayInactive">
+              <p> <strong> Unstable patient </strong> </p>
+
+               <p> 
+
+                You have categoried this patient as unstable. 
+               Ensure a backup plan is made immediately! Inform your haematology consultant for further advice and promptly phone the RCI department. 
+                </p>
+
+                <p> Please confirm below that you have read the above advice </p>
+
+            Yes I have read the above advice <input id="confirmAdviceReadBox" type="checkbox" class="confirmAdviceReadBox" >
+
+        </div>
+     </div>
+    </div>
+ 
+    
+  
+
+ 
 
 
 

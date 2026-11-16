@@ -50,12 +50,46 @@ db.connect()
   })
   .catch(console.error);
 
+//Code for testing initial ESP32 connection with the backend
+
+app.post('/api/esp32BarcodeInfo', async (req,res) =>{
+
+  const esp32Barcode = req.body.barcode
+
+  if (esp32Barcode){
+    console.log(esp32Barcode)
+
+      res.status(200).json({
+        message: "Barcode recieved is to be updated",
+        testRequired: "ABO Group",
+        conditions: "37 degrees celsius"
+        
+
+      })
+
+  }else{
+    res.status(400).json({
+      message: "body not valid"
+
+    }) 
+
+  }
+
+
+
+})
+
+
 
 
   //This route is used for obtaining the users details on login directly from the server
 
 app.post('/api/getUserInfo', auth, async (req, res) => {
+  (console.log("accessed"))
 
+  console.log(req.headers.authorization)
+  
+  
     const response = await fetch(
             "https://labdash.uk.auth0.com/userinfo",
             {
@@ -65,9 +99,10 @@ app.post('/api/getUserInfo', auth, async (req, res) => {
             }
         );
 
-        
 
 const user = await response.json()
+console.log("User info", user)
+
 
 const roles = await req.auth["https://labflow.uk/roles"];
 const labId = await req.auth["https://labflow.uk/referral_lab_id"]
@@ -113,12 +148,12 @@ if (!currentUser) {
   
    
    
-  res.json(user)
+  res.json( await user)
 })
 
 
 app.post("/api/redirectUserBasedOnRole", auth, async (req, res) => {
-console.log("accessed")
+ /*console.log("accessed")
 
 let redirectPage = ""
 
@@ -141,7 +176,7 @@ res.json ("An error has occurred. Please contact system administrator")
 }
 
 
-
+*/
 })
 
 
@@ -165,6 +200,7 @@ const orderOfStateTransition = [
   requestState.SampleReceived,
   requestState.requestInProgress,
   requestState.requestComplete
+  
 
 ]
 
@@ -175,19 +211,67 @@ const orderOfStateTransition = [
 //Also checks for duplicate requests using the checkDuplicateRequest function and if a duplicate is found it returns a 400 status code with an error message. If no duplicate is found it stores the form data and returns a success message.
 
 
-app.post('/api/formSubmit', async (req, res) => {
-    const pageData = req.body; // Get the form data from the request body
+app.post('/api/formSubmit', auth, async (req, res) => {
+
+  const user = req.auth.sub
+
+  const databaseUser = await db.query(
+    `SELECT workplace FROM users WHERE auth0_sub = $1`,
+    [user]
+  );
+
+  const workplace = databaseUser.rows[0].workplace
+  const telephoneNumber = 0;
+
+  console.log("This is database user", databaseUser.rows[0].workplace)
+
+
+  const pageData = req.body; // Get the form data from the request body
+
+  const databaseLookup = await db.query(
+    `SELECT 
+     FROM patients
+    
+     WHERE 
+    forename = $1
+    AND 
+    surname = $2
+    AND
+    date_of_birth = $3
+    AND
+    (
+    hospital_number = $4
+    OR 
+    nhs_number = $5 
+  )
+    `,
+    [pageData.forename, pageData.surname, pageData.dateOfBirth, pageData.hospitalNumber, pageData.NHSNumber]
+
+
+  );
+
+  
+  if (databaseLookup.rows == ""){
+    console.log("Database Lookup is empty", databaseLookup.rows )
+
+  }else{
+    console.log("Look there's data here",databaseLookup.rows)
+
+  }
   
 
   const duplicateRequest = checkDuplicateRequest(pageData, allRequests);
 
   if (duplicateRequest){
+
     console.log("duplicate is: ", duplicateRequest);
-    res.status(400).json({ 
+   return res.status(400).json({ 
     message: "Duplicate request detected. Form data not stored.",
     duplicate: duplicateRequest
+
   });
-  }
+    }
+  
 
 try {
     pageData.TransfusionDate = pageData.TransfusionDate || null; 
@@ -249,8 +333,9 @@ try {
     pageData.ClinicalDetails,
     pageData.PatientTransfusedInLastThreeMonths,
     pageData.TransfusionDate,
-    pageData.HospitalName,
-    pageData.LaboratoryContactNumber,
+    databaseUser.rows[0].workplace,
+    telephoneNumber,
+    //THIS IS WHERE I INSERT NEW VARIABLES FROM USER INFO
     pageData.ABOGroup,
     pageData.RhDGroup,
     pageData.SerologicalResults,
@@ -274,8 +359,7 @@ try {
   
    );
       
-
-    return res.status(200).json({ 
+     return res.status(200).json({ 
       message: "Successfully submitted and sent to database",
       Data_Submitted: patientDemoData.rows[0] && requestData.rows[0],
       duplicateRequest: duplicateRequest,
@@ -293,7 +377,10 @@ try {
 });
 
 
-function checkDuplicateRequest(pageData, allRequests){
+async function checkDuplicateRequest(pageData, allRequests){
+
+  
+
 
     const duplicateRequest = allRequests.some(item =>  //This some loop looks for a condition if all the key values of the form data match an existing request in the allRequests array. If a match is found it returns true and if not it returns false. This is used to prevent duplicate requests from being stored in the in-memory array.
     pageData.forename === item.forename && 
@@ -322,7 +409,7 @@ app.post("/api/getformData", auth, async (req, res) => {
    let currentUser = req.auth
  console.log(currentUser)
    
-if (currentUser['https://labflow.uk/referral_lab_id'].includes ("RCI") ) {
+//if (currentUser['https://labflow.uk/referral_lab_id'].includes ("RCI") ) {
 
   if (data.pageDisplayed.outstanding_requests) {
 
@@ -387,7 +474,7 @@ if (currentUser['https://labflow.uk/referral_lab_id'].includes ("RCI") ) {
   );
   res.json(requests.rows);
 }
-}
+//}
 })
 
     // The join statement in the SQL query combines data from the requests and patients tables based on the patients_id foreign key. This allows us to retrieve both the request data and the associated patient demographics in a single query. The results are ordered by the created_at timestamp in descending order, so the most recent requests will be returned first.
