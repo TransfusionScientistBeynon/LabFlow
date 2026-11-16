@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 
 import {getAuth0Token} from '../auth/auth.js';
 
+import API_URL from '../services/api';
+
 
 
  //This ensures the auth0 client has initialised before page render.

@@ -8,7 +8,7 @@
 
  import requestReceived from '../assets/Images/sampleInTransit.PNG'
 
- import API_URL from './api';
+ import API_URL from '../services/api';
 
 
 function Hospitalview({currentPage, setCurrentPage, userInfo} ){
