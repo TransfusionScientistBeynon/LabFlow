@@ -13,11 +13,6 @@ app.use(express.json()); // This allows us to parse JSON bodies in incoming requ
 app.use(express.static(path.join(__dirname, '../Frontend')));
 
 
-
-//Defines the URL for the APP
-const API_URL = import.meta.env.VITE_API_URL;
-
-console.log(API_URL)
 //Routes for authentication
 // Public route (no login needed)
 app.get("/", (req, res) => {
