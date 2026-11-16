@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Newrequest from './components/Newrequest';
 import Hospitalview from './components/Hospitalview';
-import Successfulsubmission from './components/SuccessfulSubmission';
+import Successfulsubmission from './components/Successfulsubmission';
 import Failedsubmission from './components/Failedsubmission';
 
 import {retrieveUserInfo} from './services/userInfoService';
