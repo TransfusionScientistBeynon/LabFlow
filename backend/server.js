@@ -12,6 +12,12 @@ app.use(cors());
 app.use(express.json()); // This allows us to parse JSON bodies in incoming requests
 app.use(express.static(path.join(__dirname, '../Frontend')));
 
+
+
+//Defines the URL for the APP
+const API_URL = import.meta.env.VITE_API_URL;
+
+console.log(API_URL)
 //Routes for authentication
 // Public route (no login needed)
 app.get("/", (req, res) => {
@@ -84,7 +90,7 @@ app.post('/api/esp32BarcodeInfo', async (req,res) =>{
 
   //This route is used for obtaining the users details on login directly from the server
 
-app.post('/api/getUserInfo', auth, async (req, res) => {
+app.post(`${API_URL}/api/getUserInfo`, auth, async (req, res) => {
   (console.log("accessed"))
 
   console.log(req.headers.authorization)
