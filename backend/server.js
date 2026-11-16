@@ -90,7 +90,7 @@ app.post('/api/esp32BarcodeInfo', async (req,res) =>{
 
   //This route is used for obtaining the users details on login directly from the server
 
-app.post(`${API_URL}/api/getUserInfo`, auth, async (req, res) => {
+app.post(`/api/getUserInfo`, auth, async (req, res) => {
   (console.log("accessed"))
 
   console.log(req.headers.authorization)

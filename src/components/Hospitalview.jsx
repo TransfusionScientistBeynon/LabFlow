@@ -30,7 +30,7 @@ const functionToken = await getAuth0Token();
 if (currentPage === 'myRequests'){
     console.log("running")
 
-   const response = await fetch('http://localhost:3000/api/loadHospitalRequests',{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
+   const response = await fetch('/api/loadHospitalRequests',{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
     method:"GET",
     headers:{
         "Content-Type": "application/json",
@@ -113,7 +113,7 @@ async function searchHospitalOutstandingRequests(event){
 
 
 
-    const searchResults = await fetch('http://localhost:3000/api/myHospitalsOustandingRequestSearch',{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
+    const searchResults = await fetch('/api/myHospitalsOustandingRequestSearch',{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
     method:"POST",
     headers:{
         "Content-Type": "application/json",
