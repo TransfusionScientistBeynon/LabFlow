@@ -86,7 +86,7 @@ export async function protectPage(){
 await initAuth();
 await handleRedirect();
 await protectPage();
-await redirectUserBasedOnRole();
+
 
 
 })();
