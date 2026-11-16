@@ -11,6 +11,8 @@ import Failedsubmission from './components/Failedsubmission';
 import {retrieveUserInfo} from './services/userInfoService';
 import {protectPage} from './auth/auth';
 
+import API_URL from './api';
+
 
 function App() {
 
