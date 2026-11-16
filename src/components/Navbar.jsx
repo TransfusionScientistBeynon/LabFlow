@@ -3,10 +3,10 @@
  import {logout} from '../auth/auth.js';
  import {protectPage} from '../auth/auth.js';
  
- import rciLogo from '../assets/images/labDashLogo7.png';
- import workPlaceIcon from '../assets/images/WorkplaceIcon.png';
- import roleIcon from '../assets/images/RoleIcon.png';
- import signOutIcon from '../assets/images/SignOutIcon.png';
+ import rciLogo from '../assets/Images/labDashLogo7.png';
+ import workPlaceIcon from '../assets/Images/WorkplaceIcon.png';
+ import roleIcon from '../assets/Images/RoleIcon.png';
+ import signOutIcon from '../assets/Images/SignOutIcon.png';
 
  
 
