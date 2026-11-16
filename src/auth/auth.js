@@ -80,7 +80,7 @@ export async function redirectUserBasedOnRole(){
     const functionToken = await getAuth0Token();
 
 
-await fetch("http://localhost:3000/api/redirectUserBasedOnRole",{ 
+await fetch("/api/redirectUserBasedOnRole",{ 
     method:"POST",
     headers:{
         "Content-Type": "application/json",
