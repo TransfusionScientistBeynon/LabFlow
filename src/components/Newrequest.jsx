@@ -194,7 +194,7 @@ function renderError(nameElement){
     console.log("These are name Elements being passed", nameElement)
     console.log("...", nameElement.valid)
     console.log("This is render Error", nameElement.ErrorMessage)
-    
+    console.log("hello")
 
     if (nameElement.valid === false  ){
 
