@@ -23,7 +23,7 @@ console.log({currentPage})
 
 
 
-{/* Creates a variable called requestFormData and setFormData as an array. We then set all those values to nothing and it obtains the value from the users input by applying a value in JSX e.g. value=request_form_data.forename */}
+/* Creates a variable called requestFormData and setFormData as an array. We then set all those values to nothing and it obtains the value from the users input by applying a value in JSX e.g. value=request_form_data.forename */
 const [requestFormData, setRequestFormData] = useState({
 
 forename : "",
@@ -70,6 +70,8 @@ const[backgroundOverlay, setBackgroundOverlay] = useState(false);
 const [unstablePatient, setUnstablePatient] = useState(false);
 
 const [adviceButtonChecked, setAdviceButtonChecked] = useState(false);
+
+const [duplicateRequest, setDuplicateRequest] = useState(false)
 
 
 
@@ -250,16 +252,11 @@ useEffect(() => { {/* This is a react state useEffect runs when a state changes 
 
 
 async function submitForm(){
+    
+    const actualErrors = Object.entries(formErrors).filter(([key, value]) => value !== null);
 
-    console.log("These are all the form errors currently", formErrors)
-
-
-        const actualErrors = Object.entries(formErrors)
-        .filter(([key, value]) => value !== null);
-
-   
     const token = await getAuth0Token();
-
+    
     const response = await fetch(`${API_URL}/api/formSubmit`,{ //this function uses the fetch API to send a POST request to the backend server at the specified URL. It sends the formData object as a JSON string in the request body, along with the appropriate headers to indicate that the content type is JSON.
     method:"POST",
     headers:{
@@ -271,118 +268,132 @@ async function submitForm(){
 
     });
 
-
-
 const serverResponse = await response.json();
-console.log(serverResponse)
 
+handleSubmissionErrors(serverResponse);
+
+}
+
+
+async function handleSubmissionErrors(serverResponse){
 
 if (serverResponse.successfulSubmissionState) {
-    setSuccessfulSubmission(true);
-    setCurrentPage("Successful submission")
-}else{
-    if (serverResponse.status === 400) {
-       
-        const mandatoryFields = serverResponse.mandatoryFields
-        console.log("These are the mandatory fields", serverResponse.mandatoryFields)
-      
-        const completedFields = serverResponse.completedFields
+setSuccessfulSubmission(true);
+setCurrentPage("Successful submission")
+
+}else if (serverResponse.status === 400) {
+
+
+ const mandatoryFieldsComplete = checkMandatoryFieldsAreComplete(serverResponse)
+
+ console.log(mandatoryFieldsComplete)
+
+    if (mandatoryFieldsComplete === true){
+
+        const fieldsAreValid = checkFieldsAreValid(serverResponse)
+
+        console.log(fieldsAreValid)
+
+        
+     if (!fieldsAreValid){
+            
+            renderErrorHandler(serverResponse)
+
+        }
+    }else if (!mandatoryFieldsComplete){
+        renderErrorHandler(serverResponse)
+
+    }
 
    
+}else if (serverResponse.duplicateRequestCheck){
 
-        
+        setDuplicateRequest(true)
+    
+
+}
+
+
+}
+
+function checkMandatoryFieldsAreComplete(serverResponse){
+
+        const mandatoryFields = serverResponse.mandatoryFields
+        const completedFields = serverResponse.completedFields
         const remainingFieldsRequired = mandatoryFields.filter(value => !completedFields.includes(value))
-        console.log("These are the remaining fields", remainingFieldsRequired )
+         let incompleteFieldsOnSubmit = remainingFieldsRequired
 
-        let incompleteFieldsOnSubmit = remainingFieldsRequired
+         console.log("These are the mandatory fields", mandatoryFields)
+    console.log("These are the remaining fields", remainingFieldsRequired)
+    
 
-        incompleteFieldsOnSubmit.forEach((item)=>{
+        if (remainingFieldsRequired.length > 0 ){
+            console.log("remaining incomplete fields")
+            return false
+
+        }else{
+            console.log("Fields are complete")
+            return true
+
+        }
+}
+
+ function checkFieldsAreValid(serverResponse){
+
+
+    let invalidFieldsOnSubmit = serverResponse.InvalidFields
+    let invalidErrorMessagesOnSubmit = serverResponse.InvalidErrorMessages
+
+    if (invalidFieldsOnSubmit.length > 0){
+        return false
+
+    }else if (invalidFieldsOnSubmit.length === 0){
+        return true
+
+    }
+
+}
+
+function renderErrorHandler(serverResponse){
+
+    const mandatoryFields = serverResponse.mandatoryFields
+    const completedFields = serverResponse.completedFields
+    const remainingFieldsRequired = mandatoryFields.filter(value => !completedFields.includes(value))
+    let incompleteFieldsOnSubmit = remainingFieldsRequired
+
+    if(incompleteFieldsOnSubmit.length > 0 ){
+
+         incompleteFieldsOnSubmit.forEach((item)=>{
             renderError(item)
 
         })
-
-
-    
-        console.log("These are the invalid fields", serverResponse.InvalidFields)
-
-      
-            let invalidFieldsOnSubmit = serverResponse.InvalidFields
-            let invalidErrorMessagesOnSubmit = serverResponse.InvalidErrorMessages
-
-            console.log("This is are error messages before any modification", invalidErrorMessagesOnSubmit)
-
-            if (invalidErrorMessagesOnSubmit){
-
-                const errorMessagesArray = Object.entries(invalidErrorMessagesOnSubmit) //Turn data from object into an array
-                
-                const errorMessagesKeyValue = errorMessagesArray.map(([key,value]) =>{ //Converts array of objects into new object
-                    
-                    return{
-                    InvalidField: key,
-                    ErrorMessage: value,
-                    valid: false
-
-                    }
-
-                })
-
-
-                
-    errorMessagesKeyValue.forEach((item)=>{
-        renderError(item)
-
-    })
-                
-                
-                
-
-              
-            }
-            
-       /* if (invalidFieldsOnSubmit){
-          const invalidFieldsObjectArray =  invalidFieldsOnSubmit.map((item)=>{
-
-                return{
-                    backendNameElement: item,
-                    valid : false,
-                    errorMessage: null
-    
-
-                }
-                
-        })
-
-        console.log(invalidFieldsObjectArray)
-
-        
-
-        invalidFieldsObjectArray.forEach((item)=>{
-           
-            renderError(item)
-
-        })
-            
-    }*/
-        
-        
-        
-
 
     }
 
 
-    
 
+    let invalidErrorMessagesOnSubmit = serverResponse.InvalidErrorMessages
+     
+    if (invalidErrorMessagesOnSubmit){
 
+    const errorMessagesArray = Object.entries(invalidErrorMessagesOnSubmit) //Turn data from object into an array 
+    const errorMessagesKeyValue = errorMessagesArray.map(([key,value]) =>{ //Converts array of objects into new object    
+    return{
+    InvalidField: key,
+    ErrorMessage: value,
+    valid: false
+    }
+    })
+
+    errorMessagesKeyValue.forEach((item)=>{
+        renderError(item)
+
+    })
+              
+    }
+          
 
 }
-
-
-
-
-}
-
-
 
 return (
 <>
@@ -745,7 +756,17 @@ return (
            <input type="submit" id="submitButton" value="Submit" onClick={submitForm}/>   
     </div>
 
+<div id="duplicateRequestModal" name="duplicateRequestModal" className={duplicateRequest ? "modalBoxActive" : "modalBoxInactive"}>
+        <p> <strong> Similar patient Found </strong> </p>
 
+               <p> 
+               A similar record already exists in labDash. Would you like to link it to the existing record? 
+                </p>
+
+    Yes <input name="linkToExistingRecordCheckbox" type='checkbox' value='Yes' checked={null} onChange={null} />
+    No <input name="linkToExistingRecordCheckbox" type='checkbox' value='No' checked={null} onChange={null} />
+
+</div>
 
 
 </div>

@@ -530,7 +530,7 @@ async function formValidationResultHandler(areMandatoryFieldsComplete, areComple
 
     if (!duplicateRequestCheck.success){
        return res.status(409).json({
-    message: "Duplicate request detected"
+        duplicateRequestCheck
     });
   }
 
@@ -644,18 +644,20 @@ async function checkForDuplicateRequests () {
       message: "No Duplicate Requests found"
 
     }
-  }else{
+  }else if(databaseLookup.rows.length >0){
+
     return{
       success: false,
-      message: "Duplicate requests detected"
+      message: "Duplicate requests detected",
+      code: "DUPLICATE_REQUEST",
+      duplicateRequestFound: databaseLookup.rows[0]
 
     }
 
   }
 
-
-
   }catch(error){
+
     return{
       success:false,
       message: "Database unable to check for errors",

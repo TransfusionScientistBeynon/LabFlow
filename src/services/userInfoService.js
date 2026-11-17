@@ -1,5 +1,5 @@
 import { getAuth0Token } from '../auth/auth.js';
-import API_URL from '../services/api';
+import API_URL from '../services/api'
 
 export async function retrieveUserInfo(){
 
