@@ -375,8 +375,8 @@ app.post('/api/formSubmit', auth, async (req, res) => {
    
     return res.status(400).json({
      message: "Mandatory fields not completed",
-     RequiredFields: requiredFields,
-     CompletedFields: completedFieldsIteration,
+     mandatoryFields: requiredFields,
+     completedFields: completedFieldsIteration,
      status: 400
 
     })
@@ -413,6 +413,11 @@ const timeSampleRequested = completedFields.test_time_required
 const combinedDateTimeTestRequired = dateSampleRequested.concat(timeSampleRequested)
 
 const patientLastTransfused = completedFields.transfusion_history_date
+const completedFieldsDateObject = new Date(completedFields.transfusion_history_date)
+  const todayDateObject = new Date
+  const threeMonthsAgo = new Date
+   threeMonthsAgo.setMonth(todayDateObject.getMonth() - 3)
+   
 
 console.log(patientLastTransfused)
 
@@ -422,21 +427,30 @@ console.log(patientLastTransfused)
     date_of_birth : false,
     date_of_sample_arrival: false,
     test_date_required: false,
+    transfusion_history_date : false
 
     
+  }
+
+  const invalidErrorMessages = {
+
+
+
   }
 
   if (completedFields.haemoglobin < 15 || completedFields.haemoglobin >250){
     console.log("Invalid Haemoglobin")
     valueCheck.haemoglobin = false;
+    invalidErrorMessages.haemoglobin = "Hb values <15 or >250 are invalid"
   }else{
     valueCheck.haemoglobin = true;
 
   }
 
   if (completedFields.date_of_birth > stringAndSliceDate){
+
     valueCheck.date_of_birth = false;
-    
+    invalidErrorMessages.date_of_birth = "Date of Birth cannot be beyond today's date"    
 
   }else{
     valueCheck.date_of_birth = true;
@@ -444,30 +458,66 @@ console.log(patientLastTransfused)
   }
 
   if (combinedDateTimeSampleArrival < joinCurrentDateTime){
+
     console.log("sample Arrival date invalid")
     valueCheck.date_of_sample_arrival = false;
+    invalidErrorMessages.date_of_sample_arrival = "Sample cannot arrive before current date/time"
+
 
   }else{
     valueCheck.date_of_sample_arrival = true;
-
+    
   }
 
   if (combinedDateTimeTestRequired < joinCurrentDateTime || combinedDateTimeTestRequired < combinedDateTimeSampleArrival){
+
     valueCheck.test_date_required = false;
+    invalidErrorMessages.test_date_required = "Date and time of test results can't be before current date/time and must be after sample arrival date" 
 
   }else{
     valueCheck.test_date_required = true;
 
   }
 
+  console.log("This is date object", completedFieldsDateObject)
+  console.log("This is threeMonthsAgo", threeMonthsAgo)
 
-  const areCompletedFieldsValid = Object.values(valueCheck).every(condition => condition === true)//Takes all the values from value Check.
+  if (completedFields.transfusion_history_date > stringAndSliceDate || completedFieldsDateObject < threeMonthsAgo ){
+    valueCheck.transfusion_history_date = false;
+    invalidErrorMessages.transfusion_history_date = "Transfusion Date can't be beyond today's date and must be within the last 3 months. Select 'no' if patient not transfused in the last 3 months"
+    console.log("The transfusion date failed", completedFields.transfusion_history_date)
+    console.log("stringandSliceDate", stringAndSliceDate)
+    
+  }else{
+    valueCheck.transfusion_history_date = true;
+  }
+  
+  const areCompletedFieldsValid = Object.values(valueCheck).every(condition => condition === true)
+  
+let invalidFields = []
 
- await formValidationResultHandler(areMandatoryFieldsComplete, areCompletedFieldsValid, requiredFields, completedFieldsIteration)
+ const checkWhichFieldsAreInvalid = Object.entries(valueCheck).forEach(([key,value]) => {
+
+  console.log("This is value Check", valueCheck)
+  
+    if (value === false){
+
+      invalidFields.push(key)
+
+    }
+
+ });
+  
+ 
+
+
+  //Takes all the values from value Check.
+
+ await formValidationResultHandler(areMandatoryFieldsComplete, areCompletedFieldsValid, requiredFields, completedFieldsIteration, invalidFields, invalidErrorMessages)
 
 }
 
-async function formValidationResultHandler(areMandatoryFieldsComplete, areCompletedFieldsValid, requiredFields, completedFieldsIteration){
+async function formValidationResultHandler(areMandatoryFieldsComplete, areCompletedFieldsValid, requiredFields, completedFieldsIteration, invalidFields, invalidErrorMessages){
   if (areMandatoryFieldsComplete && areCompletedFieldsValid){
 
    const duplicateRequestCheck = await checkForDuplicateRequests();
@@ -544,7 +594,9 @@ async function formValidationResultHandler(areMandatoryFieldsComplete, areComple
       message: "Form Validation check failed",
       status: 400,
       mandatoryFields: requiredFields,
-      completedFields: completedFieldsIteration
+      completedFields: completedFieldsIteration,
+      InvalidFields: invalidFields,
+      InvalidErrorMessages: invalidErrorMessages
 
     })
 

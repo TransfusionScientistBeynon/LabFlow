@@ -191,7 +191,20 @@ function closeAdviceBox(event){
 
 function renderError(nameElement){
 
-    if (nameElement === "haemoglobin") {
+    console.log("These are name Elements being passed", nameElement)
+    console.log("...", nameElement.valid)
+    console.log("This is render Error", nameElement.ErrorMessage)
+    
+
+    if (nameElement.valid === false  ){
+
+
+          setFormErrors(previous =>({
+            ...previous,
+            [nameElement.InvalidField] : <p className="validation"> {nameElement.ErrorMessage} </p>
+        }));
+
+    }else if (nameElement === "haemoglobin") {
         setFormErrors(previous =>({
             ...previous,
             [nameElement] : <p className="validation"> Haemoglobin value Invalid  </p>
@@ -270,29 +283,95 @@ if (serverResponse.successfulSubmissionState) {
 }else{
     if (serverResponse.status === 400) {
        
-
+        const mandatoryFields = serverResponse.mandatoryFields
         console.log("These are the mandatory fields", serverResponse.mandatoryFields)
-        console.log("These are the completed fields" , serverResponse.completedFields)
+      
+        const completedFields = serverResponse.completedFields
 
-        const mandatoryFields = serverResponse.RequiredFields
-        const completedFields = serverResponse.CompletedFields
+   
 
+        
         const remainingFieldsRequired = mandatoryFields.filter(value => !completedFields.includes(value))
-        console.log("These are the remaining fieeds", remainingFieldsRequired )
+        console.log("These are the remaining fields", remainingFieldsRequired )
 
-        console.log(remainingFieldsRequired, "These are the remaining fields")
+        let incompleteFieldsOnSubmit = remainingFieldsRequired
 
-        const errorsOnSubmit = remainingFieldsRequired
-
-        errorsOnSubmit.forEach((item)=>{
+        incompleteFieldsOnSubmit.forEach((item)=>{
             renderError(item)
 
         })
+
+
+    
+        console.log("These are the invalid fields", serverResponse.InvalidFields)
+
+      
+            let invalidFieldsOnSubmit = serverResponse.InvalidFields
+            let invalidErrorMessagesOnSubmit = serverResponse.InvalidErrorMessages
+
+            console.log("This is are error messages before any modification", invalidErrorMessagesOnSubmit)
+
+            if (invalidErrorMessagesOnSubmit){
+
+                const errorMessagesArray = Object.entries(invalidErrorMessagesOnSubmit) //Turn data from object into an array
+                
+                const errorMessagesKeyValue = errorMessagesArray.map(([key,value]) =>{ //Converts array of objects into new object
+                    
+                    return{
+                    InvalidField: key,
+                    ErrorMessage: value,
+                    valid: false
+
+                    }
+
+                })
+
+
+                
+    errorMessagesKeyValue.forEach((item)=>{
+        renderError(item)
+
+    })
+                
+                
+                
+
+              
+            }
+            
+       /* if (invalidFieldsOnSubmit){
+          const invalidFieldsObjectArray =  invalidFieldsOnSubmit.map((item)=>{
+
+                return{
+                    backendNameElement: item,
+                    valid : false,
+                    errorMessage: null
+    
+
+                }
+                
+        })
+
+        console.log(invalidFieldsObjectArray)
+
+        
+
+        invalidFieldsObjectArray.forEach((item)=>{
+           
+            renderError(item)
+
+        })
+            
+    }*/
+        
         
         
 
 
     }
+
+
+    
 
 
 
