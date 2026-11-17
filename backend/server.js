@@ -372,6 +372,12 @@ app.post('/api/formSubmit', auth, async (req, res) => {
     await checkValuesProvidedAreValid(areMandatoryFieldsComplete, completedFields,requiredFields,completedFieldsIteration)
 
   }else{
+
+    console.log("Required fields:", requiredFields);
+console.log("Completed fields:", completedFieldsIteration);
+
+console.log("Required fields array:", Array.isArray(requiredFields));
+console.log("Completed fields array:", Array.isArray(completedFieldsIteration));
    
     return res.status(400).json({
      message: "Mandatory fields not completed",
