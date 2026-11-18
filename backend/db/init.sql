@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS patients (
   forename TEXT NOT NULL,
   surname TEXT NOT NULL,
   date_of_birth DATE NOT NULL,
-  hospital_Number TEXT NOT NULL,
-  NHS_Number TEXT NOT NULL,
+  hospital_Number TEXT,
+  NHS_Number TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

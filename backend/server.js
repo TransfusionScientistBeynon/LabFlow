@@ -267,20 +267,31 @@ app.post('/api/formSubmit', auth, async (req, res) => {
     const [key, value] = item;
 
    
-
-    if (value != ''){
+console.log(typeof value, value, "HEEEEEEEEEEEEE");
+    
+if (typeof value === 'string' && value.trim() !== ''){
       completedFields[key] = value
     }
+    
+    if (typeof value !== 'string' && value.length >0){
+      completedFields[key] = value
+
+    }
   
-    if (value === '' || value === null){
+    if (typeof value === 'string' && value.trim() === ''){
     
     emptyKeys[key] = value
 
-      
+    }
+
+    if (typeof value !== 'string' && value.length === 0){
+      emptyKeys[key] = value
+
+    }
     
-  }
-  
 });
+
+
  await checkIfMandatoryFieldsAreComplete(completedFields, emptyKeys)
   }
 
@@ -337,26 +348,29 @@ app.post('/api/formSubmit', auth, async (req, res) => {
       validationCriteria.unit_transportation_method = true;
     }
 
-    if (key === 'hospital_number' && value !== ''){
+    if (key === 'hospital_number'  && value.trim() != ''){
+      console.log("Check mandatory value", value)
       validationCriteria.nhs_number = false;
 
     }
 
-    if (key === 'nhs_number' && value !== ''){
+    if (key === 'nhs_number' && value.trim() != ''){
+      console.log("Check madatory", value)
       validationCriteria.hospital_number = false;
 
     }
 
    
 
-
+console.log("val before function", validationCriteria)
 
 });
-
+console.log("val after function", validationCriteria)
+console.log("These are completed fields are function", completedFields)
    const requiredFields = Object.entries(validationCriteria) //Creates object into key  and values so we can iterate through it.
   .filter(([key, value]) => value === true) //Filters out results that aren't required
   .map(([key, value]) => key) //.map makes a new array from our iteration only providing the keys that we want as we no longer need the value.
-
+ 
   const completedFieldsIteration = Object.entries(completedFields)
   .map(([key, value]) => key) //removes the values from the completedFileds array to make comparison easier.
 
@@ -525,7 +539,7 @@ let invalidFields = []
 
 async function formValidationResultHandler(areMandatoryFieldsComplete, areCompletedFieldsValid, requiredFields, completedFieldsIteration, invalidFields, invalidErrorMessages){
   if (areMandatoryFieldsComplete && areCompletedFieldsValid){
-
+    console.log("These are mandatory fields", areMandatoryFieldsComplete)
    const duplicateRequestCheck = await checkForDuplicateRequests();
 
     if (!duplicateRequestCheck.success){
@@ -533,6 +547,17 @@ async function formValidationResultHandler(areMandatoryFieldsComplete, areComple
         duplicateRequestCheck
     });
   }
+
+  const checkForMerges = await checkForPossibleMergeEvents()
+  console.log("These are the merge Events", checkForMerges)
+
+  if (!checkForMerges.success){
+      return res.status(409).json({
+           PossibleMergeEvent : checkForMerges
+
+        })
+
+      }
 
   if (duplicateRequestCheck.success){
 
@@ -627,9 +652,9 @@ async function checkForDuplicateRequests () {
     date_of_birth = $3
     AND
     (
-    hospital_number = $4
+    hospital_number IS NOT DISTINCT FROM $4
     OR 
-    nhs_number = $5 
+    nhs_number IS NOT DISTINCT FROM $5 
   )
     `,
     [pageData.forename, pageData.surname, pageData.date_of_birth, pageData.hospital_number, pageData.nhs_number]
@@ -668,6 +693,63 @@ async function checkForDuplicateRequests () {
 
   }
   
+
+
+}
+
+async function checkForPossibleMergeEvents(){
+//:: specifies type of data parameter holds
+  try{
+  const databaseLookup = await db.query(
+    `SELECT *
+     FROM patients
+    
+     WHERE 
+    forename = $1
+    AND 
+    surname = $2
+    AND
+    date_of_birth = $3
+     AND (
+        $4::TEXT IS NULL
+        OR hospital_number IS DISTINCT FROM $4::TEXT
+    )
+
+    AND (
+        $5::TEXT IS NULL
+        OR nhs_number IS DISTINCT FROM $5::TEXT
+    )
+
+    `
+  , [pageData.forename, pageData.surname, pageData.date_of_birth, pageData.hospital_number, pageData.nhs_number]
+  )
+
+
+  if(databaseLookup.rows.length >0) {
+    return{
+      success: false,
+      message: "Potential merge request located",
+      potentialMergeRequest: databaseLookup.rows
+
+    }
+  }else{
+    return{
+      success: true
+
+    }
+
+  }
+  
+  }catch(error){
+    return{ 
+      status:(400),
+      message: "Unable to checkDatabase for potential merges",
+      error: error,
+      errorCode: "MERGE_CHECK_FAILED",
+
+    }
+
+  }
 
 
 }
@@ -711,10 +793,16 @@ try{
  async function insertPatientDemographics(){
 
   try{
-
+//NULLIF nullifies the column if the trim of $4 or $5 are empty
       const patientDemoData = await db.query(
       `INSERT INTO patients (forename, surname, date_of_birth, hospital_number, NHS_number)
-        VALUES ($1, $2, $3, $4, $5) 
+        VALUES (
+        $1,
+        $2,
+        $3, 
+        NULLIF(TRIM($4),''),  
+        NULLIF(TRIM($5),'')
+      ) 
         RETURNING id`,
         [
         pageData.forename,
@@ -731,6 +819,7 @@ try{
           patientDemoData: patientDemoData
           }
       }catch (error){
+        console.error("This is the error", error)
           return {
             success: false,
             message: "Failed to Insert patient Demographics into the database",
