@@ -4,7 +4,11 @@ function Successfulsubmission({currentPage, setCurrentPage, userInfo} ){
 </>
 return (
 
-    <p> submission Successful </p>
+    <div id="submission_successful">
+
+        <p> Submission Successful </p>
+
+    </div>
 
 )
 

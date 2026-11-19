@@ -581,8 +581,10 @@ async function formValidationResultHandler(areMandatoryFieldsComplete, areComple
 
       if (checkRequestInsertedIntoDatabase.success){
         return res.status(200).json({
+
             success: true,
-            message: "Request successfully stored in the database"
+            message: "Request successfully stored in the database",
+            successfulSubmissionState: true
 
           })
 

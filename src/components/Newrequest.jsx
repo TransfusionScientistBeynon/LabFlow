@@ -449,7 +449,7 @@ return (
          
             <div className="formField">
             <label htmlFor="forenameInput"> Forename: </label>
-             <input type="text" id="forenameInput" name="forename" value={requestFormData.forename} onChange={formHandler} onBlur={formValidator}/>   
+             <input type="text" id="forenameInput" name="forename" pattern="[A-Za-zÀ-ÿ '-]+" required value={requestFormData.forename} onChange={formHandler} onBlur={formValidator}/>   
 
              {formErrors.forename}
             </div>
@@ -457,7 +457,7 @@ return (
 
             <div className="formField">
             <label htmlFor="surnameInput"> Surname: </label>
-            <input type="text" id="surnameInput" name="surname" value={requestFormData.surname} onChange={formHandler} onBlur={formValidator}/> 
+            <input type="text" id="surnameInput" name="surname" pattern="[A-Za-zÀ-ÿ '-]+" required value={requestFormData.surname} onChange={formHandler} onBlur={formValidator}/> 
             {formErrors.surname}
             </div>
             
