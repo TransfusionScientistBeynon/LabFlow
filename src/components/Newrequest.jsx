@@ -1,27 +1,13 @@
-
 import { useState, useEffect } from 'react';
-
-
 import {getAuth0Token} from '../auth/auth.js';
+
+import SuccessfulSubmissionTick from '../assets/Images/SuccessfulSubmissionTick.png';
 
 import API_URL from '../services/api';
 
-
-
  //This ensures the auth0 client has initialised before page render.
-
 function Newrequest({currentPage, setCurrentPage, userInfo, successfulSubmission, setSuccessfulSubmission, unsuccessfulSubmission, setUnsuccessfulSubmission}){
 console.log({currentPage})
-
-
-
-
-// 
-
-
-
-
-
 
 /* Creates a variable called requestFormData and setFormData as an array. We then set all those values to nothing and it obtains the value from the users input by applying a value in JSX e.g. value=request_form_data.forename */
 const [requestFormData, setRequestFormData] = useState({
@@ -55,9 +41,9 @@ test_time_required : "",
 
 no_units_required : "",
 unit_spqr : [] ,
-unit_transportation_method : []
+unit_transportation_method : [],
 
-
+mergeRequestDecision: ''
 
 })
 
@@ -71,16 +57,13 @@ const [unstablePatient, setUnstablePatient] = useState(false);
 
 const [adviceButtonChecked, setAdviceButtonChecked] = useState(false);
 
-const [duplicateRequest, setDuplicateRequest] = useState(false)
+const [duplicateRequest, setDuplicateRequest] = useState(false);
 
+const [potentialMerges, setPotentialMerges] = useState(false);
 
+const [potentialMergesData, setPotentialMergesData] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL;
-
-console.log("API URL:", API_URL);
-
-
-
+const [mergeRequestDecision, setMergeRequestDecision] = useState('not_performed') 
 
 
 
@@ -150,7 +133,7 @@ function formHandler(event){
     
 }
 
-function formValidator(event){ {/*Renameed name and value in my function. This validates the inputs from the frontend on the form */}
+function formValidator(event){ 
 
 let inputName = event.target.name;
 let inputValue = event.target.value
@@ -184,12 +167,20 @@ function renderClinicalMessage(event){
     }
 }
 
+function toggleOverlayForModalBoxOn(){
+    setBackgroundOverlay(true);
+
+}
+ 
+function toggleOverlayForModalBoxOff(){
+    setBackgroundOverlay(false);
+    setSuccessfulSubmission(false);
+}
+
 function closeAdviceBox(event){
     setUnstablePatient(false);
     setBackgroundOverlay(false)
 }
-
-
 
 function renderError(nameElement){
 
@@ -236,7 +227,7 @@ function renderError(nameElement){
 
 }
 
-useEffect(() => { {/* This is a react state useEffect runs when a state changes in react */}
+useEffect(() => { 
 
     if (requestFormData.test_required === "Antibody identification and crossmatch") {
         setCrossmatchInfo(true);
@@ -246,13 +237,8 @@ useEffect(() => { {/* This is a react state useEffect runs when a state changes 
 
 }, [requestFormData.test_required]);
 
-
-
-
-
-
 async function submitForm(){
-    
+    console.log("This is requestFormData at submission", requestFormData.mergeRequestDecision)
     const actualErrors = Object.entries(formErrors).filter(([key, value]) => value !== null);
 
     const token = await getAuth0Token();
@@ -278,15 +264,22 @@ handleSubmissionErrors(serverResponse);
 async function handleSubmissionErrors(serverResponse){
 
 if (serverResponse.successfulSubmissionState) {
-setSuccessfulSubmission(true);
-setCurrentPage("Successful submission")
+
+    console.log("Server Response: ", serverResponse)
+    console.log("Background overlay: ", backgroundOverlay)
+    setBackgroundOverlay(true)
+    setSuccessfulSubmission(true);
+     setPotentialMerges(false);
+    setPotentialMergesData([]);
+    requestFormData.mergeRequestDecision = ''
+    console.log("Background overlay after: ", backgroundOverlay)
 
 }else if (serverResponse.status === 400) {
 
 
- const mandatoryFieldsComplete = checkMandatoryFieldsAreComplete(serverResponse)
+    const mandatoryFieldsComplete = checkMandatoryFieldsAreComplete(serverResponse)
 
- console.log(mandatoryFieldsComplete)
+    console.log(mandatoryFieldsComplete)
 
     if (mandatoryFieldsComplete === true){
 
@@ -311,10 +304,94 @@ setCurrentPage("Successful submission")
         setDuplicateRequest(true)
     
 
+}else if (serverResponse.PossibleMergeEvent){
+
+     setPotentialMerges(true)
+     setPotentialMergesData(renderPossibleMerges(serverResponse))
+
+
+
+}else if(serverResponse.MergeRequestDecision === 'reset'){
+
+    console.log("running")
+     setBackgroundOverlay(true)
+    setSuccessfulSubmission(true);
+     setPotentialMerges(false);
+    setPotentialMergesData([]);
+    requestFormData.mergeRequestDecision = ''
+
 }
+
+}
+
+useEffect(()=>{
+
+}, [potentialMerges]);
+
+useEffect(()=>{
+
+}, [potentialMergesData]);
+
+ function renderPossibleMerges(serverResponse){
+
+    const mergesList = serverResponse.PossibleMergeEvent.potentialMergeRequest;
+    setBackgroundOverlay(true)
+    setPotentialMerges(true)
+
+   return mergesList.map((item) => (
+        <tr key={item.id} className="requestRow" onClick={() => mergePatientAfterUserSelection(item, serverResponse)}>
+          <td>{item.id} </td>
+          <td> {item.forename}</td>
+          <td>{item.surname}</td>
+          <td> {item.date_of_birth} </td>
+          <td>{item.hospital_number || 'N/A' }</td>
+          <td>{item.nhs_number}</td>
+          
+        </tr>
+      ));
+
+     
 
 
 }
+
+
+
+async function createNewPatientWithoutMerge(){
+
+    setMergeRequestDecision('New patient without merge')
+
+    requestFormData.mergeRequestDecision = mergeRequestDecision
+
+    console.log(mergeRequestDecision)
+
+    requestFormData.mergeRequestDecision = "performed"
+    setPotentialMerges(false)
+    submitForm()
+    
+   
+
+}
+
+ function mergePatientAfterUserSelection(item, serverResponse){
+   
+
+    const patientToMergeWith = item
+
+    
+    console.log("Id of patient to merge with is :", item.id)
+    requestFormData.mergeRequestDecision = patientToMergeWith.id
+
+    console.log("This is decision", requestFormData.mergeRequestDecision)
+
+
+
+    submitForm();
+    
+
+}
+
+
 
 function checkMandatoryFieldsAreComplete(serverResponse){
 
@@ -395,6 +472,8 @@ function renderErrorHandler(serverResponse){
 
 }
 
+
+
 return (
 <>
 
@@ -416,6 +495,43 @@ return (
 
             Yes I have read the above advice <input name="confirmAdviceReadBox" checked={adviceButtonChecked} onChange={(event) => {setAdviceButtonChecked(event.target.checked); closeAdviceBox(event.target.checked);}} type="checkbox" className="confirmAdviceReadBox" />
 
+</div>
+
+<div id="submission_successful" name="successful_submission" className={successfulSubmission ? "modalBoxActive" : "modalBoxInactive"}>
+
+    <div className="request_submitted_modal">        
+
+    <p> <strong> Request successfully submitted </strong>  </p> 
+
+    <img src={SuccessfulSubmissionTick} alt="Tick Icon" className="SuccessfulSubmissionImage"/> 
+    
+    <button id="myRequests" onClick={toggleOverlayForModalBoxOff} > Close </button>
+    
+    </div>
+
+</div>
+
+<div id="potentialMerges" name="potentialMerges" className={potentialMerges ? "modalBoxActive" : "modalBoxInactive"}>
+   
+    <p> <strong> Similar patient records found </strong> </p>
+
+    <p> Please select from a patient below if you would like to use an existing request. To create a new patient click 'Finish Submission'</p>
+
+    <table name="mergeTable">
+        
+    <tr>
+        <th> Id </th>
+        <th> Forename </th>
+        <th> Surname </th>
+        <th> Date of Birth </th>
+        <th> Hospital Number </th>
+        <th> NHS Number </th>
+    </tr>
+    
+    {potentialMergesData}
+    </table>
+
+    <button name="finishSubmission" onClick={createNewPatientWithoutMerge}> Finish Submission </button>
 </div>
 
 </div>
@@ -767,6 +883,8 @@ return (
     No <input name="linkToExistingRecordCheckbox" type='checkbox' value='No' checked={null} onChange={null} />
 
 </div>
+
+
 
 
 </div>

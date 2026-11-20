@@ -117,16 +117,6 @@ useEffect (() => {
 />}
 
 
-{currentPage === 'Successful submission' &&
-  <Successfulsubmission
-  currentPage = {currentPage}
-  setCurrentPage = {setCurrentPage}
-  successfulSubmission = {successfulSubmission}
-  setSuccessfulSubmission = {setSuccessfulSubmission}/>
-
-
-
-}
 
 {currentPage === 'Unsuccessful submission' &&
 

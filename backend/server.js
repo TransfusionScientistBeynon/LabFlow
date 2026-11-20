@@ -265,9 +265,6 @@ app.post('/api/formSubmit', auth, async (req, res) => {
 
     Object.entries(pageData).forEach(item => {
     const [key, value] = item;
-
-   
-console.log(typeof value, value, "HEEEEEEEEEEEEE");
     
 if (typeof value === 'string' && value.trim() !== ''){
       completedFields[key] = value
@@ -538,28 +535,44 @@ let invalidFields = []
 }
 
 async function formValidationResultHandler(areMandatoryFieldsComplete, areCompletedFieldsValid, requiredFields, completedFieldsIteration, invalidFields, invalidErrorMessages){
+
   if (areMandatoryFieldsComplete && areCompletedFieldsValid){
     console.log("These are mandatory fields", areMandatoryFieldsComplete)
-   const duplicateRequestCheck = await checkForDuplicateRequests();
 
-    if (!duplicateRequestCheck.success){
-       return res.status(409).json({
-        duplicateRequestCheck
-    });
-  }
+  
 
-  const checkForMerges = await checkForPossibleMergeEvents()
+     const checkForMerges = await checkForPossibleMergeEvents()
   console.log("These are the merge Events", checkForMerges)
 
-  if (!checkForMerges.success){
+    if (!checkForMerges.success){
       return res.status(409).json({
            PossibleMergeEvent : checkForMerges
 
         })
+    }
+    
+  if (typeof pageData.mergeRequestDecision !== 'number'){
+  
+  
+    
+   const patientExists = await checkIfPatientExists();
 
-      }
+    if (patientExists.success){
 
-  if (duplicateRequestCheck.success){
+      const checkRequestAddedToExistingPatient = await addRequestToExistingPatient(patientExists.KnownPatient.id, pageData)
+
+      return res.status(200).json({
+        success: true,
+        message: "Entered a new request into an existing patient record",
+        code: "REQUEST_ADDED_TO_EXISTING_PATIENT"
+
+      })
+      
+    }
+
+ 
+
+  if (!patientExists.success){
 
 
     const checkUserWorkplaceAdded = await addUserWorkplaceToRequest();  
@@ -619,7 +632,17 @@ async function formValidationResultHandler(areMandatoryFieldsComplete, areComple
 
   }
 
-  
+  }else{
+    return res.status(200).json({
+      success: true,
+      message: "Attached request to patient user selected",
+      MergeRequestDecision: "reset"    
+
+    })
+
+
+
+  }
 
 }else{
 
@@ -638,7 +661,7 @@ async function formValidationResultHandler(areMandatoryFieldsComplete, areComple
 }
 
 
-async function checkForDuplicateRequests () {
+async function checkIfPatientExists () {
 
   try{
 
@@ -667,17 +690,18 @@ async function checkForDuplicateRequests () {
   if (databaseLookup.rows.length === 0){
 
     return{
-      success:true,
-      message: "No Duplicate Requests found"
+      success: false,
+      message: "Patient Doesn't exist in Database"
 
     }
   }else if(databaseLookup.rows.length >0){
 
     return{
-      success: false,
-      message: "Duplicate requests detected",
-      code: "DUPLICATE_REQUEST",
-      duplicateRequestFound: databaseLookup.rows[0]
+      success: true,
+      message: "Patient already exists",
+      code: "PATIENT_KNOWN",
+      KnownPatient: databaseLookup.rows[0]
+      
 
     }
 
@@ -701,6 +725,8 @@ async function checkForDuplicateRequests () {
 
 async function checkForPossibleMergeEvents(){
 //:: specifies type of data parameter holds
+console.log("This is pageData.mergeRequestDecision", pageData.mergeRequestDecision)
+if (pageData.mergeRequestDecision === ''){
   try{
   const databaseLookup = await db.query(
     `SELECT *
@@ -753,9 +779,27 @@ async function checkForPossibleMergeEvents(){
 
   }
 
+}else if (pageData.mergeRequestDecision === "performed"){
+  return{
+    success:true
 
+  }
+}else if (typeof pageData.mergeRequestDecision === 'number'){
+
+    const patientToMerge = pageData.mergeRequestDecision
+    const wasPatientAdded = await addRequestToExistingPatient(patientToMerge, pageData)
+  console.log(wasPatientAdded, "was patient added")
+    if (wasPatientAdded.success){
+      return{
+        success:true
+        
+
+      }
+
+    }
 }
 
+}
 
 async function addUserWorkplaceToRequest(){
 
@@ -924,6 +968,107 @@ async function insertRequestIntoDatabase(patientDemoData, workplaceId, workplace
   
 }
 
+async function addRequestToExistingPatient(patientToMerge, pageData){
+
+  const patientId = patientToMerge
+  console.log("This is patient id", patientId)
+  console.log("This is pageData", pageData)
+
+  const checkUserWorkplaceAdded = await addUserWorkplaceToRequest()
+
+  if (checkUserWorkplaceAdded.success){
+
+      const workplaceId = checkUserWorkplaceAdded.workplaceId
+      const workplaceName = checkUserWorkplaceAdded.workplaceName
+      const telephoneNumber = 0;
+
+
+  
+  try{
+    const insertRequestIntoExistingPatient = await db.query (
+  `INSERT INTO requests (patients_id,
+  PatientStability,
+  BleedingOrHaemolysing,
+  Hb,
+  ClinicalDetails,
+  PatientTransfusedInLastThreeMonths,
+  TransfusionDate, 
+  HospitalId,
+  HospitalName,
+  LaboratoryContactNumber,
+  ABOGroup,
+  RhDGroup,
+  SerologicalResults,
+  TestRequested,
+  AdditionalInfo,
+  DateRequested,
+  TimeRequested,
+  SampleTransportMethod,
+  DateOfSampleArrival,
+  TimeOfSampleArrival,
+  UnitsRequired,
+  SpecialRequirements,
+  UnitTransportationMethod,
+
+  Requester,
+  request_status)
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
+  RETURNING id`,
+  [
+    patientId,
+    pageData.patient_stability,
+    pageData.bleeding_or_haemolysing,
+    pageData.haemoglobin,
+    pageData.clinical_details,
+    pageData.transfusion_history,
+    pageData.transfusion_history_date,
+    workplaceId,
+    workplaceName,
+    telephoneNumber,
+    //THIS IS WHERE I INSERT NEW VARIABLES FROM USER INFO
+    pageData.abo_group,
+    pageData.rhd_group,
+    pageData.serological_results,
+    pageData.test_required,
+    pageData.additional_information,
+    pageData.test_date_required,
+    pageData.test_time_required,
+    pageData.sample_transportation,
+    pageData.date_of_sample_arrival,
+    pageData.time_of_sample_arrival,
+    pageData.no_units_required,
+    pageData.unit_spqr,
+    pageData.unit_transportation_method,
+
+   
+    pageData.requester || "Unknown Requester",
+    requestState.requestReceived,
+  ]
+   ); 
+
+
+  return {
+    success:true,
+    message: "Request added to an existing patient",
+    code: "ADDED_REQUEST_TO_EXISTING_PATIENT"
+
+  }
+
+  }catch (error){
+    console.error(error)
+
+    return{
+    success: false,
+    message: "Unable to add request to existing patient",
+    code: "MERGE_REQUEST_FAILED",
+    error: error
+
+  }
+
+}
+
+  }
+}
 
 });
 
